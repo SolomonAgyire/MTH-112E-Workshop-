@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTH 112E - Student Scores Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="max-w-6xl mx-auto p-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">MTH 112E - Student Progress Viewer</h1>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">All Student Sessions</h2>
+            <div id="scoresContainer" class="space-y-4">
+                <!-- Scores will be displayed here -->
+            </div>
+            
+            <div class="mt-6 flex gap-4">
+                <button onclick="loadScores()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                    Refresh Scores
+                </button>
+                <button onclick="exportScores()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                    Export to CSV
+                </button>
+                <button onclick="clearScores()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+                    Clear All Scores
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadScores() {
+            const scores = JSON.parse(localStorage.getItem('mth112e_scores') || '[]');
+            const container = document.getElementById('scoresContainer');
+            
+            if (scores.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No student data found. Students need to complete the worksheet and click "Save My Progress".</p>';
+                return;
+            }
+            
+            container.innerHTML = scores.map((session, index) => {
+                const date = new Date(session.timestamp).toLocaleString();
+                const percentage = Math.round((session.totalCorrect / session.totalQuestions) * 100);
+                
+                return `
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold text-lg">Session ${index + 1}</h3>
+                            <span class="text-sm text-gray-500">${date}</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-blue-600">${session.scores.warmup.correct}/${session.scores.warmup.total}</div>
+                                <div class="text-sm text-gray-600">Warm-up</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-green-600">${session.scores.workout.correct}/${session.scores.workout.total}</div>
+                                <div class="text-sm text-gray-600">Workout</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-purple-600">${session.scores.cooldown.correct}/${session.scores.cooldown.total}</div>
+                                <div class="text-sm text-gray-600">Cool-down</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-orange-600">${session.scores.transformations.correct}/${session.scores.transformations.total}</div>
+                                <div class="text-sm text-gray-600">Transformations</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <div class="text-sm text-gray-600">
+                                Total: ${session.totalCorrect}/${session.totalQuestions} (${percentage}%)
+                            </div>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function exportScores() {
+            const scores = JSON.parse(localStorage.getItem('mth112e_scores') || '[]');
+            if (scores.length === 0) {
+                alert('No scores to export!');
+                return;
+            }
+            
+            // Convert to CSV format
+            const csvContent = [
+                'Timestamp,Warm-up Correct,Warm-up Total,Workout Correct,Workout Total,Cool-down Correct,Cool-down Total,Transformations Correct,Transformations Total,Total Correct,Total Questions,Percentage',
+                ...scores.map(session => {
+                    const percentage = Math.round((session.totalCorrect / session.totalQuestions) * 100);
+                    return [
+                        session.timestamp,
+                        session.scores.warmup.correct,
+                        session.scores.warmup.total,
+                        session.scores.workout.correct,
+                        session.scores.workout.total,
+                        session.scores.cooldown.correct,
+                        session.scores.cooldown.total,
+                        session.scores.transformations.correct,
+                        session.scores.transformations.total,
+                        session.totalCorrect,
+                        session.totalQuestions,
+                        percentage
+                    ].join(',');
+                })
+            ].join('\n');
+            
+            // Download CSV
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mth112e_scores_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function clearScores() {
+            if (confirm('Are you sure you want to clear all student scores? This cannot be undone.')) {
+                localStorage.removeItem('mth112e_scores');
+                loadScores();
+            }
+        }
+        
+        // Load scores on page load
+        loadScores();
+    </script>
+</body>
+</html>

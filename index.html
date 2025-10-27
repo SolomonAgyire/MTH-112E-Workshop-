@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTH 112E: Interactive Review</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Chosen Palette: Neutral Stone with Indigo Accent -->
+    <!-- Application Structure Plan: The app translates the lesson plan into an interactive learning module. The structure is a linear, 3-part flow mimicking the plan: Warm-up, Workout, and Cool-Down. This guides the student logically through the concepts. Users interact with problems directly: evaluating functions in input fields with immediate feedback (Warm-up, Cool-Down) and visually exploring transformations in an interactive Chart.js plot (Workout). This sequential structure is chosen for pedagogical clarity, moving from simple evaluation to complex visual transformation, matching the source report's goal. -->
+    <!-- Visualization & Content Choices: 1. Warm-up (Evaluation): Goal: Practice. Method: HTML Input + JS Check. Interaction: User types answer, clicks button, gets instant "Correct/Incorrect" feedback. Justification: Active recall of function notation. | 2. Workout (Transformations): Goal: Compare/Explore. Method: Chart.js Line Chart (Canvas). Interaction: User selects a parent function (x^2, |x|, sqrt) AND a transformation rule from the report. The chart dynamically plots the original (gray) vs. transformed (blue) graph. An explanation box reveals the transformation description. Justification: Visually connects the symbolic rule (e.g., "f(x-3)") to the graphical change (shift right), which is the core objective. | 3. Cool-Down (Piecewise): Goal: Practice. Method: HTML Input + JS Check. Interaction: User types answer, clicks button, gets feedback. Justification: Reinforces the domain-checking rule for piecewise functions. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 42rem;
+            margin-left: auto;
+            margin-right: auto;
+            height: 24rem;
+            max-height: 400px;
+        }
+        @media (min-width: 640px) {
+            .chart-container {
+                height: 26rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-stone-50 font-sans text-stone-800 antialiased">
+
+    <main class="max-w-4xl mx-auto p-4 sm:p-8 space-y-8">
+        
+        <header class="text-center py-4">
+            <h1 class="text-3xl sm:text-4xl font-bold text-indigo-700">MTH 112E Review: Functions in Motion</h1>
+            <p class="mt-2 text-lg text-stone-600">SLA Leader: Solomon Agyire</p>
+            <p class="mt-4 max-w-2xl mx-auto text-base">
+                <strong>Session Objective:</strong> Apply common transformations (shifts, reflections, stretches/shrinks) to graph parent functions and correctly evaluate piecewise functions at specified values.
+            </p>
+        </header>
+
+        <section id="warmup" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200">
+            <h2 class="text-2xl font-bold text-indigo-900 border-b border-stone-200 pb-2">🚀 Part 1: Warm-up - Function Evaluation</h2>
+            <p class="mt-4 text-stone-600">Let's start with a quick check on function notation. This section is for practicing how to substitute a value into a function rule. You have 3 trials for each question.</p>
+            
+            <div class="mt-6 bg-stone-50 p-4 rounded-lg">
+                <p class="text-lg font-medium">Given the function:</p>
+                <p class="text-2xl font-mono text-center py-2">$$f(x) = x^2 - 3x$$</p>
+            </div>
+
+            <div class="mt-6 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <label for="warmup1" class="text-lg font-medium">a. Find f(2)</label>
+                    <input type="number" id="warmup1" class="md:col-span-1 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter answer">
+                    <div class="md:col-span-1">
+                        <button id="btnWarmup1" class="w-full md:w-auto bg-indigo-600 text-white py-2 px-5 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                        <span id="resultWarmup1" class="ml-3 font-medium"></span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <label for="warmup2" class="text-lg font-medium">b. Find f(-3)</label>
+                    <input type="number" id="warmup2" class="md:col-span-1 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter answer">
+                    <div class="md:col-span-1">
+                        <button id="btnWarmup2" class="w-full md:w-auto bg-indigo-600 text-white py-2 px-5 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                        <span id="resultWarmup2" class="ml-3 font-medium"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="workout" class="bg-white p-8 sm:p-12 rounded-2xl shadow-lg border border-stone-200">
+            <h2 class="text-3xl font-bold text-indigo-900 border-b border-stone-200 pb-3">💪 Part 2: Workout - Visualizing Transformations</h2>
+            <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h3 class="text-lg font-bold text-blue-900 mb-2">📋 Instructions:</h3>
+                <ol class="text-blue-800 space-y-1">
+                    <li><strong>Step 1:</strong> First, select a parent function (f(x)) from the dropdown below</li>
+                    <li><strong>Step 2:</strong> Then, choose a transformation (g(x)) to see how it changes the graph</li>
+                    <li><strong>Step 3:</strong> Observe the changes - does it shift up/down, left/right, shrink, stretch, or reflect?</li>
+                    <li><strong>Step 4:</strong> Try different combinations to understand each transformation type!</li>
+                </ol>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="parentFunction" class="block text-lg font-semibold text-stone-700 mb-2">1. Choose a Parent Function f(x):</label>
+                    <select id="parentFunction" class="mt-1 block w-full p-3 text-lg border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="x2">f(x) = x² (Parabola)</option>
+                        <option value="abs">f(x) = |x| (Absolute Value)</option>
+                        <option value="sqrt">f(x) = √x (Square Root)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="transformation" class="block text-lg font-semibold text-stone-700 mb-2">2. Choose a Transformation g(x):</label>
+                    <select id="transformation" class="mt-1 block w-full p-3 text-lg border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="a">g(x) = f(x) + 4</option>
+                        <option value="b">g(x) = f(x - 3)</option>
+                        <option value="c">g(x) = -f(x)</option>
+                        <option value="d">g(x) = f(2x)</option>
+                        <option value="e">g(x) = ½f(x)</option>
+                        <option value="f">g(x) = -f(x+1) - 5</option>
+                        <option value="g">g(x) = 3f(x)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-8 chart-container">
+                <canvas id="transformChart"></canvas>
+            </div>
+            
+            <div id="explanationBox" class="mt-8 p-6 bg-indigo-50 border border-indigo-200 rounded-lg text-indigo-800">
+            </div>
+
+            <!-- Transformation Quiz Modal -->
+            <div id="quizModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+                <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4">
+                    <h3 class="text-2xl font-bold text-indigo-900 mb-4">🎯 Quick Quiz</h3>
+                    <div id="quizContent" class="mb-6">
+                        <!-- Quiz content will be inserted here -->
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="submitQuiz" class="flex-1 bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors font-medium">Submit</button>
+                        <button id="skipQuiz" class="flex-1 bg-gray-500 text-white py-3 px-4 rounded-lg hover:bg-gray-600 transition-colors font-medium">Skip</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Piecewise Function Section in Workout -->
+            <div class="mt-8 p-6 bg-stone-50 rounded-lg border border-stone-200">
+                <h3 class="text-xl font-bold text-indigo-900 mb-4">🎯 Practice: Piecewise Function Evaluation</h3>
+                <p class="text-stone-600 mb-4">Try this piecewise function evaluation. You have 3 attempts for each question.</p>
+                
+                <div class="bg-white p-4 rounded-lg mb-6">
+                    <p class="text-lg font-medium">Given the function:</p>
+                    <div class="text-2xl font-mono text-center py-2">
+                        $$\text{f(x) = } 
+                        \begin{cases} 
+                        x + 3 & \text{if } x < 1 \\
+                        x^2 - 1 & \text{if } x \ge 1 
+                        \end{cases}$$
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label for="workout1" class="text-lg font-medium">a. Find f(0)</label>
+                        <input type="number" id="workout1" class="md:col-span-1 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter answer">
+                        <div class="md:col-span-1">
+                            <button id="btnWorkout1" class="w-full md:w-auto bg-indigo-600 text-white py-2 px-5 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                            <span id="resultWorkout1" class="ml-3 font-medium"></span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label for="workout2" class="text-lg font-medium">b. Find f(1)</label>
+                        <input type="number" id="workout2" class="md:col-span-1 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter answer">
+                        <div class="md:col-span-1">
+                            <button id="btnWorkout2" class="w-full md:w-auto bg-indigo-600 text-white py-2 px-5 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                            <span id="resultWorkout2" class="ml-3 font-medium"></span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label for="workout3" class="text-lg font-medium">c. Find f(3)</label>
+                        <input type="number" id="workout3" class="md:col-span-1 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter answer">
+                        <div class="md:col-span-1">
+                            <button id="btnWorkout3" class="w-full md:w-auto bg-indigo-600 text-white py-2 px-5 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                            <span id="resultWorkout3" class="ml-3 font-medium"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cooldown" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200">
+            <h2 class="text-2xl font-bold text-indigo-900 border-b border-stone-200 pb-2">🧊 Part 3: Cool-Down - Piecewise Functions</h2>
+            <p class="mt-4 text-stone-600">Great job! Let's finish by practicing with piecewise functions. The key is to check which 'rule' or 'piece' the $x$-value fits into *before* you calculate.</p>
+
+            <div class="mt-6 bg-stone-50 p-4 rounded-lg">
+                <p class="text-lg font-medium">Given the function:</p>
+                <div class="text-2xl font-mono text-center py-2">
+                    <!-- Note: The expression below must be double-dollar signs for MathJax to render the environment correctly -->
+                    $$\text{f(x) = } 
+                    \begin{cases} 
+                    x + 2 & \text{if } x < 0 \\
+                    x^2 & \text{if } x \ge 0 
+                    \end{cases}$$
+                </div>
+            </div>
+
+            <div class="mt-6 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <label for="cool1" class="text-lg font-medium">a. Find f(-3)</label>
+                    <input type="number" id="cool1" class="md:col-span-1 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter answer">
+                    <div class="md:col-span-1">
+                        <button id="btnCool1" class="w-full md:w-auto bg-indigo-600 text-white py-2 px-5 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                        <span id="resultCool1" class="ml-3 font-medium"></span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <label for="cool2" class="text-lg font-medium">b. Find f(0)</label>
+                    <input type="number" id="cool2" class="md:col-span-1 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter answer">
+                    <div class="md:col-span-1">
+                        <button id="btnCool2" class="w-full md:w-auto bg-indigo-600 text-white py-2 px-5 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                        <span id="resultCool2" class="ml-3 font-medium"></span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <label for="cool3" class="text-lg font-medium">c. Find f(1)</label>
+                    <input type="number" id="cool3" class="md:col-span-1 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter answer">
+                    <div class="md:col-span-1">
+                        <button id="btnCool3" class="w-full md:w-auto bg-indigo-600 text-white py-2 px-5 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                        <span id="resultCool3" class="ml-3 font-medium"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-6 text-stone-500 text-sm">
+        <p>SLA Review Session | Solomon Agyire | MTH 112E</p>
+    </footer>
+
+    <script>
+        // Global attempt counters for all sections
+        window.attemptsWarmup1 = 3;
+        window.attemptsWarmup2 = 3;
+        window.attemptsWorkout1 = 3;
+        window.attemptsWorkout2 = 3;
+        window.attemptsWorkout3 = 3;
+        window.attemptsCool1 = 3;
+        window.attemptsCool2 = 3;
+        window.attemptsCool3 = 3;
+
+        // Scoring system
+        window.studentScore = {
+            warmup: { correct: 0, total: 2 },
+            workout: { correct: 0, total: 3 },
+            cooldown: { correct: 0, total: 3 },
+            transformations: { correct: 0, total: 0 }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.MathJax) {
+                MathJax.typeset(); 
+            }
+
+            // Function for all sections (3 trials limit)
+            function checkAnswer(inputId, resultId, buttonId, correctAnswer, attemptCounterName, section = '') {
+                const input = document.getElementById(inputId);
+                const result = document.getElementById(resultId);
+                const button = document.getElementById(buttonId);
+                const userAnswer = parseFloat(input.value);
+
+                // Check if the current attempt counter has a valid count
+                let currentAttempts = window[attemptCounterName];
+                if (currentAttempts === undefined || currentAttempts <= 0) return;
+
+                if (userAnswer === correctAnswer) {
+                    result.textContent = 'Correct! Great job.';
+                    result.className = 'ml-3 font-medium text-green-600';
+                    button.disabled = true;
+                    input.disabled = true;
+                    
+                    // Update score
+                    if (section && window.studentScore[section]) {
+                        window.studentScore[section].correct++;
+                    }
+                } else {
+                    currentAttempts--;
+                    window[attemptCounterName] = currentAttempts; // Update global counter
+                    
+                    if (currentAttempts > 0) {
+                        result.textContent = `Incorrect. ${currentAttempts} trial${currentAttempts > 1 ? 's' : ''} remaining.`;
+                        result.className = 'ml-3 font-medium text-red-600';
+                    } else {
+                        result.textContent = `Incorrect. The correct answer is ${correctAnswer}.`;
+                        result.className = 'ml-3 font-bold text-red-700';
+                        button.disabled = true;
+                        input.disabled = true;
+                    }
+                }
+            }
+
+
+            // --- Event Listeners ---
+
+            // Event Listeners for all sections (all use 3-trial function)
+            
+            // Warm-up Listeners
+            document.getElementById('btnWarmup1').addEventListener('click', () => 
+                checkAnswer('warmup1', 'resultWarmup1', 'btnWarmup1', -2, 'attemptsWarmup1', 'warmup')
+            );
+            document.getElementById('btnWarmup2').addEventListener('click', () => 
+                checkAnswer('warmup2', 'resultWarmup2', 'btnWarmup2', 18, 'attemptsWarmup2', 'warmup')
+            );
+            
+            // Workout Listeners (new piecewise function)
+            document.getElementById('btnWorkout1').addEventListener('click', () => 
+                checkAnswer('workout1', 'resultWorkout1', 'btnWorkout1', 3, 'attemptsWorkout1', 'workout')
+            );
+            document.getElementById('btnWorkout2').addEventListener('click', () => 
+                checkAnswer('workout2', 'resultWorkout2', 'btnWorkout2', 0, 'attemptsWorkout2', 'workout')
+            );
+            document.getElementById('btnWorkout3').addEventListener('click', () => 
+                checkAnswer('workout3', 'resultWorkout3', 'btnWorkout3', 8, 'attemptsWorkout3', 'workout')
+            );
+            
+            // Cool-Down Listeners
+            document.getElementById('btnCool1').addEventListener('click', () => 
+                checkAnswer('cool1', 'resultCool1', 'btnCool1', -1, 'attemptsCool1', 'cooldown')
+            );
+            document.getElementById('btnCool2').addEventListener('click', () => 
+                checkAnswer('cool2', 'resultCool2', 'btnCool2', 0, 'attemptsCool2', 'cooldown')
+            );
+            document.getElementById('btnCool3').addEventListener('click', () => 
+                checkAnswer('cool3', 'resultCool3', 'btnCool3', 1, 'attemptsCool3', 'cooldown')
+            );
+
+            // --- Chart Logic (Unchanged) ---
+            let myChart;
+            const ctx = document.getElementById('transformChart').getContext('2d');
+            const parentSelect = document.getElementById('parentFunction');
+            const transformSelect = document.getElementById('transformation');
+            const explanationBox = document.getElementById('explanationBox');
+
+            const transformations = {
+                'a': { 
+                    func: (f, x) => f(x) + 4, 
+                    desc: '<strong>g(x) = f(x) + 4:</strong> Vertical Shift Up 4 units.',
+                    quiz: {
+                        question: 'What type of transformation is g(x) = f(x) + 4?',
+                        options: ['Vertical shift up by 4 units', 'Horizontal shift right by 4 units', 'Vertical stretch by factor of 4', 'Reflection across x-axis'],
+                        correct: 0
+                    }
+                },
+                'b': { 
+                    func: (f, x) => f(x - 3), 
+                    desc: '<strong>g(x) = f(x - 3):</strong> Horizontal Shift Right 3 units.',
+                    quiz: {
+                        question: 'What type of transformation is g(x) = f(x - 3)?',
+                        options: ['Horizontal shift right by 3 units', 'Horizontal shift left by 3 units', 'Vertical shift up by 3 units', 'Vertical shift down by 3 units'],
+                        correct: 0
+                    }
+                },
+                'c': { 
+                    func: (f, x) => -f(x), 
+                    desc: '<strong>g(x) = -f(x):</strong> Reflection across the x-axis.',
+                    quiz: {
+                        question: 'What type of transformation is g(x) = -f(x)?',
+                        options: ['Reflection across x-axis', 'Reflection across y-axis', 'Vertical shift up by 1 unit', 'Horizontal shift right by 1 unit'],
+                        correct: 0
+                    }
+                },
+                'd': { 
+                    func: (f, x) => f(2 * x), 
+                    desc: '<strong>g(x) = f(2x):</strong> Horizontal Shrink by a factor of 1/2.',
+                    quiz: {
+                        question: 'What type of transformation is g(x) = f(2x)?',
+                        options: ['Horizontal shrink by factor of 1/2', 'Horizontal stretch by factor of 2', 'Vertical shrink by factor of 1/2', 'Vertical stretch by factor of 2'],
+                        correct: 0
+                    }
+                },
+                'e': { 
+                    func: (f, x) => 0.5 * f(x), 
+                    desc: '<strong>g(x) = ½f(x):</strong> Vertical Shrink by a factor of 1/2.',
+                    quiz: {
+                        question: 'What type of transformation is g(x) = ½f(x)?',
+                        options: ['Vertical shrink by factor of 1/2', 'Vertical stretch by factor of 2', 'Horizontal shrink by factor of 1/2', 'Horizontal stretch by factor of 2'],
+                        correct: 0
+                    }
+                },
+                'f': { 
+                    func: (f, x) => -f(x + 1) - 5, 
+                    desc: '<strong>g(x) = -f(x+1) - 5:</strong> Horizontal Shift Left 1 unit, Reflection across the x-axis, and Vertical Shift Down 5 units.',
+                    quiz: {
+                        question: 'What transformations are in g(x) = -f(x+1) - 5?',
+                        options: ['Left 1, reflect x-axis, down 5', 'Right 1, reflect y-axis, up 5', 'Left 1, reflect y-axis, down 5', 'Right 1, reflect x-axis, up 5'],
+                        correct: 0
+                    }
+                },
+                'g': { 
+                    func: (f, x) => 3 * f(x), 
+                    desc: '<strong>g(x) = 3f(x):</strong> Vertical Stretch by a factor of 3.',
+                    quiz: {
+                        question: 'What type of transformation is g(x) = 3f(x)?',
+                        options: ['Vertical stretch by factor of 3', 'Vertical shrink by factor of 1/3', 'Horizontal stretch by factor of 3', 'Horizontal shrink by factor of 1/3'],
+                        correct: 0
+                    }
+                }
+            };
+
+            const parentFunctions = {
+                'x2': { func: x => x * x, range: [-10, 10] },
+                'abs': { func: x => Math.abs(x), range: [-10, 10] },
+                'sqrt': { func: x => (x < 0 ? null : Math.sqrt(x)), range: [-2, 18] }
+            };
+
+            function updateChart() {
+                const parentKey = parentSelect.value;
+                const transformKey = transformSelect.value;
+
+                const parent = parentFunctions[parentKey];
+                const transform = transformations[transformKey];
+                
+                const [min, max] = parent.range;
+                const step = (max - min) / 40;
+                const xValues = Array.from({ length: 41 }, (_, i) => min + i * step);
+
+                const parentData = xValues.map(x => ({
+                    x: x,
+                    y: parent.func(x)
+                })).filter(p => p.y !== null);
+
+                const transformData = xValues.map(x => ({
+                    x: x,
+                    y: transform.func(parent.func, x)
+                })).filter(p => p.y !== null && !isNaN(p.y));
+
+                myChart.data.datasets = [
+                    {
+                        label: 'Parent f(x)',
+                        data: parentData,
+                        borderColor: 'rgb(156, 163, 175)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Transformed g(x)',
+                        data: transformData,
+                        borderColor: 'rgb(79, 70, 229)',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.1
+                    }
+                ];
+
+                let xMin = Math.min(...parentData.map(p => p.x), ...transformData.map(p => p.x));
+                let xMax = Math.max(...parentData.map(p => p.x), ...transformData.map(p => p.x));
+                let yMin = Math.min(0, ...parentData.map(p => p.y), ...transformData.map(p => p.y));
+                let yMax = Math.max(10, ...parentData.map(p => p.y), ...transformData.map(p => p.y));
+                
+                const xRange = xMax - xMin;
+                const yRange = yMax - yMin;
+
+                myChart.options.scales.x.min = xMin - xRange * 0.1;
+                myChart.options.scales.x.max = xMax + xRange * 0.1;
+                myChart.options.scales.y.min = yMin - yRange * 0.1;
+                myChart.options.scales.y.max = yMax + yRange * 0.1;
+
+                myChart.update();
+                explanationBox.innerHTML = `<h4 class="font-bold mb-1">Transformation Description:</h4><p>${transform.desc}</p>`;
+                
+                // Manually typeset the dynamic content in the explanation box
+                if (window.MathJax) {
+                    MathJax.typesetPromise([explanationBox]);
+                }
+
+                // Show quiz after a short delay
+                setTimeout(() => {
+                    showTransformationQuiz(transformKey, transform);
+                }, 1000);
+            }
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                generateLabels: function(chart) {
+                                    const labels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                    
+                                    // Labels are already clean without $ signs
+                                    labels.forEach(label => {
+                                        // No processing needed since we removed $ signs
+                                    });
+                                    return labels;
+                                }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += `(${context.parsed.x.toFixed(1)}, ${context.parsed.y.toFixed(1)})`;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+            
+            parentSelect.addEventListener('change', updateChart);
+            transformSelect.addEventListener('change', updateChart);
+            
+            updateChart();
+
+            // Quiz functionality
+            function showTransformationQuiz(transformKey, transform) {
+                const modal = document.getElementById('quizModal');
+                const quizContent = document.getElementById('quizContent');
+                const submitBtn = document.getElementById('submitQuiz');
+                const skipBtn = document.getElementById('skipQuiz');
+                
+                // Create quiz HTML
+                const quiz = transform.quiz;
+                quizContent.innerHTML = `
+                    <p class="text-lg font-medium mb-4">${quiz.question}</p>
+                    <div class="space-y-2">
+                        ${quiz.options.map((option, index) => `
+                            <label class="flex items-center p-2 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="quizAnswer" value="${index}" class="mr-3">
+                                <span>${option}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                
+                // Show modal
+                modal.classList.remove('hidden');
+                
+                // Submit button handler
+                submitBtn.onclick = () => {
+                    const selected = document.querySelector('input[name="quizAnswer"]:checked');
+                    if (selected) {
+                        const userAnswer = parseInt(selected.value);
+                        const isCorrect = userAnswer === quiz.correct;
+                        
+                        if (isCorrect) {
+                            window.studentScore.transformations.correct++;
+                            alert('Correct! Great job understanding the transformation.');
+                        } else {
+                            alert(`Incorrect. The correct answer is: ${quiz.options[quiz.correct]}`);
+                        }
+                        
+                        window.studentScore.transformations.total++;
+                        modal.classList.add('hidden');
+                    } else {
+                        alert('Please select an answer!');
+                    }
+                };
+                
+                // Skip button handler
+                skipBtn.onclick = () => {
+                    modal.classList.add('hidden');
+                };
+            }
+
+            // Modal event listeners
+            document.getElementById('submitQuiz').addEventListener('click', () => {
+                // Handler is set dynamically in showTransformationQuiz
+            });
+            
+            document.getElementById('skipQuiz').addEventListener('click', () => {
+                document.getElementById('quizModal').classList.add('hidden');
+            });
+
+            // Close modal when clicking outside
+            document.getElementById('quizModal').addEventListener('click', (e) => {
+                if (e.target.id === 'quizModal') {
+                    document.getElementById('quizModal').classList.add('hidden');
+                }
+            });
+
+            // Save scores function (for instructor to view)
+            function saveScores() {
+                const timestamp = new Date().toISOString();
+                const scoreData = {
+                    timestamp: timestamp,
+                    scores: window.studentScore,
+                    totalCorrect: Object.values(window.studentScore).reduce((sum, section) => sum + section.correct, 0),
+                    totalQuestions: Object.values(window.studentScore).reduce((sum, section) => sum + section.total, 0)
+                };
+                
+                // Store in localStorage for now (you can modify this to send to a server)
+                const existingScores = JSON.parse(localStorage.getItem('mth112e_scores') || '[]');
+                existingScores.push(scoreData);
+                localStorage.setItem('mth112e_scores', JSON.stringify(existingScores));
+                
+                console.log('Scores saved:', scoreData);
+                alert('Your progress has been saved!');
+            }
+
+            // Add save button to footer
+            const footer = document.querySelector('footer');
+            const saveButton = document.createElement('button');
+            saveButton.textContent = 'Save My Progress';
+            saveButton.className = 'mt-4 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors';
+            saveButton.onclick = saveScores;
+            footer.appendChild(saveButton);
+        });
+    </script>
+</body>
+</html>
