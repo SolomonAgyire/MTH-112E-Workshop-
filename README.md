@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # MTH 112E Interactive Workshop
 
 **SLA Leader:** Solomon Agyire  
@@ -64,3 +65,6 @@ If you encounter any issues:
 ---
 
 **Happy Learning! 🎓**
+=======
+# MTH-112E-Workshop-
+>>>>>>> dceadf5f2fda308c2b7a53e961fd9eb6f2c47fd4
