@@ -8,7 +8,19 @@
 </head>
 <body class="bg-gray-100 font-sans">
     <div class="max-w-6xl mx-auto p-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">MTH 112E - Student Progress Viewer</h1>
+        <div id="loginSection" class="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Instructor Access</h1>
+            <p class="text-gray-600 mb-4 text-center">Enter the instructor password to view student scores:</p>
+            <input type="password" id="passwordInput" placeholder="Enter instructor password" 
+                   class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500">
+            <button onclick="checkPassword()" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700">
+                Access Scores Dashboard
+            </button>
+            <p id="errorMessage" class="text-red-600 text-sm mt-2 text-center hidden"></p>
+        </div>
+        
+        <div id="scoresSection" class="hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">MTH 112E - Student Progress Viewer</h1>
         
         <div class="bg-white rounded-lg shadow-lg p-6">
             <h2 class="text-xl font-semibold mb-4">All Student Sessions</h2>
@@ -28,9 +40,36 @@
                 </button>
             </div>
         </div>
+        </div>
     </div>
 
     <script>
+        // Password protection
+        const INSTRUCTOR_PASSWORD = "MTH112E_Solomon_2024"; // Change this to your preferred password
+        
+        function checkPassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const errorMessage = document.getElementById('errorMessage');
+            const loginSection = document.getElementById('loginSection');
+            const scoresSection = document.getElementById('scoresSection');
+            
+            if (passwordInput.value === INSTRUCTOR_PASSWORD) {
+                loginSection.classList.add('hidden');
+                scoresSection.classList.remove('hidden');
+                loadScores();
+            } else {
+                errorMessage.textContent = 'Incorrect password. Please try again.';
+                errorMessage.classList.remove('hidden');
+                passwordInput.value = '';
+            }
+        }
+        
+        // Allow Enter key to submit
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
         function loadScores() {
             const scores = JSON.parse(localStorage.getItem('mth112e_scores') || '[]');
             const container = document.getElementById('scoresContainer');

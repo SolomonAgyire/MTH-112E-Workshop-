@@ -27,7 +27,7 @@ This interactive workshop helps students master function transformations and pie
 4. **Click "Save My Progress"** when finished
 
 ### For Instructor:
-- **View student progress**: [Scores Dashboard](https://solomonagyire.github.io/MTH-112E-Workshop-/scores_viewer.html)
+- **View student progress**: Contact Solomon Agyire for access to the scores dashboard
 - **Export data**: Download CSV files for gradebook integration
 - **Track engagement**: See which transformations students struggle with
 
