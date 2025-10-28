@@ -219,6 +219,68 @@
             </div>
         </section>
 
+        <section id="bonus" class="bg-white p-8 sm:p-12 rounded-2xl shadow-lg border border-stone-200">
+            <h2 class="text-3xl font-bold text-indigo-900 border-b border-stone-200 pb-3">🎯 Bonus Round - Advanced Transformations</h2>
+            <p class="mt-4 text-stone-600">Ready for a challenge? This section focuses on horizontal shifts and introduces new parent functions. Master these and you'll be a transformation expert!</p>
+
+            <div class="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h3 class="text-lg font-bold text-yellow-900 mb-2">🎯 Instructions:</h3>
+                <ol class="text-yellow-800 space-y-1">
+                    <li><strong>Step 1:</strong> Select a parent function from the expanded list below</li>
+                    <li><strong>Step 2:</strong> Choose a horizontal shift transformation</li>
+                    <li><strong>Step 3:</strong> Observe how horizontal shifts affect different function types</li>
+                    <li><strong>Step 4:</strong> Try all combinations to master horizontal transformations!</li>
+                </ol>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="bonusParentFunction" class="block text-lg font-semibold text-stone-700 mb-2">1. Choose a Parent Function f(x):</label>
+                    <select id="bonusParentFunction" class="mt-1 block w-full p-3 text-lg border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="x2">f(x) = x² (Parabola)</option>
+                        <option value="abs">f(x) = |x| (Absolute Value)</option>
+                        <option value="sqrt">f(x) = √x (Square Root)</option>
+                        <option value="x3">f(x) = x³ (Cubic)</option>
+                        <option value="exp">f(x) = 2ˣ (Exponential)</option>
+                        <option value="log">f(x) = log₂(x) (Logarithmic)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="bonusTransformation" class="block text-lg font-semibold text-stone-700 mb-2">2. Choose a Horizontal Shift g(x):</label>
+                    <select id="bonusTransformation" class="mt-1 block w-full p-3 text-lg border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="h1">g(x) = f(x + 2) - Shift Left 2</option>
+                        <option value="h2">g(x) = f(x - 4) - Shift Right 4</option>
+                        <option value="h3">g(x) = f(x + 5) - Shift Left 5</option>
+                        <option value="h4">g(x) = f(x - 1) - Shift Right 1</option>
+                        <option value="h5">g(x) = f(x + 3) + 2 - Left 3, Up 2</option>
+                        <option value="h6">g(x) = f(x - 2) - 3 - Right 2, Down 3</option>
+                        <option value="h7">g(x) = f(x + 1) - 4 - Left 1, Down 4</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-8 chart-container">
+                <canvas id="bonusChart"></canvas>
+            </div>
+            
+            <div id="bonusExplanationBox" class="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
+            </div>
+
+            <!-- Bonus Transformation Quiz Modal -->
+            <div id="bonusQuizModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+                <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4">
+                    <h3 class="text-2xl font-bold text-indigo-900 mb-4">🎯 Bonus Quiz</h3>
+                    <div id="bonusQuizContent" class="mb-6">
+                        <!-- Quiz content will be inserted here -->
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="submitBonusQuiz" class="flex-1 bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors font-medium">Submit</button>
+                        <button id="skipBonusQuiz" class="flex-1 bg-gray-500 text-white py-3 px-4 rounded-lg hover:bg-gray-600 transition-colors font-medium">Skip</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <footer class="text-center py-6 text-stone-500 text-sm">
@@ -241,7 +303,8 @@
             warmup: { correct: 0, total: 2 },
             workout: { correct: 0, total: 3 },
             cooldown: { correct: 0, total: 3 },
-            transformations: { correct: 0, total: 0 }
+            transformations: { correct: 0, total: 0 },
+            bonus: { correct: 0, total: 0 }
         };
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -397,7 +460,77 @@
             const parentFunctions = {
                 'x2': { func: x => x * x, range: [-10, 10] },
                 'abs': { func: x => Math.abs(x), range: [-10, 10] },
-                'sqrt': { func: x => (x < 0 ? null : Math.sqrt(x)), range: [-2, 18] }
+                'sqrt': { func: x => (x < 0 ? null : Math.sqrt(x)), range: [-2, 18] },
+                'x3': { func: x => x * x * x, range: [-5, 5] },
+                'exp': { func: x => Math.pow(2, x), range: [-3, 3] },
+                'log': { func: x => (x <= 0 ? null : Math.log2(x)), range: [0.1, 8] }
+            };
+
+            // Bonus transformations (focused on horizontal shifts)
+            const bonusTransformations = {
+                'h1': { 
+                    func: (f, x) => f(x + 2), 
+                    desc: '<strong>g(x) = f(x + 2):</strong> Horizontal Shift Left 2 units.',
+                    quiz: {
+                        question: 'What happens when we use f(x + 2)?',
+                        options: ['Shifts left 2 units', 'Shifts right 2 units', 'Shifts up 2 units', 'Shifts down 2 units'],
+                        correct: 0
+                    }
+                },
+                'h2': { 
+                    func: (f, x) => f(x - 4), 
+                    desc: '<strong>g(x) = f(x - 4):</strong> Horizontal Shift Right 4 units.',
+                    quiz: {
+                        question: 'What happens when we use f(x - 4)?',
+                        options: ['Shifts left 4 units', 'Shifts right 4 units', 'Shifts up 4 units', 'Shifts down 4 units'],
+                        correct: 1
+                    }
+                },
+                'h3': { 
+                    func: (f, x) => f(x + 5), 
+                    desc: '<strong>g(x) = f(x + 5):</strong> Horizontal Shift Left 5 units.',
+                    quiz: {
+                        question: 'What happens when we use f(x + 5)?',
+                        options: ['Shifts left 5 units', 'Shifts right 5 units', 'Shifts up 5 units', 'Shifts down 5 units'],
+                        correct: 0
+                    }
+                },
+                'h4': { 
+                    func: (f, x) => f(x - 1), 
+                    desc: '<strong>g(x) = f(x - 1):</strong> Horizontal Shift Right 1 unit.',
+                    quiz: {
+                        question: 'What happens when we use f(x - 1)?',
+                        options: ['Shifts left 1 unit', 'Shifts right 1 unit', 'Shifts up 1 unit', 'Shifts down 1 unit'],
+                        correct: 1
+                    }
+                },
+                'h5': { 
+                    func: (f, x) => f(x + 3) + 2, 
+                    desc: '<strong>g(x) = f(x + 3) + 2:</strong> Horizontal Shift Left 3 units and Vertical Shift Up 2 units.',
+                    quiz: {
+                        question: 'What transformations are in g(x) = f(x + 3) + 2?',
+                        options: ['Left 3, Up 2', 'Right 3, Up 2', 'Left 3, Down 2', 'Right 3, Down 2'],
+                        correct: 0
+                    }
+                },
+                'h6': { 
+                    func: (f, x) => f(x - 2) - 3, 
+                    desc: '<strong>g(x) = f(x - 2) - 3:</strong> Horizontal Shift Right 2 units and Vertical Shift Down 3 units.',
+                    quiz: {
+                        question: 'What transformations are in g(x) = f(x - 2) - 3?',
+                        options: ['Left 2, Down 3', 'Right 2, Down 3', 'Left 2, Up 3', 'Right 2, Up 3'],
+                        correct: 1
+                    }
+                },
+                'h7': { 
+                    func: (f, x) => f(x + 1) - 4, 
+                    desc: '<strong>g(x) = f(x + 1) - 4:</strong> Horizontal Shift Left 1 unit and Vertical Shift Down 4 units.',
+                    quiz: {
+                        question: 'What transformations are in g(x) = f(x + 1) - 4?',
+                        options: ['Left 1, Down 4', 'Right 1, Down 4', 'Left 1, Up 4', 'Right 1, Up 4'],
+                        correct: 0
+                    }
+                }
             };
 
             function updateChart() {
@@ -545,6 +678,153 @@
             
             updateChart();
 
+            // Bonus chart functionality
+            let bonusChart;
+            const bonusCtx = document.getElementById('bonusChart').getContext('2d');
+            const bonusParentSelect = document.getElementById('bonusParentFunction');
+            const bonusTransformSelect = document.getElementById('bonusTransformation');
+            const bonusExplanationBox = document.getElementById('bonusExplanationBox');
+
+            function updateBonusChart() {
+                const parentKey = bonusParentSelect.value;
+                const transformKey = bonusTransformSelect.value;
+
+                const parent = parentFunctions[parentKey];
+                const transform = bonusTransformations[transformKey];
+                
+                const [min, max] = parent.range;
+                const step = (max - min) / 40;
+                const xValues = Array.from({ length: 41 }, (_, i) => min + i * step);
+
+                const parentData = xValues.map(x => ({
+                    x: x,
+                    y: parent.func(x)
+                })).filter(p => p.y !== null && !isNaN(p.y));
+
+                const transformData = xValues.map(x => ({
+                    x: x,
+                    y: transform.func(parent.func, x)
+                })).filter(p => p.y !== null && !isNaN(p.y));
+
+                bonusChart.data.datasets = [
+                    {
+                        label: 'Parent f(x)',
+                        data: parentData,
+                        borderColor: 'rgb(156, 163, 175)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Transformed g(x)',
+                        data: transformData,
+                        borderColor: 'rgb(234, 179, 8)',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.1
+                    }
+                ];
+
+                let xMin = Math.min(...parentData.map(p => p.x), ...transformData.map(p => p.x));
+                let xMax = Math.max(...parentData.map(p => p.x), ...transformData.map(p => p.x));
+                let yMin = Math.min(0, ...parentData.map(p => p.y), ...transformData.map(p => p.y));
+                let yMax = Math.max(10, ...parentData.map(p => p.y), ...transformData.map(p => p.y));
+                
+                const xRange = xMax - xMin;
+                const yRange = yMax - yMin;
+
+                bonusChart.options.scales.x.min = xMin - xRange * 0.1;
+                bonusChart.options.scales.x.max = xMax + xRange * 0.1;
+                bonusChart.options.scales.y.min = yMin - yRange * 0.1;
+                bonusChart.options.scales.y.max = yMax + yRange * 0.1;
+
+                bonusChart.update();
+                bonusExplanationBox.innerHTML = `<h4 class="font-bold mb-1">Transformation Description:</h4><p>${transform.desc}</p>`;
+                
+                // Manually typeset the dynamic content in the explanation box
+                if (window.MathJax) {
+                    MathJax.typesetPromise([bonusExplanationBox]);
+                }
+
+                // Show quiz after a short delay
+                setTimeout(() => {
+                    showBonusQuiz(transformKey, transform);
+                }, 1000);
+            }
+
+            bonusChart = new Chart(bonusCtx, {
+                type: 'line',
+                data: {
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                generateLabels: function(chart) {
+                                    const labels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                    return labels;
+                                }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += `(${context.parsed.x.toFixed(1)}, ${context.parsed.y.toFixed(1)})`;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+            
+            bonusParentSelect.addEventListener('change', updateBonusChart);
+            bonusTransformSelect.addEventListener('change', updateBonusChart);
+            
+            updateBonusChart();
+
             // Quiz functionality
             function showTransformationQuiz(transformKey, transform) {
                 const modal = document.getElementById('quizModal');
@@ -609,6 +889,73 @@
             document.getElementById('quizModal').addEventListener('click', (e) => {
                 if (e.target.id === 'quizModal') {
                     document.getElementById('quizModal').classList.add('hidden');
+                }
+            });
+
+            // Bonus quiz functionality
+            function showBonusQuiz(transformKey, transform) {
+                const modal = document.getElementById('bonusQuizModal');
+                const quizContent = document.getElementById('bonusQuizContent');
+                const submitBtn = document.getElementById('submitBonusQuiz');
+                const skipBtn = document.getElementById('skipBonusQuiz');
+                
+                // Create quiz HTML
+                const quiz = transform.quiz;
+                quizContent.innerHTML = `
+                    <p class="text-lg font-medium mb-4">${quiz.question}</p>
+                    <div class="space-y-2">
+                        ${quiz.options.map((option, index) => `
+                            <label class="flex items-center p-2 border rounded-lg hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="bonusQuizAnswer" value="${index}" class="mr-3">
+                                <span>${option}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                
+                // Show modal
+                modal.classList.remove('hidden');
+                
+                // Submit button handler
+                submitBtn.onclick = () => {
+                    const selected = document.querySelector('input[name="bonusQuizAnswer"]:checked');
+                    if (selected) {
+                        const userAnswer = parseInt(selected.value);
+                        const isCorrect = userAnswer === quiz.correct;
+                        
+                        if (isCorrect) {
+                            window.studentScore.bonus.correct++;
+                            alert('Correct! Excellent work on horizontal transformations!');
+                        } else {
+                            alert(`Incorrect. The correct answer is: ${quiz.options[quiz.correct]}`);
+                        }
+                        
+                        window.studentScore.bonus.total++;
+                        modal.classList.add('hidden');
+                    } else {
+                        alert('Please select an answer!');
+                    }
+                };
+                
+                // Skip button handler
+                skipBtn.onclick = () => {
+                    modal.classList.add('hidden');
+                };
+            }
+
+            // Bonus modal event listeners
+            document.getElementById('submitBonusQuiz').addEventListener('click', () => {
+                // Handler is set dynamically in showBonusQuiz
+            });
+            
+            document.getElementById('skipBonusQuiz').addEventListener('click', () => {
+                document.getElementById('bonusQuizModal').classList.add('hidden');
+            });
+
+            // Close bonus modal when clicking outside
+            document.getElementById('bonusQuizModal').addEventListener('click', (e) => {
+                if (e.target.id === 'bonusQuizModal') {
+                    document.getElementById('bonusQuizModal').classList.add('hidden');
                 }
             });
 
