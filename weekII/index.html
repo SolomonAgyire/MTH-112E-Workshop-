@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTH 112E: Quadratic Functions Review</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['$$', '$$']]
+            }
+        };
+    </script>
+    <style>
+        .container-base {
+            @apply max-w-2xl p-4 sm:p-8 space-y-8;
+            margin-left: calc(360px + 4rem);
+            margin-right: 5rem;
+        }
+        @media (max-width: 1024px) {
+            .container-base {
+                margin-left: calc(340px + 3rem);
+                margin-right: 4rem;
+            }
+        }
+        @media (max-width: 768px) {
+            .container-base {
+                margin-left: 0;
+                margin-right: 0;
+                max-width: 100%;
+            }
+        }
+        .section-card {
+            @apply bg-white rounded-2xl shadow-lg border border-stone-200;
+        }
+        .formula-box {
+            @apply bg-stone-50 p-4 rounded-lg;
+        }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 320px;
+            background: linear-gradient(to bottom, #ffffff, #f9fafb);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 320px;
+                max-width: 85vw;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+        .main-content {
+            transition: margin-left 0.3s ease;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        .progress-bar {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed, #a855f7);
+            transition: width 0.4s ease;
+            box-shadow: 0 2px 4px rgba(79, 70, 229, 0.3);
+        }
+        .hint-box {
+            @apply bg-yellow-50 border border-yellow-200 p-4 rounded-lg mt-2;
+        }
+        .instruction-box {
+            @apply p-4 bg-blue-50 border border-blue-200 rounded-lg;
+        }
+        .question-label {
+            min-width: 250px;
+            flex-shrink: 0;
+        }
+        @media (max-width: 640px) {
+            .question-label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body class="bg-stone-50 font-sans text-stone-800 antialiased">
+    
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <div class="p-4 sm:p-6 border-b-2 border-stone-200 bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex-shrink-0">
+            <button id="closeSidebar" class="md:hidden float-right text-white hover:text-gray-200 text-xl font-bold">×</button>
+            <h2 class="text-xl sm:text-2xl font-bold mb-1">Progress Tracker</h2>
+            <p class="text-xs sm:text-sm text-indigo-100">Track your learning</p>
+        </div>
+        
+        <div class="p-4 sm:p-6 space-y-3 sm:space-y-4 flex-1 overflow-y-auto min-h-0">
+            <div>
+                <label class="block text-sm font-semibold text-stone-700 mb-2">Group Name</label>
+                <input type="text" id="groupName" placeholder="Enter your group name" 
+                       class="w-full p-2 text-sm border-2 border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all shadow-sm mb-2">
+                <button id="submitGroupName" class="w-full bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs sm:text-sm">
+                    Submit
+                </button>
+                <p id="groupNameStatus" class="text-xs text-stone-500 mt-1"></p>
+            </div>
+            
+            <!-- Leaderboard Section -->
+            <div class="border-t-2 border-stone-200 pt-3">
+                <h3 class="text-xs sm:text-sm font-bold text-stone-800 mb-2 flex items-center gap-2">
+                    🏆 Leaderboard
+                </h3>
+                <div id="leaderboard" class="space-y-1.5 max-h-40 sm:max-h-48 overflow-y-auto text-xs">
+                    <p class="text-xs text-stone-500 text-center py-2">No scores yet. Start working to see rankings!</p>
+                </div>
+            </div>
+            
+            <div class="space-y-3 sm:space-y-4">
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="font-semibold text-stone-700 text-xs sm:text-sm">Warm-up</span>
+                        <span id="scoreWarmup" class="font-bold text-indigo-600 text-xs sm:text-sm">0/3</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progressWarmup" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="font-semibold text-stone-700 text-xs sm:text-sm">Workout</span>
+                        <span id="scoreWorkout" class="font-bold text-indigo-600 text-xs sm:text-sm">0/7</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progressWorkout" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="font-semibold text-stone-700 text-xs sm:text-sm">Cool-Down</span>
+                        <span id="scoreCooldown" class="font-bold text-indigo-600 text-xs sm:text-sm">0/6</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progressCooldown" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="font-semibold text-stone-700 text-xs sm:text-sm">Bonus</span>
+                        <span id="scoreBonus" class="font-bold text-indigo-600 text-xs sm:text-sm">0/9</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progressBonus" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pt-4 border-t-2 border-stone-200 space-y-2 flex-shrink-0">
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-3 rounded-lg border border-indigo-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-sm sm:text-base text-stone-800">Total Score</span>
+                        <span id="totalScore" class="font-bold text-lg sm:text-xl text-indigo-700">0/25</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progressTotal" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <button id="saveProgress" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2 px-3 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-xs sm:text-sm">
+                    💾 Save Progress
+                </button>
+                
+                <p class="text-xs text-stone-500 text-center leading-relaxed px-1">
+                    Save your progress to update the leaderboard!
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Sidebar Toggle -->
+    <button id="openSidebar" class="md:hidden fixed top-6 left-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-3 rounded-xl shadow-xl z-50 hover:shadow-2xl transition-all">
+        📊 Progress
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content container-base">
+        
+        <header class="text-center py-4">
+            <h1 class="text-3xl sm:text-4xl font-bold text-indigo-700">MTH 112E Review: Quadratic Functions & Parabolas</h1>
+            <p class="mt-2 text-lg text-stone-600">SLA Leader: Solomon Agyire</p>
+            <p class="mt-4 max-w-2xl mx-auto text-base">
+                <strong>Session Objective:</strong> Master the analysis and graphing of quadratic functions using vertex form, standard form, and techniques like completing the square. Students will learn to identify key features of parabolas including the vertex, axis of symmetry, intercepts, domain, and range. Additionally, students will practice finding zeros and their multiplicities, and test for various types of symmetry in polynomial equations.
+            </p>
+        </header>
+
+        <!-- I. Formulas Section -->
+        <section id="formulas" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200 my-8">
+            <h2 class="text-2xl font-bold text-indigo-900 border-b border-stone-200 pb-2">📜 Formulas & Reference</h2>
+            
+            <div class="mt-6 space-y-6">
+                <div>
+                    <h3 class="text-lg font-bold text-indigo-900 mb-3">Standard & Vertex Forms</h3>
+                    <ul class="space-y-3 text-stone-700">
+                        <li class="flex items-start">
+                            <span class="font-semibold mr-2">• Standard Form:</span>
+                            <span class="math">$$f(x) = ax^2 + bx + c$$</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="font-semibold mr-2">• Vertex Form:</span>
+                            <span class="math">$$f(x) = a(x-h)^2 + k \quad (\text{Vertex is } (h, k))$$</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold text-indigo-900 mb-3">Finding the Vertex</h3>
+                    <ul class="space-y-3 text-stone-700">
+                        <li class="flex items-start">
+                            <span class="font-semibold mr-2">• Vertex Formula (from Standard Form):</span>
+                            <span class="math">$$h = -\frac{b}{2a} \quad \text{and} \quad k = f(h)$$</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold text-indigo-900 mb-3">Completing the Square Method</h3>
+                    <div class="text-sm text-stone-700 space-y-2 bg-stone-50 p-4 rounded-lg">
+                        <p class="font-medium mb-2">For <span class="math">\(f(x) = x^2 + bx + c\)</span>:</p>
+                        <ol class="list-decimal list-inside space-y-1 ml-2">
+                            <li>Take half of <span class="math">\(b\)</span>: <span class="math">\(\frac{b}{2}\)</span></li>
+                            <li>Square it: <span class="math">\(\left(\frac{b}{2}\right)^2\)</span></li>
+                            <li>Add and subtract inside: <span class="math">\(f(x) = x^2 + bx + \left(\frac{b}{2}\right)^2 - \left(\frac{b}{2}\right)^2 + c\)</span></li>
+                            <li>Factor the perfect square: <span class="math">\(f(x) = \left(x + \frac{b}{2}\right)^2 - \left(\frac{b}{2}\right)^2 + c\)</span></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- II. Warm-Up: Finding the Vertex (Completing the Square) -->
+        <section id="warmup" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200 my-8">
+            <h2 class="text-2xl font-bold text-indigo-900 border-b border-stone-200 pb-2">🚀 Part 1: Warm-up - Vertex & Direction</h2>
+            <p class="mt-4 text-stone-600">Let's start with a quick check on function notation. This section is for practicing how to substitute a value into a function rule. You have 3 trials for each question.</p>
+            
+            <div class="mt-6 space-y-4">
+                <!-- Warmup Question 1 -->
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <label for="warmup1_h" class="text-lg font-medium flex-1">Q1. Find the vertex <span class="math">\((h, k)\)</span> of <span class="math">\(f(x) = x^2 - 8x + 10\)</span></label>
+                    <div class="flex gap-2 items-center md:justify-end">
+                        <span class="font-mono font-bold">(</span>
+                        <input type="number" id="warmup1_h" class="w-16 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="h">
+                        <span class="font-mono font-bold">,</span>
+                        <input type="number" id="warmup1_k" class="w-16 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="k">
+                        <span class="font-mono font-bold">)</span>
+                        <button id="btnWarmup1" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                        <button id="hintWarmup1" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="resultWarmup1" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWarmup1Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong> 
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>For <span class="math">\(f(x) = x^2 - 8x + 10\)</span>, we have <span class="math">\(b = -8\)</span>.</p>
+                        <p><strong>Step 1:</strong> Calculate half of <span class="math">\(b\)</span>: <span class="math">\(\frac{b}{2} = \frac{-8}{2} = ?\)</span></p>
+                        <p><strong>Step 2:</strong> Square that result: <span class="math">\(\left(\frac{b}{2}\right)^2 = ?\)</span></p>
+                        <p><strong>Step 3:</strong> Add and subtract that square value inside the function. Group the first three terms to form a perfect square.</p>
+                        <p><strong>Step 4:</strong> Factor the perfect square and simplify the remaining terms. The function should look like <span class="math">\(f(x) = (x-h)^2 + k\)</span> form.</p>
+                        <p class="font-semibold mt-2 text-indigo-700">Once you have it in vertex form, identify the values of <span class="math">\(h\)</span> and <span class="math">\(k\)</span> from your factored expression.</p>
+                    </div>
+                </div>
+
+                <!-- Warmup Question 2 -->
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <label class="text-lg font-medium flex-1">Q2. True or False: For <span class="math">\(f(x) = 3x^2 + 5x - 1\)</span>, the parabola opens upward.</label>
+                    <div class="flex gap-2 items-center md:justify-end">
+                        <button id="btnWarmup2_T" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">True</button>
+                        <button id="btnWarmup2_F" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">False</button>
+                        <button id="hintWarmup2" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="resultWarmup2" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWarmup2Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>Look at the coefficient of <span class="math">\(x^2\)</span> (the <span class="math">\(a\)</span> value).</p>
+                        <p>• If <span class="math">\(a > 0\)</span>, the parabola opens upward (like a "U")</p>
+                        <p>• If <span class="math">\(a < 0\)</span>, the parabola opens downward (like an upside-down "U")</p>
+                        <p class="font-semibold mt-2">Now look at the coefficient of <span class="math">\(x^2\)</span> in <span class="math">\(f(x) = 3x^2 + 5x - 1\)</span>. Is it positive or negative?</p>
+                    </div>
+                </div>
+
+                <!-- Warmup Question 3 -->
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <label class="text-lg font-medium flex-1">Q3. True or False: For <span class="math">\(f(x) = 1 - x^2\)</span>, the parabola has a minimum value.</label>
+                    <div class="flex gap-2 items-center md:justify-end">
+                        <button id="btnWarmup3_T" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">True</button>
+                        <button id="btnWarmup3_F" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">False</button>
+                        <button id="hintWarmup3" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="resultWarmup3" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWarmup3Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>First, rewrite <span class="math">\(f(x) = 1 - x^2\)</span> in standard form: <span class="math">\(f(x) = -x^2 + 1\)</span></p>
+                        <p>Now identify the coefficient <span class="math">\(a\)</span>. Is it positive or negative?</p>
+                        <p class="font-semibold mt-2">Remember: If a parabola opens downward (when <span class="math">\(a < 0\)</span>), does it have a maximum or minimum value?</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- III. Core Workout: Full Parabola Analysis -->
+        <section id="workout" class="bg-white p-8 sm:p-12 rounded-2xl shadow-lg border border-stone-200 my-8">
+            <h2 class="text-3xl font-bold text-indigo-900 border-b border-stone-200 pb-3">💪 Part 2: Core Workout - Parabola Analysis</h2>
+            <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h3 class="text-lg font-bold text-blue-900 mb-2">📋 Instructions:</h3>
+                <ol class="text-blue-800 space-y-1">
+                    <li><strong>Step 1:</strong> First, perform a complete analysis on the function below</li>
+                    <li><strong>Step 2:</strong> Then, use vertex form to identify key features: vertex, intercepts, axis of symmetry, domain, range</li>
+                    <li><strong>Step 3:</strong> Observe each feature and how they relate to the graph</li>
+                    <li><strong>Step 4:</strong> You have 3 attempts for each question. Answer questions in order (a through h) - each builds on the previous</li>
+                </ol>
+            </div>
+            
+            <div class="mt-6 bg-stone-50 p-4 rounded-lg">
+                <p class="text-lg font-medium">Given the function:</p>
+                <p class="text-2xl font-mono text-center py-2">$$f(x) = (x-3)^2 - 9$$</p>
+            </div>
+
+            <div class="mt-6 space-y-4">
+                <!-- Workout Questions a-h -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <label for="wa_input" class="text-lg font-medium">a. Opens Up or Down?</label>
+                    <input type="text" id="wa_input" class="md:col-span-1 w-24 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Up or Down">
+                    <div class="md:col-span-1 flex gap-2">
+                        <button id="btn_wa" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                        <button id="hint_wa_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="res_wa" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hint_wa" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong> <span>Look at the coefficient <span class="math">\(a\)</span>. In vertex form <span class="math">\(f(x) = a(x-h)^2 + k\)</span>, here we have <span class="math">\(a = 1\)</span> (positive).</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <label for="wb_h" class="text-lg font-medium">b. Identify the Vertex <span class="math">\((h, k)\)</span></label>
+                    <div class="md:col-span-1 flex gap-2 items-center">
+                        <span class="font-mono font-bold">(</span>
+                        <input type="number" id="wb_h" class="w-16 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="h">
+                        <span class="font-mono font-bold">,</span>
+                        <input type="number" id="wb_k" class="w-16 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="k">
+                        <span class="font-mono font-bold">)</span>
+                    </div>
+                    <div class="md:col-span-1 flex gap-2">
+                        <button id="btn_wb" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                        <button id="hint_wb_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="res_wb" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hint_wb" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong> 
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>In <span class="math">\(f(x) = (x-3)^2 - 9\)</span>, this is in vertex form <span class="math">\(a(x-h)^2 + k\)</span>.</p>
+                        <p>• Compare <span class="math">\((x-3)\)</span> to <span class="math">\((x-h)\)</span>. What value must <span class="math">\(h\)</span> be to make these match?</p>
+                        <p>• The constant term is <span class="math">\(-9\)</span>. In vertex form, this is <span class="math">\(k\)</span>. What is <span class="math">\(k\)</span>? (Watch the sign!)</p>
+                        <p class="font-semibold mt-2">Remember: When you have <span class="math">\((x-3)\)</span>, think about what value of <span class="math">\(h\)</span> makes <span class="math">\((x-h)\)</span> equal to <span class="math">\((x-3)\)</span>.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <label for="wc_input" class="text-lg font-medium">c. Identify the <span class="math">\(x\)</span> and <span class="math">\(y\)</span> intercepts</label>
+                    <input type="text" id="wc_input" class="md:col-span-1 w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., (0,0), (6,0)">
+                    <div class="md:col-span-1 flex gap-2">
+                        <button id="btn_wc" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                        <button id="hint_wc_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="res_wc" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hint_wc" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-1 space-y-1">
+                        <p><strong>For <span class="math">\(x\)</span>-intercepts:</strong> Set <span class="math">\(f(x) = 0\)</span> → <span class="math">\((x-3)^2 - 9 = 0\)</span></p>
+                        <p>• Solve: <span class="math">\((x-3)^2 = ?\)</span></p>
+                        <p>• Take the square root of both sides: <span class="math">\(x-3 = \pm ?\)</span></p>
+                        <p>• Solve for <span class="math">\(x\)</span>. You should get two values.</p>
+                        <p class="mt-2"><strong>For <span class="math">\(y\)</span>-intercept:</strong> Set <span class="math">\(x = 0\)</span> and evaluate <span class="math">\(f(0)\)</span>.</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <label for="wd_input" class="text-lg font-medium">d. Determine the axis of symmetry.</label>
+                    <input type="text" id="wd_input" class="md:col-span-1 w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="x = #">
+                    <div class="md:col-span-1 flex gap-2">
+                        <button id="btn_wd" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                        <button id="hint_wd_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="res_wd" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hint_wd" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong> 
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>The axis of symmetry is always the vertical line passing through the vertex.</p>
+                        <p>• From part (b), you found the vertex is at <span class="math">\((h, k)\)</span>.</p>
+                        <p>• The axis of symmetry is the vertical line through the vertex, so it's <span class="math">\(x = ?\)</span></p>
+                        <p class="font-semibold mt-2">Think: What is the <span class="math">\(x\)</span>-coordinate (the <span class="math">\(h\)</span>-value) of the vertex?</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <label for="we_input" class="text-lg font-medium">e. Determine the Min/Max Value.</label>
+                    <input type="number" id="we_input" class="md:col-span-1 w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Value">
+                    <div class="md:col-span-1 flex gap-2">
+                        <button id="btn_we" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                        <button id="hint_we_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="res_we" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hint_we" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong> 
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>The min/max value is always the <span class="math">\(k\)</span>-coordinate of the vertex.</p>
+                        <p>• From part (b), you identified the vertex as <span class="math">\((h, k)\)</span>.</p>
+                        <p>• The <span class="math">\(k\)</span>-value tells you the minimum (if opening up) or maximum (if opening down) value.</p>
+                        <p class="font-semibold mt-2">What is the <span class="math">\(k\)</span>-coordinate of your vertex from part (b)?</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <label for="wg_input" class="text-lg font-medium">f. Write the Domain (Interval Notation).</label>
+                    <input type="text" id="wg_input" class="md:col-span-1 w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., (-inf, inf)">
+                    <div class="md:col-span-1 flex gap-2">
+                        <button id="btn_wg" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                        <button id="hint_wg_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="res_wg" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hint_wg" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong> <span>Quadratic functions are polynomials. All polynomials have domain <span class="math">\((-\infty, \infty)\)</span> (all real numbers) since you can plug any real number into <span class="math">\(x\)</span>.</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <label for="wh_input" class="text-lg font-medium">g. Write the Range (Interval Notation).</label>
+                    <input type="text" id="wh_input" class="md:col-span-1 w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., [-9, inf)">
+                    <div class="md:col-span-1 flex gap-2">
+                        <button id="btn_wh" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">Check</button>
+                        <button id="hint_wh_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="res_wh" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hint_wh" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong> 
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>• From part (a), you determined the parabola opens upward (so it has a minimum).</p>
+                        <p>• From part (e), you found the minimum value (the <span class="math">\(k\)</span>-coordinate).</p>
+                        <p>• The range starts at this minimum value and extends upward to infinity.</p>
+                        <p class="font-semibold mt-2">Use interval notation: <span class="math">\([\text{minimum}, \infty)\)</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- IV. Cool-Down: Zeros and Multiplicity -->
+        <section id="cooldown" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200 my-8">
+            <h2 class="text-2xl font-bold text-indigo-900 border-b border-stone-200 pb-2">🧊 Part 3: Cool-Down - Zeros & Multiplicity</h2>
+            <p class="mt-4 text-stone-600">Great job! Let's finish by practicing with zeros and multiplicities. For each zero, enter the zero value and its multiplicity separately. You have 3 attempts for each part.</p>
+
+            <div class="mt-6 bg-stone-50 p-4 rounded-lg">
+                <p class="text-lg font-medium">Given the function:</p>
+                <p class="text-2xl font-mono text-center py-2">$$g(x) = x^2(x-5)(x+2)^3$$</p>
+            </div>
+
+            <div class="mt-6 space-y-6">
+                <!-- Zero 1 -->
+                <div class="border border-stone-200 rounded-lg p-4 bg-stone-50">
+                    <p class="text-sm font-semibold text-stone-700 mb-3">Zero #1:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label class="text-base font-medium">Zero value:</label>
+                        <input type="number" id="cool1_zero" class="md:col-span-1 w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 0">
+                        <div class="md:col-span-1 flex gap-2">
+                            <button id="btnCool1_zero" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
+                            <span id="resultCool1_zero" class="ml-2 font-medium text-sm"></span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mt-3">
+                        <label class="text-base font-medium">Multiplicity:</label>
+                        <input type="number" id="cool1_mult" class="md:col-span-1 w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 2">
+                        <div class="md:col-span-1 flex gap-2">
+                            <button id="btnCool1_mult" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
+                            <span id="resultCool1_mult" class="ml-2 font-medium text-sm"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zero 2 -->
+                <div class="border border-stone-200 rounded-lg p-4 bg-stone-50">
+                    <p class="text-sm font-semibold text-stone-700 mb-3">Zero #2:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label class="text-base font-medium">Zero value:</label>
+                        <input type="number" id="cool2_zero" class="md:col-span-1 w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 5">
+                        <div class="md:col-span-1 flex gap-2">
+                            <button id="btnCool2_zero" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
+                            <span id="resultCool2_zero" class="ml-2 font-medium text-sm"></span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mt-3">
+                        <label class="text-base font-medium">Multiplicity:</label>
+                        <input type="number" id="cool2_mult" class="md:col-span-1 w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 1">
+                        <div class="md:col-span-1 flex gap-2">
+                            <button id="btnCool2_mult" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
+                            <span id="resultCool2_mult" class="ml-2 font-medium text-sm"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zero 3 -->
+                <div class="border border-stone-200 rounded-lg p-4 bg-stone-50">
+                    <p class="text-sm font-semibold text-stone-700 mb-3">Zero #3:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label class="text-base font-medium">Zero value:</label>
+                        <input type="number" id="cool3_zero" class="md:col-span-1 w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., -2">
+                        <div class="md:col-span-1 flex gap-2">
+                            <button id="btnCool3_zero" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
+                            <span id="resultCool3_zero" class="ml-2 font-medium text-sm"></span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mt-3">
+                        <label class="text-base font-medium">Multiplicity:</label>
+                        <input type="number" id="cool3_mult" class="md:col-span-1 w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 3">
+                        <div class="md:col-span-1 flex gap-2">
+                            <button id="btnCool3_mult" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
+                            <span id="resultCool3_mult" class="ml-2 font-medium text-sm"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button id="hintCool1" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡 Hint</button>
+                    <div id="hintCool1Content" class="hidden hint-box mt-2">
+                        <strong class="text-yellow-900">Hint:</strong>
+                        <div class="text-stone-700 mt-2 space-y-2">
+                            <p>For <span class="math">\(g(x) = x^2(x-5)(x+2)^3\)</span>:</p>
+                            <p>• Find each factor that equals zero. The exponent tells you the multiplicity.</p>
+                            <p>• For <span class="math">\(x^2\)</span>: What value of <span class="math">\(x\)</span> makes this zero? What's the exponent? That's the multiplicity.</p>
+                            <p>• For <span class="math">\((x-5)\)</span>: Set <span class="math">\(x-5 = 0\)</span> to find the zero. What's the exponent? (If not shown, it's 1)</p>
+                            <p>• For <span class="math">\((x+2)^3\)</span>: Set <span class="math">\(x+2 = 0\)</span> to find the zero. What's the exponent on this factor? That number is the multiplicity.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- V. Add-Ons (Bonus): Mixed Topics -->
+        <section id="addons" class="bg-white p-8 sm:p-12 rounded-2xl shadow-lg border border-stone-200 my-8">
+            <h2 class="text-3xl font-bold text-indigo-900 border-b border-stone-200 pb-3">🎯 Bonus Round - Mixed Topics</h2>
+            <p class="mt-4 text-stone-600">Ready for a challenge? Test your knowledge across various topics from Week 2. True/False questions have only 1 attempt.</p>
+
+            <div class="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h3 class="text-lg font-bold text-yellow-900 mb-2">🎯 Instructions:</h3>
+                <p class="text-yellow-800 mb-2">These bonus questions cover various topics from Week 2: symmetry, vertex form, direction of opening, and axis of symmetry.</p>
+                <p class="text-yellow-800"><strong>Note:</strong> True/False questions have only 1 attempt each - think carefully before answering!</p>
+            </div>
+
+            <div class="mt-6 space-y-4">
+                <!-- Bonus 1 -->
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <label class="text-lg font-medium flex-1">Bonus 1: The equation <span class="math">\(y = x^4 - 2x^2 + 5\)</span> has <span class="math">\(y\)</span>-axis symmetry.</label>
+                    <div class="flex gap-2 items-center md:justify-end">
+                        <button id="btnBonus1_T" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">True</button>
+                        <button id="btnBonus1_F" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">False</button>
+                        <button id="hintBonus1" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="resultBonus1" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintBonus1Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>To test for <span class="math">\(y\)</span>-axis symmetry, substitute <span class="math">\((-x)\)</span> for <span class="math">\(x\)</span> in the original equation.</p>
+                        <p><span class="math">\(y = (-x)^4 - 2(-x)^2 + 5\)</span></p>
+                        <p>• Simplify: <span class="math">\((-x)^4 = ?\)</span> and <span class="math">\((-x)^2 = ?\)</span></p>
+                        <p>• After simplifying, compare the result to the original equation.</p>
+                        <p class="font-semibold mt-2">If the simplified equation matches the original exactly, then it has <span class="math">\(y\)</span>-axis symmetry. Does it match?</p>
+                    </div>
+                </div>
+
+                <!-- Bonus 2 -->
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <label class="text-lg font-medium flex-1">Bonus 2: The equation <span class="math">\(x^2 + y^2 = 16\)</span> has <span class="math">\(x\)</span>-axis symmetry.</label>
+                    <div class="flex gap-2 items-center md:justify-end">
+                        <button id="btnBonus2_T" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">True</button>
+                        <button id="btnBonus2_F" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">False</button>
+                        <button id="hintBonus2" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="resultBonus2" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintBonus2Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>To test for <span class="math">\(x\)</span>-axis symmetry, substitute <span class="math">\((-y)\)</span> for <span class="math">\(y\)</span> in the original equation.</p>
+                        <p><span class="math">\(x^2 + (-y)^2 = 16\)</span></p>
+                        <p>• Simplify: <span class="math">\((-y)^2 = ?\)</span></p>
+                        <p>• After simplifying, compare the result to the original equation <span class="math">\(x^2 + y^2 = 16\)</span>.</p>
+                        <p class="font-semibold mt-2">If the simplified equation matches the original exactly, then it has <span class="math">\(x\)</span>-axis symmetry. Does it match?</p>
+                    </div>
+                </div>
+
+                <!-- Bonus 3 -->
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <label class="text-lg font-medium flex-1">Bonus 3: The equation <span class="math">\(y = 5x^3 - x\)</span> has origin symmetry.</label>
+                    <div class="flex gap-2 items-center md:justify-end">
+                        <button id="btnBonus3_T" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">True</button>
+                        <button id="btnBonus3_F" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">False</button>
+                        <button id="hintBonus3" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="resultBonus3" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintBonus3Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>To test for origin symmetry, substitute <span class="math">\((-x)\)</span> for <span class="math">\(x\)</span> AND <span class="math">\((-y)\)</span> for <span class="math">\(y\)</span>:</p>
+                        <p><span class="math">\(-y = 5(-x)^3 - (-x)\)</span></p>
+                        <p>• Simplify: <span class="math">\((-x)^3 = ?\)</span> and <span class="math">\(-(-x) = ?\)</span></p>
+                        <p>• Solve for <span class="math">\(y\)</span> by multiplying both sides by <span class="math">\(-1\)</span>.</p>
+                        <p>• Compare the final result to the original equation <span class="math">\(y = 5x^3 - x\)</span>.</p>
+                        <p class="font-semibold mt-2">If the simplified equation matches the original exactly, then it has origin symmetry. Does it match?</p>
+                    </div>
+                </div>
+
+                <!-- Bonus 4 -->
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <label class="text-lg font-medium flex-1">Bonus 4: The vertex of <span class="math">\(f(x) = 2(x-3)^2 + 5\)</span> is at <span class="math">\((3, 5)\)</span>.</label>
+                    <div class="flex gap-2 items-center md:justify-end">
+                        <button id="btnBonus4_T" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">True</button>
+                        <button id="btnBonus4_F" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">False</button>
+                        <button id="hintBonus4" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="resultBonus4" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintBonus4Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>The function is in vertex form: <span class="math">\(f(x) = a(x-h)^2 + k\)</span></p>
+                        <p>• In this form, the vertex is at <span class="math">\((h, k)\)</span>.</p>
+                        <p>• Compare <span class="math">\(f(x) = 2(x-3)^2 + 5\)</span> to the standard vertex form.</p>
+                        <p class="font-semibold mt-2">What values do <span class="math">\(h\)</span> and <span class="math">\(k\)</span> have in this function?</p>
+                    </div>
+                </div>
+
+                <!-- Bonus 5 -->
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <label class="text-lg font-medium flex-1">Bonus 5: The parabola <span class="math">\(f(x) = -x^2 + 4x - 3\)</span> has a maximum value.</label>
+                    <div class="flex gap-2 items-center md:justify-end">
+                        <button id="btnBonus5_T" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">True</button>
+                        <button id="btnBonus5_F" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">False</button>
+                        <button id="hintBonus5" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="resultBonus5" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintBonus5Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>Look at the coefficient of <span class="math">\(x^2\)</span> (the <span class="math">\(a\)</span> value).</p>
+                        <p>• If <span class="math">\(a > 0\)</span>, the parabola opens upward and has a minimum.</p>
+                        <p>• If <span class="math">\(a < 0\)</span>, the parabola opens downward and has a maximum.</p>
+                        <p class="font-semibold mt-2">In <span class="math">\(f(x) = -x^2 + 4x - 3\)</span>, what is the value of <span class="math">\(a\)</span>? Is it positive or negative?</p>
+                    </div>
+                </div>
+
+                <!-- Bonus 6 -->
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <label class="text-lg font-medium flex-1">Bonus 6: For <span class="math">\(f(x) = x^2 - 6x + 8\)</span>, the axis of symmetry is <span class="math">\(x = 3\)</span>.</label>
+                    <div class="flex gap-2 items-center md:justify-end">
+                        <button id="btnBonus6_T" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">True</button>
+                        <button id="btnBonus6_F" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">False</button>
+                        <button id="hintBonus6" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="resultBonus6" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintBonus6Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>For a quadratic in standard form <span class="math">\(f(x) = ax^2 + bx + c\)</span>, the axis of symmetry is <span class="math">\(x = -\frac{b}{2a}\)</span>.</p>
+                        <p>• In <span class="math">\(f(x) = x^2 - 6x + 8\)</span>, we have <span class="math">\(a = 1\)</span> and <span class="math">\(b = -6\)</span>.</p>
+                        <p>• Calculate: <span class="math">\(-\frac{b}{2a} = -\frac{(-6)}{2(1)} = ?\)</span></p>
+                        <p class="font-semibold mt-2">What value do you get? Does it equal 3?</p>
+                    </div>
+                </div>
+
+                <!-- Bonus 7 -->
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <label class="text-lg font-medium flex-1">Bonus 7: The function <span class="math">\(f(x) = 4x^2 + 12x + 9\)</span> has a minimum value at its vertex.</label>
+                    <div class="flex gap-2 items-center md:justify-end">
+                        <button id="btnBonus7_T" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">True</button>
+                        <button id="btnBonus7_F" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">False</button>
+                        <button id="hintBonus7" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="resultBonus7" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintBonus7Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>Look at the coefficient of <span class="math">\(x^2\)</span> (the <span class="math">\(a\)</span> value).</p>
+                        <p>• If <span class="math">\(a > 0\)</span>, the parabola opens upward and has a minimum at the vertex.</p>
+                        <p>• If <span class="math">\(a < 0\)</span>, the parabola opens downward and has a maximum at the vertex.</p>
+                        <p class="font-semibold mt-2">In <span class="math">\(f(x) = 4x^2 + 12x + 9\)</span>, what is the value of <span class="math">\(a\)</span>? Is it positive or negative?</p>
+                    </div>
+                </div>
+
+                <!-- Bonus 8 -->
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <label class="text-lg font-medium flex-1">Bonus 8: The range of <span class="math">\(f(x) = (x-2)^2 - 5\)</span> is <span class="math">\([-5, \infty)\)</span>.</label>
+                    <div class="flex gap-2 items-center md:justify-end">
+                        <button id="btnBonus8_T" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">True</button>
+                        <button id="btnBonus8_F" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">False</button>
+                        <button id="hintBonus8" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="resultBonus8" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintBonus8Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>The function is in vertex form: <span class="math">\(f(x) = (x-2)^2 - 5\)</span></p>
+                        <p>• What is the vertex? The <span class="math">\(k\)</span>-value is the minimum (since it opens upward).</p>
+                        <p>• The range starts at this minimum value and extends upward to infinity.</p>
+                        <p class="font-semibold mt-2">What is the <span class="math">\(k\)</span>-value? Does the range start at <span class="math">\(-5\)</span>?</p>
+                    </div>
+                </div>
+
+                <!-- Bonus 9 -->
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <label class="text-lg font-medium flex-1">Bonus 9: Completing the square is used to convert a quadratic from standard form to vertex form.</label>
+                    <div class="flex gap-2 items-center md:justify-end">
+                        <button id="btnBonus9_T" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">True</button>
+                        <button id="btnBonus9_F" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow">False</button>
+                        <button id="hintBonus9" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow" title="Get a hint">💡</button>
+                        <span id="resultBonus9" class="ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintBonus9Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>Think about what "completing the square" does.</p>
+                        <p>• Standard form: <span class="math">\(f(x) = ax^2 + bx + c\)</span></p>
+                        <p>• Vertex form: <span class="math">\(f(x) = a(x-h)^2 + k\)</span></p>
+                        <p class="font-semibold mt-2">What is the purpose of completing the square? What form does it help you convert to?</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="main-content text-center py-6 text-stone-500 text-sm">
+        <p>SLA Review Session | Solomon Agyire | MTH 112E</p>
+    </footer>
+
+    <script>
+        // --- GLOBAL STATE ---
+        let attempts = {
+            warmup1: 3, warmup2: 1, warmup3: 1, // True/False have only 1 attempt
+            workout_a: 3, workout_b: 3, workout_c: 3, workout_d: 3, workout_e: 3, workout_g: 3, workout_h: 3,
+            cooldown1_zero: 3, cooldown1_mult: 3, cooldown2_zero: 3, cooldown2_mult: 3, cooldown3_zero: 3, cooldown3_mult: 3,
+            bonus1: 1, bonus2: 1, bonus3: 1, bonus4: 1, bonus5: 1, bonus6: 1, bonus7: 1, bonus8: 1, bonus9: 1 // True/False have only 1 attempt
+        };
+        
+        let scores = {
+            warmup: { correct: 0, total: 3 },
+            workout: { correct: 0, total: 7 },
+            cooldown: { correct: 0, total: 6 }, // 3 zeros × 2 parts (zero + multiplicity) = 6 total points
+            bonus: { correct: 0, total: 9 } // Now 9 bonus questions
+        };
+        
+        let answered = {
+            warmup1: false, warmup2: false, warmup3: false,
+            workout_a: false, workout_b: false, workout_c: false, workout_d: false, workout_e: false, workout_g: false, workout_h: false,
+            cooldown1_zero: false, cooldown1_mult: false, cooldown2_zero: false, cooldown2_mult: false, cooldown3_zero: false, cooldown3_mult: false,
+            bonus1: false, bonus2: false, bonus3: false, bonus4: false, bonus5: false, bonus6: false, bonus7: false, bonus8: false, bonus9: false
+        };
+
+
+        // Utility to normalize string input for checking (case-insensitive, space-insensitive)
+        const normalize = (str) => String(str).toLowerCase().replace(/\s/g, '').replace(/\*/g, '');
+
+        // --- PROGRESS TRACKING ---
+        function updateProgress() {
+            document.getElementById('scoreWarmup').textContent = `${scores.warmup.correct}/${scores.warmup.total}`;
+            document.getElementById('scoreWorkout').textContent = `${scores.workout.correct}/${scores.workout.total}`;
+            document.getElementById('scoreCooldown').textContent = `${scores.cooldown.correct}/${scores.cooldown.total}`;
+            document.getElementById('scoreBonus').textContent = `${scores.bonus.correct}/${scores.bonus.total}`;
+            
+            const totalCorrect = scores.warmup.correct + scores.workout.correct + scores.cooldown.correct + scores.bonus.correct;
+            const totalQuestions = scores.warmup.total + scores.workout.total + scores.cooldown.total + scores.bonus.total;
+            document.getElementById('totalScore').textContent = `${totalCorrect}/${totalQuestions}`;
+            
+            // Update progress bars
+            document.getElementById('progressWarmup').style.width = `${(scores.warmup.correct / scores.warmup.total) * 100}%`;
+            document.getElementById('progressWorkout').style.width = `${(scores.workout.correct / scores.workout.total) * 100}%`;
+            document.getElementById('progressCooldown').style.width = `${(scores.cooldown.correct / scores.cooldown.total) * 100}%`;
+            document.getElementById('progressBonus').style.width = `${(scores.bonus.correct / scores.bonus.total) * 100}%`;
+            document.getElementById('progressTotal').style.width = `${(totalCorrect / totalQuestions) * 100}%`;
+        }
+
+        // --- CORE CHECKING FUNCTIONS ---
+        function checkAnswer(checkFunc, resultId, buttonIds, correctAnswer, hintId, attemptCounterName, section, questionId) {
+            const resultElement = document.getElementById(resultId);
+            const buttonElements = Array.isArray(buttonIds) ? buttonIds.map(id => document.getElementById(id)) : [document.getElementById(buttonIds)];
+            const hintElement = document.getElementById(hintId);
+            
+            if (answered[questionId]) return;
+            
+            let isCorrect = checkFunc();
+            let currentAttempts = attempts[attemptCounterName];
+            
+            if (currentAttempts <= 0) return;
+
+            if (isCorrect) {
+                resultElement.textContent = 'Correct! ✓';
+                resultElement.className = 'font-medium text-green-600';
+                buttonElements.forEach(btn => { if(btn) btn.disabled = true; });
+                
+                // Disable inputs based on questionId
+                if (questionId === 'warmup1') {
+                    document.getElementById('warmup1_h').disabled = true;
+                    document.getElementById('warmup1_k').disabled = true;
+                } else if (questionId === 'workout_b') {
+                    document.getElementById('wb_h').disabled = true;
+                    document.getElementById('wb_k').disabled = true;
+                } else if (questionId === 'workout_a') document.getElementById('wa_input').disabled = true;
+                else if (questionId === 'workout_c') document.getElementById('wc_input').disabled = true;
+                else if (questionId === 'workout_d') document.getElementById('wd_input').disabled = true;
+                else if (questionId === 'workout_e') document.getElementById('we_input').disabled = true;
+                else if (questionId === 'workout_g') document.getElementById('wg_input').disabled = true;
+                else if (questionId === 'workout_h') document.getElementById('wh_input').disabled = true;
+                else if (questionId === 'cooldown1_zero') document.getElementById('cool1_zero').disabled = true;
+                else if (questionId === 'cooldown1_mult') document.getElementById('cool1_mult').disabled = true;
+                else if (questionId === 'cooldown2_zero') document.getElementById('cool2_zero').disabled = true;
+                else if (questionId === 'cooldown2_mult') document.getElementById('cool2_mult').disabled = true;
+                else if (questionId === 'cooldown3_zero') document.getElementById('cool3_zero').disabled = true;
+                else if (questionId === 'cooldown3_mult') document.getElementById('cool3_mult').disabled = true;
+                
+                if (hintElement) hintElement.classList.add('hidden');
+                attempts[attemptCounterName] = 0;
+                answered[questionId] = true;
+                scores[section].correct++;
+                updateProgress();
+            } else {
+                currentAttempts--;
+                attempts[attemptCounterName] = currentAttempts;
+                
+                if (currentAttempts > 0) {
+                    resultElement.textContent = `Incorrect. ${currentAttempts} trial${currentAttempts > 1 ? 's' : ''} remaining.`;
+                    resultElement.className = 'font-medium text-red-600';
+                    if (hintElement) hintElement.classList.remove('hidden');
+                } else {
+                    resultElement.textContent = `Incorrect. The correct answer is: ${correctAnswer}`;
+                    resultElement.className = 'font-bold text-red-700';
+                    buttonElements.forEach(btn => { if(btn) btn.disabled = true; });
+                    
+                    // Disable inputs on final attempt
+                    if (questionId === 'warmup1') {
+                        document.getElementById('warmup1_h').disabled = true;
+                        document.getElementById('warmup1_k').disabled = true;
+                    } else if (questionId === 'workout_b') {
+                        document.getElementById('wb_h').disabled = true;
+                        document.getElementById('wb_k').disabled = true;
+                    } else if (questionId === 'workout_a') document.getElementById('wa_input').disabled = true;
+                    else if (questionId === 'workout_c') document.getElementById('wc_input').disabled = true;
+                    else if (questionId === 'workout_d') document.getElementById('wd_input').disabled = true;
+                    else if (questionId === 'workout_e') document.getElementById('we_input').disabled = true;
+                    else if (questionId === 'workout_g') document.getElementById('wg_input').disabled = true;
+                    else if (questionId === 'workout_h') document.getElementById('wh_input').disabled = true;
+                    else if (questionId === 'cooldown1_zero') document.getElementById('cool1_zero').disabled = true;
+                    else if (questionId === 'cooldown1_mult') document.getElementById('cool1_mult').disabled = true;
+                    else if (questionId === 'cooldown2_zero') document.getElementById('cool2_zero').disabled = true;
+                    else if (questionId === 'cooldown2_mult') document.getElementById('cool2_mult').disabled = true;
+                    else if (questionId === 'cooldown3_zero') document.getElementById('cool3_zero').disabled = true;
+                    else if (questionId === 'cooldown3_mult') document.getElementById('cool3_mult').disabled = true;
+                    
+                    if (hintElement) hintElement.classList.add('hidden');
+                }
+            }
+        }
+
+
+        // --- WARM-UP LOGIC ---
+        document.getElementById('btnWarmup1').addEventListener('click', () => {
+            const h = parseFloat(document.getElementById('warmup1_h').value);
+            const k = parseFloat(document.getElementById('warmup1_k').value);
+            const checkFunc = () => (h === 4 && k === -6);
+            checkAnswer(checkFunc, 'resultWarmup1', 'btnWarmup1', '(4, -6)', 'hintWarmup1Content', 'warmup1', 'warmup', 'warmup1');
+        });
+
+        const checkW2 = (isTrue) => {
+            checkAnswer(() => isTrue, 'resultWarmup2', ['btnWarmup2_T', 'btnWarmup2_F'], 'True', 'hintWarmup2Content', 'warmup2', 'warmup', 'warmup2');
+        };
+        document.getElementById('btnWarmup2_T').addEventListener('click', () => checkW2(true));
+        document.getElementById('btnWarmup2_F').addEventListener('click', () => checkW2(false));
+
+        const checkW3 = (isTrue) => {
+            checkAnswer(() => !isTrue, 'resultWarmup3', ['btnWarmup3_T', 'btnWarmup3_F'], 'False', 'hintWarmup3Content', 'warmup3', 'warmup', 'warmup3');
+        };
+        document.getElementById('btnWarmup3_T').addEventListener('click', () => checkW3(true));
+        document.getElementById('btnWarmup3_F').addEventListener('click', () => checkW3(false));
+
+        // --- WORKOUT LOGIC ---
+        document.getElementById('btn_wa').addEventListener('click', () => {
+            const input = normalize(document.getElementById('wa_input').value);
+            checkAnswer(() => input === 'up', 'res_wa', 'btn_wa', 'Up', 'hint_wa', 'workout_a', 'workout', 'workout_a');
+        });
+
+        document.getElementById('btn_wb').addEventListener('click', () => {
+            const h = parseFloat(document.getElementById('wb_h').value);
+            const k = parseFloat(document.getElementById('wb_k').value);
+            checkAnswer(() => (h === 3 && k === -9), 'res_wb', 'btn_wb', '(3, -9)', 'hint_wb', 'workout_b', 'workout', 'workout_b');
+        });
+        
+        document.getElementById('btn_wc').addEventListener('click', () => {
+            const input = normalize(document.getElementById('wc_input').value);
+            const correct1 = normalize('(0,0),(6,0)');
+            const correct2 = normalize('(6,0),(0,0)');
+            checkAnswer(() => (input === correct1 || input === correct2 || input === normalize('(0,0), (6,0)')), 'res_wc', 'btn_wc', '(0,0), (6,0)', 'hint_wc', 'workout_c', 'workout', 'workout_c');
+        });
+        
+        document.getElementById('btn_wd').addEventListener('click', () => {
+            const input = normalize(document.getElementById('wd_input').value);
+            checkAnswer(() => (input === 'x=3' || input === 'x3'), 'res_wd', 'btn_wd', 'x = 3', 'hint_wd', 'workout_d', 'workout', 'workout_d');
+        });
+        
+        document.getElementById('btn_we').addEventListener('click', () => {
+            const input = parseFloat(document.getElementById('we_input').value);
+            checkAnswer(() => (input === -9), 'res_we', 'btn_we', '-9', 'hint_we', 'workout_e', 'workout', 'workout_e');
+        });
+
+        document.getElementById('btn_wg').addEventListener('click', () => {
+            const input = normalize(document.getElementById('wg_input').value);
+            const correct1 = normalize('(-inf, inf)');
+            const correct2 = normalize('(-\\infty, \\infty)');
+            checkAnswer(() => (input === correct1 || input === correct2 || input === 'allreals'), 'res_wg', 'btn_wg', '(-∞, ∞)', 'hint_wg', 'workout_g', 'workout', 'workout_g');
+        });
+        
+        document.getElementById('btn_wh').addEventListener('click', () => {
+            const input = normalize(document.getElementById('wh_input').value);
+            const correct1 = normalize('[-9, inf)');
+            const correct2 = normalize('[-9, \\infty)');
+            checkAnswer(() => (input === correct1 || input === correct2), 'res_wh', 'btn_wh', '[-9, ∞)', 'hint_wh', 'workout_h', 'workout', 'workout_h');
+        });
+        
+        // --- COOL-DOWN LOGIC ---
+        // Zero 1: x = 0, multiplicity = 2
+        document.getElementById('btnCool1_zero').addEventListener('click', () => {
+            const zero = parseFloat(document.getElementById('cool1_zero').value);
+            checkAnswer(() => zero === 0, 'resultCool1_zero', 'btnCool1_zero', '0', 'hintCool1Content', 'cooldown1_zero', 'cooldown', 'cooldown1_zero');
+        });
+        document.getElementById('btnCool1_mult').addEventListener('click', () => {
+            const mult = parseFloat(document.getElementById('cool1_mult').value);
+            checkAnswer(() => mult === 2, 'resultCool1_mult', 'btnCool1_mult', '2', 'hintCool1Content', 'cooldown1_mult', 'cooldown', 'cooldown1_mult');
+        });
+
+        // Zero 2: x = 5, multiplicity = 1
+        document.getElementById('btnCool2_zero').addEventListener('click', () => {
+            const zero = parseFloat(document.getElementById('cool2_zero').value);
+            checkAnswer(() => zero === 5, 'resultCool2_zero', 'btnCool2_zero', '5', 'hintCool1Content', 'cooldown2_zero', 'cooldown', 'cooldown2_zero');
+        });
+        document.getElementById('btnCool2_mult').addEventListener('click', () => {
+            const mult = parseFloat(document.getElementById('cool2_mult').value);
+            checkAnswer(() => mult === 1, 'resultCool2_mult', 'btnCool2_mult', '1', 'hintCool1Content', 'cooldown2_mult', 'cooldown', 'cooldown2_mult');
+        });
+
+        // Zero 3: x = -2, multiplicity = 3
+        document.getElementById('btnCool3_zero').addEventListener('click', () => {
+            const zero = parseFloat(document.getElementById('cool3_zero').value);
+            checkAnswer(() => zero === -2, 'resultCool3_zero', 'btnCool3_zero', '-2', 'hintCool1Content', 'cooldown3_zero', 'cooldown', 'cooldown3_zero');
+        });
+        document.getElementById('btnCool3_mult').addEventListener('click', () => {
+            const mult = parseFloat(document.getElementById('cool3_mult').value);
+            checkAnswer(() => mult === 3, 'resultCool3_mult', 'btnCool3_mult', '3', 'hintCool1Content', 'cooldown3_mult', 'cooldown', 'cooldown3_mult');
+        });
+
+        // --- BONUS LOGIC ---
+        // Bonus 1: y-axis symmetry (True)
+        document.getElementById('btnBonus1_T').addEventListener('click', () => checkAnswer(() => true, 'resultBonus1', ['btnBonus1_T', 'btnBonus1_F'], 'True', 'hintBonus1Content', 'bonus1', 'bonus', 'bonus1'));
+        document.getElementById('btnBonus1_F').addEventListener('click', () => checkAnswer(() => false, 'resultBonus1', ['btnBonus1_T', 'btnBonus1_F'], 'True', 'hintBonus1Content', 'bonus1', 'bonus', 'bonus1'));
+
+        // Bonus 2: x-axis symmetry (True)
+        document.getElementById('btnBonus2_T').addEventListener('click', () => checkAnswer(() => true, 'resultBonus2', ['btnBonus2_T', 'btnBonus2_F'], 'True', 'hintBonus2Content', 'bonus2', 'bonus', 'bonus2'));
+        document.getElementById('btnBonus2_F').addEventListener('click', () => checkAnswer(() => false, 'resultBonus2', ['btnBonus2_T', 'btnBonus2_F'], 'True', 'hintBonus2Content', 'bonus2', 'bonus', 'bonus2'));
+
+        // Bonus 3: origin symmetry (True)
+        document.getElementById('btnBonus3_T').addEventListener('click', () => checkAnswer(() => true, 'resultBonus3', ['btnBonus3_T', 'btnBonus3_F'], 'True', 'hintBonus3Content', 'bonus3', 'bonus', 'bonus3'));
+        document.getElementById('btnBonus3_F').addEventListener('click', () => checkAnswer(() => false, 'resultBonus3', ['btnBonus3_T', 'btnBonus3_F'], 'True', 'hintBonus3Content', 'bonus3', 'bonus', 'bonus3'));
+
+        // Bonus 4: vertex at (3, 5) (True)
+        document.getElementById('btnBonus4_T').addEventListener('click', () => checkAnswer(() => true, 'resultBonus4', ['btnBonus4_T', 'btnBonus4_F'], 'True', 'hintBonus4Content', 'bonus4', 'bonus', 'bonus4'));
+        document.getElementById('btnBonus4_F').addEventListener('click', () => checkAnswer(() => false, 'resultBonus4', ['btnBonus4_T', 'btnBonus4_F'], 'True', 'hintBonus4Content', 'bonus4', 'bonus', 'bonus4'));
+
+        // Bonus 5: maximum value (True - since a = -1 < 0)
+        document.getElementById('btnBonus5_T').addEventListener('click', () => checkAnswer(() => true, 'resultBonus5', ['btnBonus5_T', 'btnBonus5_F'], 'True', 'hintBonus5Content', 'bonus5', 'bonus', 'bonus5'));
+        document.getElementById('btnBonus5_F').addEventListener('click', () => checkAnswer(() => false, 'resultBonus5', ['btnBonus5_T', 'btnBonus5_F'], 'True', 'hintBonus5Content', 'bonus5', 'bonus', 'bonus5'));
+
+        // Bonus 6: axis of symmetry x = 3 (True)
+        document.getElementById('btnBonus6_T').addEventListener('click', () => checkAnswer(() => true, 'resultBonus6', ['btnBonus6_T', 'btnBonus6_F'], 'True', 'hintBonus6Content', 'bonus6', 'bonus', 'bonus6'));
+        document.getElementById('btnBonus6_F').addEventListener('click', () => checkAnswer(() => false, 'resultBonus6', ['btnBonus6_T', 'btnBonus6_F'], 'True', 'hintBonus6Content', 'bonus6', 'bonus', 'bonus6'));
+
+        // Bonus 7: minimum value (True - since a = 4 > 0)
+        document.getElementById('btnBonus7_T').addEventListener('click', () => checkAnswer(() => true, 'resultBonus7', ['btnBonus7_T', 'btnBonus7_F'], 'True', 'hintBonus7Content', 'bonus7', 'bonus', 'bonus7'));
+        document.getElementById('btnBonus7_F').addEventListener('click', () => checkAnswer(() => false, 'resultBonus7', ['btnBonus7_T', 'btnBonus7_F'], 'True', 'hintBonus7Content', 'bonus7', 'bonus', 'bonus7'));
+
+        // Bonus 8: range [-5, ∞) (True)
+        document.getElementById('btnBonus8_T').addEventListener('click', () => checkAnswer(() => true, 'resultBonus8', ['btnBonus8_T', 'btnBonus8_F'], 'True', 'hintBonus8Content', 'bonus8', 'bonus', 'bonus8'));
+        document.getElementById('btnBonus8_F').addEventListener('click', () => checkAnswer(() => false, 'resultBonus8', ['btnBonus8_T', 'btnBonus8_F'], 'True', 'hintBonus8Content', 'bonus8', 'bonus', 'bonus8'));
+
+        // Bonus 9: completing the square purpose (True)
+        document.getElementById('btnBonus9_T').addEventListener('click', () => checkAnswer(() => true, 'resultBonus9', ['btnBonus9_T', 'btnBonus9_F'], 'True', 'hintBonus9Content', 'bonus9', 'bonus', 'bonus9'));
+        document.getElementById('btnBonus9_F').addEventListener('click', () => checkAnswer(() => false, 'resultBonus9', ['btnBonus9_T', 'btnBonus9_F'], 'True', 'hintBonus9Content', 'bonus9', 'bonus', 'bonus9'));
+
+        // --- HINT BUTTONS ---
+        const hintButtons = {
+            'hintWarmup1': 'hintWarmup1Content',
+            'hintWarmup2': 'hintWarmup2Content',
+            'hintWarmup3': 'hintWarmup3Content',
+            'hintCool1': 'hintCool1Content',
+            'hintBonus1': 'hintBonus1Content',
+            'hintBonus2': 'hintBonus2Content',
+            'hintBonus3': 'hintBonus3Content',
+            'hintBonus4': 'hintBonus4Content',
+            'hintBonus5': 'hintBonus5Content',
+            'hintBonus6': 'hintBonus6Content',
+            'hintBonus7': 'hintBonus7Content',
+            'hintBonus8': 'hintBonus8Content',
+            'hintBonus9': 'hintBonus9Content',
+            'hint_wa_btn': 'hint_wa',
+            'hint_wb_btn': 'hint_wb',
+            'hint_wc_btn': 'hint_wc',
+            'hint_wd_btn': 'hint_wd',
+            'hint_we_btn': 'hint_we',
+            'hint_wg_btn': 'hint_wg',
+            'hint_wh_btn': 'hint_wh'
+        };
+        
+        Object.keys(hintButtons).forEach(btnId => {
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    const hintContent = document.getElementById(hintButtons[btnId]);
+                    if (hintContent) {
+                        hintContent.classList.toggle('hidden');
+                    }
+                });
+            }
+        });
+
+        // --- SIDEBAR FUNCTIONALITY ---
+        document.getElementById('openSidebar').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.add('open');
+        });
+        document.getElementById('closeSidebar').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.remove('open');
+        });
+
+        // Group name management - lock after first save
+        let groupNameLocked = false;
+        
+        // Check if group name is already locked
+        const savedGroupNameLocked = localStorage.getItem('groupName_locked_week2');
+        const savedGroupName = localStorage.getItem('groupName_week2');
+        
+        if (savedGroupNameLocked === 'true' && savedGroupName) {
+            groupNameLocked = true;
+            document.getElementById('groupName').value = savedGroupName;
+            document.getElementById('groupName').disabled = true;
+            document.getElementById('submitGroupName').disabled = true;
+            document.getElementById('submitGroupName').textContent = '✓ Submitted';
+            document.getElementById('submitGroupName').classList.add('bg-green-600', 'cursor-not-allowed');
+            document.getElementById('submitGroupName').classList.remove('hover:bg-indigo-700');
+            document.getElementById('groupNameStatus').textContent = 'Group name locked to prevent leaderboard interference.';
+            document.getElementById('groupNameStatus').classList.add('text-green-600');
+        } else {
+            document.getElementById('groupName').disabled = false;
+        }
+        
+        // Submit group name button
+        document.getElementById('submitGroupName').addEventListener('click', () => {
+            const groupNameInput = document.getElementById('groupName');
+            const groupNameValue = groupNameInput.value.trim();
+            
+            if (!groupNameValue) {
+                alert('Please enter a group name first!');
+                return;
+            }
+            
+            // Lock the group name
+            groupNameLocked = true;
+            groupNameInput.disabled = true;
+            localStorage.setItem('groupName_week2', groupNameValue);
+            localStorage.setItem('groupName_locked_week2', 'true');
+            
+            // Update button
+            const submitBtn = document.getElementById('submitGroupName');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '✓ Submitted';
+            submitBtn.classList.add('bg-green-600', 'cursor-not-allowed');
+            submitBtn.classList.remove('hover:bg-indigo-700');
+            
+            // Update status
+            document.getElementById('groupNameStatus').textContent = 'Group name locked to prevent leaderboard interference.';
+            document.getElementById('groupNameStatus').classList.add('text-green-600');
+            
+            updateLeaderboard();
+        });
+
+        // --- SAVE FUNCTIONALITY (like Week 1) ---
+        document.getElementById('saveProgress').addEventListener('click', () => {
+            // Check if group name is locked, if not, prompt to submit it first
+            if (!groupNameLocked) {
+                const groupNameValue = document.getElementById('groupName').value.trim();
+                if (!groupNameValue) {
+                    alert('Please enter and submit your group name first before saving progress!');
+                    return;
+                } else {
+                    alert('Please click the "Submit" button next to your group name first to lock it!');
+                    return;
+                }
+            }
+            
+            const groupName = document.getElementById('groupName').value || 'Anonymous';
+            const totalCorrect = scores.warmup.correct + scores.workout.correct + scores.cooldown.correct + scores.bonus.correct;
+            const totalQuestions = scores.warmup.total + scores.workout.total + scores.cooldown.total + scores.bonus.total;
+            
+            const scoreData = {
+                timestamp: new Date().toISOString(),
+                groupName: groupName,
+                scores: {
+                    warmup: { correct: scores.warmup.correct, total: scores.warmup.total },
+                    workout: { correct: scores.workout.correct, total: scores.workout.total },
+                    cooldown: { correct: scores.cooldown.correct, total: scores.cooldown.total },
+                    bonus: { correct: scores.bonus.correct, total: scores.bonus.total }
+                },
+                totalCorrect,
+                totalQuestions,
+                percentage: Math.round((totalCorrect / totalQuestions) * 100)
+            };
+            
+            // Store in localStorage array (like Week 1)
+            const existingScores = JSON.parse(localStorage.getItem('mth112e_week2_scores') || '[]');
+            
+            // Check if this group already has a score entry
+            const existingIndex = existingScores.findIndex(s => s.groupName === groupName);
+            if (existingIndex >= 0) {
+                // Update existing entry
+                existingScores[existingIndex] = scoreData;
+            } else {
+                // Add new entry
+                existingScores.push(scoreData);
+            }
+            
+            localStorage.setItem('mth112e_week2_scores', JSON.stringify(existingScores));
+            
+            // Also save progress for auto-load
+            const saveData = {
+                groupName,
+                timestamp: new Date().toISOString(),
+                scores,
+                attempts,
+                answered
+            };
+            localStorage.setItem('mth112e_week2_progress', JSON.stringify(saveData));
+            
+            updateLeaderboard();
+            alert('Progress saved! Your score has been updated on the leaderboard.');
+        });
+        
+        // --- LEADERBOARD FUNCTIONALITY ---
+        function updateLeaderboard() {
+            const leaderboard = document.getElementById('leaderboard');
+            const allScores = JSON.parse(localStorage.getItem('mth112e_week2_scores') || '[]');
+            
+            if (allScores.length === 0) {
+                leaderboard.innerHTML = '<p class="text-xs text-stone-500 text-center py-2">No scores yet. Start working to see rankings!</p>';
+                return;
+            }
+            
+            // Sort by percentage (descending), then by total correct
+            const sorted = [...allScores].sort((a, b) => {
+                if (b.percentage !== a.percentage) {
+                    return b.percentage - a.percentage;
+                }
+                return b.totalCorrect - a.totalCorrect;
+            });
+            
+            leaderboard.innerHTML = sorted.map((entry, index) => {
+                const isCurrentGroup = entry.groupName === (document.getElementById('groupName').value || 'Anonymous');
+                const rank = index + 1;
+                const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `${rank}.`;
+                const bgColor = isCurrentGroup ? 'bg-indigo-100 border-indigo-300' : 'bg-stone-50 border-stone-200';
+                const textColor = isCurrentGroup ? 'font-bold text-indigo-700' : 'text-stone-700';
+                
+                return `
+                    <div class="border rounded-lg p-2 ${bgColor}">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold">${medal}</span>
+                                <span class="text-xs ${textColor}">${entry.groupName.length > 12 ? entry.groupName.substring(0, 12) + '...' : entry.groupName}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-bold ${isCurrentGroup ? 'text-indigo-700' : 'text-stone-600'}">${entry.percentage}%</span>
+                                <span class="text-xs text-stone-500 block">${entry.totalCorrect}/${entry.totalQuestions}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Update leaderboard every 2 seconds
+        setInterval(updateLeaderboard, 2000);
+
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.MathJax) {
+                MathJax.typesetPromise().then(() => {
+                    document.querySelectorAll('.math').forEach(el => {
+                        if (el.textContent && !el.querySelector('mjx-container')) {
+                            MathJax.typesetPromise([el]);
+                        }
+                    });
+                });
+            }
+            updateProgress();
+            
+            // Load saved progress automatically (no confirmation needed)
+            const savedProgress = localStorage.getItem('mth112e_week2_progress');
+            if (savedProgress) {
+                const data = JSON.parse(savedProgress);
+                scores = data.scores;
+                attempts = data.attempts;
+                answered = data.answered;
+                updateProgress();
+            }
+            
+            // Initialize leaderboard
+            updateLeaderboard();
+        });
+    </script>
+</body>
+</html>

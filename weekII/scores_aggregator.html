@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTH 112E Week 2 - Scores Aggregator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="max-w-7xl mx-auto p-6">
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+            <h1 class="text-3xl font-bold text-indigo-700 mb-4">MTH 112E Week 2 - Student Scores Aggregator</h1>
+            <p class="text-gray-600 mb-6">Upload all student submission files to view aggregate statistics and individual scores.</p>
+            
+            <div class="border-2 border-dashed border-indigo-300 rounded-lg p-8 text-center" id="dropZone">
+                <input type="file" id="fileInput" multiple accept=".json" class="hidden">
+                <label for="fileInput" class="cursor-pointer">
+                    <div class="text-4xl mb-4">📁</div>
+                    <p class="text-lg font-medium text-gray-700 mb-2">Click to select files or drag and drop JSON files here</p>
+                    <p class="text-sm text-gray-500">Select multiple files at once (Ctrl/Cmd + Click)</p>
+                </label>
+            </div>
+            
+            <div id="fileList" class="mt-4 hidden">
+                <h3 class="font-semibold mb-2">Loaded Files:</h3>
+                <ul id="fileListItems" class="text-sm text-gray-600"></ul>
+            </div>
+            
+            <div class="mt-4 flex gap-4">
+                <button id="clearFiles" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 hidden">Clear All</button>
+                <button id="exportCSV" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 hidden">Export to CSV</button>
+            </div>
+        </div>
+        
+        <div id="resultsSection" class="hidden">
+            <!-- Summary Statistics -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-2xl font-bold text-indigo-700 mb-4">📊 Summary Statistics</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-indigo-50 p-4 rounded-lg">
+                        <div class="text-sm text-gray-600">Total Students</div>
+                        <div id="totalStudents" class="text-3xl font-bold text-indigo-700">0</div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <div class="text-sm text-gray-600">Average Score</div>
+                        <div id="avgScore" class="text-3xl font-bold text-green-700">0%</div>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div class="text-sm text-gray-600">Highest Score</div>
+                        <div id="highestScore" class="text-3xl font-bold text-blue-700">0%</div>
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded-lg">
+                        <div class="text-sm text-gray-600">Lowest Score</div>
+                        <div id="lowestScore" class="text-3xl font-bold text-orange-700">0%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section Breakdown -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-2xl font-bold text-indigo-700 mb-4">📈 Section Performance</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="p-4 border-l-4 border-blue-500 bg-blue-50 rounded">
+                        <div class="font-semibold text-gray-700">Warm-up</div>
+                        <div id="warmupAvg" class="text-2xl font-bold text-blue-700">0%</div>
+                        <div class="text-sm text-gray-600" id="warmupDetails">Avg: 0/3</div>
+                    </div>
+                    <div class="p-4 border-l-4 border-indigo-500 bg-indigo-50 rounded">
+                        <div class="font-semibold text-gray-700">Workout</div>
+                        <div id="workoutAvg" class="text-2xl font-bold text-indigo-700">0%</div>
+                        <div class="text-sm text-gray-600" id="workoutDetails">Avg: 0/8</div>
+                    </div>
+                    <div class="p-4 border-l-4 border-purple-500 bg-purple-50 rounded">
+                        <div class="font-semibold text-gray-700">Cool-Down</div>
+                        <div id="cooldownAvg" class="text-2xl font-bold text-purple-700">0%</div>
+                        <div class="text-sm text-gray-600" id="cooldownDetails">Avg: 0/1</div>
+                    </div>
+                    <div class="p-4 border-l-4 border-yellow-500 bg-yellow-50 rounded">
+                        <div class="font-semibold text-gray-700">Bonus</div>
+                        <div id="bonusAvg" class="text-2xl font-bold text-yellow-700">0%</div>
+                        <div class="text-sm text-gray-600" id="bonusDetails">Avg: 0/3</div>
+                    </div>
+                </div>
+                
+                <!-- Chart -->
+                <div class="mt-6">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Individual Scores Table -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-indigo-700 mb-4">👥 Individual Student Scores</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Warm-up</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Workout</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cool-Down</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bonus</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Percentage</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scoresTableBody" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allSubmissions = [];
+        let chart = null;
+
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const fileList = document.getElementById('fileList');
+        const fileListItems = document.getElementById('fileListItems');
+        const clearFilesBtn = document.getElementById('clearFiles');
+        const exportCSVBtn = document.getElementById('exportCSV');
+        const resultsSection = document.getElementById('resultsSection');
+
+        // File input handler
+        fileInput.addEventListener('change', handleFiles);
+
+        // Drag and drop handlers
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-indigo-500', 'bg-indigo-50');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+            const files = Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.json'));
+            if (files.length > 0) {
+                processFiles(files);
+            }
+        });
+
+        function handleFiles(e) {
+            const files = Array.from(e.target.files).filter(f => f.name.endsWith('.json'));
+            if (files.length > 0) {
+                processFiles(files);
+            }
+        }
+
+        async function processFiles(files) {
+            const newSubmissions = [];
+            
+            for (const file of files) {
+                try {
+                    const text = await file.text();
+                    const data = JSON.parse(text);
+                    
+                    // Validate data structure
+                    if (data.studentName && data.scores && data.totalCorrect !== undefined) {
+                        newSubmissions.push({
+                            ...data,
+                            fileName: file.name
+                        });
+                    } else {
+                        console.warn(`Invalid file format: ${file.name}`);
+                    }
+                } catch (error) {
+                    console.error(`Error reading ${file.name}:`, error);
+                    alert(`Error reading file ${file.name}. Make sure it's a valid JSON file.`);
+                }
+            }
+            
+            allSubmissions = [...allSubmissions, ...newSubmissions];
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            if (allSubmissions.length === 0) return;
+            
+            // Show file list
+            fileListItems.innerHTML = allSubmissions.map((s, i) => 
+                `<li>${i + 1}. ${s.fileName || s.studentName} - ${s.percentage}%</li>`
+            ).join('');
+            fileList.classList.remove('hidden');
+            clearFilesBtn.classList.remove('hidden');
+            exportCSVBtn.classList.remove('hidden');
+            resultsSection.classList.remove('hidden');
+            
+            // Calculate statistics
+            const totalStudents = allSubmissions.length;
+            const avgPercentage = Math.round(allSubmissions.reduce((sum, s) => sum + s.percentage, 0) / totalStudents);
+            const percentages = allSubmissions.map(s => s.percentage);
+            const highestPercentage = Math.max(...percentages);
+            const lowestPercentage = Math.min(...percentages);
+            
+            // Update summary stats
+            document.getElementById('totalStudents').textContent = totalStudents;
+            document.getElementById('avgScore').textContent = avgPercentage + '%';
+            document.getElementById('highestScore').textContent = highestPercentage + '%';
+            document.getElementById('lowestScore').textContent = lowestPercentage + '%';
+            
+            // Calculate section averages
+            const warmupAvg = allSubmissions.reduce((sum, s) => sum + s.scores.warmup.correct, 0) / totalStudents;
+            const workoutAvg = allSubmissions.reduce((sum, s) => sum + s.scores.workout.correct, 0) / totalStudents;
+            const cooldownAvg = allSubmissions.reduce((sum, s) => sum + s.scores.cooldown.correct, 0) / totalStudents;
+            const bonusAvg = allSubmissions.reduce((sum, s) => sum + s.scores.bonus.correct, 0) / totalStudents;
+            
+            const warmupPct = Math.round((warmupAvg / 3) * 100);
+            const workoutPct = Math.round((workoutAvg / 8) * 100);
+            const cooldownPct = Math.round((cooldownAvg / 1) * 100);
+            const bonusPct = Math.round((bonusAvg / 3) * 100);
+            
+            document.getElementById('warmupAvg').textContent = warmupPct + '%';
+            document.getElementById('workoutAvg').textContent = workoutPct + '%';
+            document.getElementById('cooldownAvg').textContent = cooldownPct + '%';
+            document.getElementById('bonusAvg').textContent = bonusPct + '%';
+            
+            document.getElementById('warmupDetails').textContent = `Avg: ${warmupAvg.toFixed(1)}/3`;
+            document.getElementById('workoutDetails').textContent = `Avg: ${workoutAvg.toFixed(1)}/8`;
+            document.getElementById('cooldownDetails').textContent = `Avg: ${cooldownAvg.toFixed(1)}/1`;
+            document.getElementById('bonusDetails').textContent = `Avg: ${bonusAvg.toFixed(1)}/3`;
+            
+            // Update chart
+            updateChart(warmupPct, workoutPct, cooldownPct, bonusPct);
+            
+            // Update table
+            updateTable();
+        }
+
+        function updateChart(warmupPct, workoutPct, cooldownPct, bonusPct) {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            if (chart) {
+                chart.destroy();
+            }
+            
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Warm-up', 'Workout', 'Cool-Down', 'Bonus'],
+                    datasets: [{
+                        label: 'Average Percentage',
+                        data: [warmupPct, workoutPct, cooldownPct, bonusPct],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(99, 102, 241, 0.7)',
+                            'rgba(147, 51, 234, 0.7)',
+                            'rgba(234, 179, 8, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(59, 130, 246)',
+                            'rgb(99, 102, 241)',
+                            'rgb(147, 51, 234)',
+                            'rgb(234, 179, 8)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateTable() {
+            const tbody = document.getElementById('scoresTableBody');
+            
+            // Sort by percentage (descending)
+            const sorted = [...allSubmissions].sort((a, b) => b.percentage - a.percentage);
+            
+            tbody.innerHTML = sorted.map(s => {
+                const date = new Date(s.timestamp).toLocaleDateString();
+                return `
+                    <tr class="${s.percentage >= 80 ? 'bg-green-50' : s.percentage >= 60 ? 'bg-yellow-50' : 'bg-red-50'}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${s.studentName}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${s.scores.warmup.correct}/${s.scores.warmup.total}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${s.scores.workout.correct}/${s.scores.workout.total}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${s.scores.cooldown.correct}/${s.scores.cooldown.total}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${s.scores.bonus.correct}/${s.scores.bonus.total}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">${s.totalCorrect}/${s.totalQuestions}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold ${s.percentage >= 80 ? 'text-green-600' : s.percentage >= 60 ? 'text-yellow-600' : 'text-red-600'}">${s.percentage}%</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        clearFilesBtn.addEventListener('click', () => {
+            if (confirm('Clear all loaded files?')) {
+                allSubmissions = [];
+                fileInput.value = '';
+                fileList.classList.add('hidden');
+                clearFilesBtn.classList.add('hidden');
+                exportCSVBtn.classList.add('hidden');
+                resultsSection.classList.add('hidden');
+                if (chart) {
+                    chart.destroy();
+                    chart = null;
+                }
+            }
+        });
+
+        exportCSVBtn.addEventListener('click', () => {
+            const csv = [
+                'Student Name,Warm-up,Warm-up Total,Workout,Workout Total,Cool-Down,Cool-Down Total,Bonus,Bonus Total,Total Correct,Total Questions,Percentage,Date',
+                ...allSubmissions.map(s => {
+                    const date = new Date(s.timestamp).toLocaleDateString();
+                    return [
+                        s.studentName,
+                        s.scores.warmup.correct,
+                        s.scores.warmup.total,
+                        s.scores.workout.correct,
+                        s.scores.workout.total,
+                        s.scores.cooldown.correct,
+                        s.scores.cooldown.total,
+                        s.scores.bonus.correct,
+                        s.scores.bonus.total,
+                        s.totalCorrect,
+                        s.totalQuestions,
+                        s.percentage,
+                        date
+                    ].join(',');
+                })
+            ].join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `MTH112E_Week2_AllScores_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>
+

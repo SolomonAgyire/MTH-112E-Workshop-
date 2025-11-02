@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTH 112E Week 2 - Group Scores Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="max-w-6xl mx-auto p-6">
+        <div id="loginSection" class="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Instructor Access</h1>
+            <p class="text-gray-600 mb-4 text-center">Enter the instructor password to view group scores:</p>
+            <input type="password" id="passwordInput" placeholder="Enter instructor password" 
+                   class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500">
+            <button onclick="checkPassword()" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700">
+                Access Scores Dashboard
+            </button>
+            <p id="errorMessage" class="text-red-600 text-sm mt-2 text-center hidden"></p>
+        </div>
+        
+        <div id="scoresSection" class="hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">MTH 112E Week 2 - Group Progress Viewer</h1>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">All Group Scores</h2>
+            <div id="scoresContainer" class="space-y-4">
+                <!-- Scores will be displayed here -->
+            </div>
+            
+            <div class="mt-6 flex gap-4">
+                <button onclick="loadScores()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                    Refresh Scores
+                </button>
+                <button onclick="exportScores()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                    Export to CSV
+                </button>
+                <button onclick="clearScores()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+                    Clear All Scores
+                </button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        // Password protection
+        const INSTRUCTOR_PASSWORD = "MTH112E_Solomon_2024"; // Change this to your preferred password
+        
+        // Check if user was previously authenticated (using sessionStorage - cleared when browser closes)
+        const isAuthenticated = sessionStorage.getItem('instructor_authenticated_week2') === 'true';
+        
+        function checkPassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const errorMessage = document.getElementById('errorMessage');
+            const loginSection = document.getElementById('loginSection');
+            const scoresSection = document.getElementById('scoresSection');
+            
+            if (passwordInput.value === INSTRUCTOR_PASSWORD) {
+                // Save authentication state
+                sessionStorage.setItem('instructor_authenticated_week2', 'true');
+                
+                loginSection.classList.add('hidden');
+                scoresSection.classList.remove('hidden');
+                loadScores();
+                // Auto-refresh every 3 seconds
+                setInterval(loadScores, 3000);
+            } else {
+                errorMessage.textContent = 'Incorrect password. Please try again.';
+                errorMessage.classList.remove('hidden');
+                passwordInput.value = '';
+            }
+        }
+        
+        // Auto-login if previously authenticated in this session
+        if (isAuthenticated) {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('scoresSection').classList.remove('hidden');
+            loadScores();
+            // Auto-refresh every 3 seconds
+            setInterval(loadScores, 3000);
+        }
+        
+        // Allow Enter key to submit
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+        
+        function loadScores() {
+            const scores = JSON.parse(localStorage.getItem('mth112e_week2_scores') || '[]');
+            const container = document.getElementById('scoresContainer');
+            
+            if (scores.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No group data found. Groups need to complete the worksheet and click "Save Progress".</p>';
+                return;
+            }
+            
+            // Sort by percentage (descending)
+            const sorted = [...scores].sort((a, b) => {
+                if (b.percentage !== a.percentage) {
+                    return b.percentage - a.percentage;
+                }
+                return b.totalCorrect - a.totalCorrect;
+            });
+            
+            container.innerHTML = sorted.map((session, index) => {
+                const date = new Date(session.timestamp).toLocaleString();
+                const rank = index + 1;
+                const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `${rank}.`;
+                
+                return `
+                    <div class="border border-gray-200 rounded-lg p-4 ${index < 3 ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-300' : ''}">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-3">
+                                <span class="text-2xl">${medal}</span>
+                                <h3 class="font-semibold text-lg">${session.groupName || 'Anonymous'}</h3>
+                            </div>
+                            <span class="text-sm text-gray-500">${date}</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-blue-600">${session.scores.warmup.correct}/${session.scores.warmup.total}</div>
+                                <div class="text-sm text-gray-600">Warm-up</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-green-600">${session.scores.workout.correct}/${session.scores.workout.total}</div>
+                                <div class="text-sm text-gray-600">Workout</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-purple-600">${session.scores.cooldown.correct}/${session.scores.cooldown.total}</div>
+                                <div class="text-sm text-gray-600">Cool-down</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-orange-600">${session.scores.bonus.correct}/${session.scores.bonus.total}</div>
+                                <div class="text-sm text-gray-600">Bonus</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <div class="text-sm text-gray-600">
+                                Total: ${session.totalCorrect}/${session.totalQuestions} (${session.percentage}%)
+                            </div>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: ${session.percentage}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function exportScores() {
+            const scores = JSON.parse(localStorage.getItem('mth112e_week2_scores') || '[]');
+            if (scores.length === 0) {
+                alert('No scores to export!');
+                return;
+            }
+            
+            // Sort by percentage
+            const sorted = [...scores].sort((a, b) => {
+                if (b.percentage !== a.percentage) {
+                    return b.percentage - a.percentage;
+                }
+                return b.totalCorrect - a.totalCorrect;
+            });
+            
+            // Convert to CSV format
+            const csvContent = [
+                'Rank,Group Name,Timestamp,Warm-up Correct,Warm-up Total,Workout Correct,Workout Total,Cool-down Correct,Cool-down Total,Bonus Correct,Bonus Total,Total Correct,Total Questions,Percentage',
+                ...sorted.map((session, index) => {
+                    return [
+                        index + 1,
+                        session.groupName || 'Anonymous',
+                        session.timestamp,
+                        session.scores.warmup.correct,
+                        session.scores.warmup.total,
+                        session.scores.workout.correct,
+                        session.scores.workout.total,
+                        session.scores.cooldown.correct,
+                        session.scores.cooldown.total,
+                        session.scores.bonus.correct,
+                        session.scores.bonus.total,
+                        session.totalCorrect,
+                        session.totalQuestions,
+                        session.percentage
+                    ].join(',');
+                })
+            ].join('\n');
+            
+            // Download CSV
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mth112e_week2_scores_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function clearScores() {
+            if (confirm('Are you sure you want to clear all group scores? This cannot be undone.')) {
+                localStorage.removeItem('mth112e_week2_scores');
+                loadScores();
+            }
+        }
+    </script>
+</body>
+</html>
