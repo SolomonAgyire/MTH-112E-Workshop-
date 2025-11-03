@@ -351,33 +351,47 @@
 
             <div class="mt-6 space-y-6 md:space-y-4">
                 <!-- Workout Questions a-h -->
-                <div class="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
-                    <label for="wa_input" class="block text-base md:text-lg font-medium md:col-span-1">a. Opens Up or Down?</label>
-                    <input type="text" id="wa_input" class="w-full md:w-24 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Up or Down">
-                    <div class="flex gap-2 md:col-span-1">
+                <div class="space-y-2 md:grid md:grid-cols-3 md:gap-4 md:items-center">
+                    <div class="flex items-center gap-2 md:col-span-1">
+                        <label for="wa_input" class="text-base md:text-lg font-medium flex-1">a. Opens Up or Down?</label>
+                        <div class="flex gap-1 md:hidden">
+                            <button id="btn_wa" class="bg-indigo-600 text-white py-1.5 px-2 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs">Check</button>
+                            <button id="hint_wa_btn" class="bg-yellow-500 text-white py-1.5 px-2 rounded-lg hover:bg-yellow-600 transition-colors shadow text-xs" title="Get a hint">💡</button>
+                        </div>
+                    </div>
+                    <input type="text" id="wa_input" class="w-32 md:w-24 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 md:col-span-1" placeholder="Up or Down">
+                    <div class="hidden md:flex gap-2 md:col-span-1">
                         <button id="btn_wa" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
                         <button id="hint_wa_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
                         <span id="res_wa" class="ml-2 font-medium text-sm"></span>
                     </div>
+                    <span id="res_wa" class="md:hidden ml-2 font-medium text-sm"></span>
                 </div>
                 <div id="hint_wa" class="hidden hint-box">
                     <strong class="text-yellow-900">Hint:</strong> <span>Look at the coefficient <span class="math">\(a\)</span>. In vertex form <span class="math">\(f(x) = a(x-h)^2 + k\)</span>, here we have <span class="math">\(a = 1\)</span> (positive).</span>
                 </div>
                 
-                <div class="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
-                    <label for="wb_h" class="block text-base md:text-lg font-medium md:col-span-1">b. Identify the Vertex <span class="math">\((h, k)\)</span></label>
+                <div class="space-y-2 md:grid md:grid-cols-3 md:gap-4 md:items-center">
+                    <div class="flex items-center gap-2 md:col-span-1">
+                        <label for="wb_h" class="text-base md:text-lg font-medium flex-1">b. Identify the Vertex <span class="math">\((h, k)\)</span></label>
+                        <div class="flex gap-1 md:hidden">
+                            <button id="btn_wb" class="bg-indigo-600 text-white py-1.5 px-2 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs">Check</button>
+                            <button id="hint_wb_btn" class="bg-yellow-500 text-white py-1.5 px-2 rounded-lg hover:bg-yellow-600 transition-colors shadow text-xs" title="Get a hint">💡</button>
+                        </div>
+                    </div>
                     <div class="flex gap-2 items-center">
                         <span class="font-mono font-bold">(</span>
-                        <input type="number" id="wb_h" class="w-16 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="h">
+                        <input type="number" id="wb_h" class="w-14 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="h">
                         <span class="font-mono font-bold">,</span>
-                        <input type="number" id="wb_k" class="w-16 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="k">
+                        <input type="number" id="wb_k" class="w-14 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="k">
                         <span class="font-mono font-bold">)</span>
                     </div>
-                    <div class="flex gap-2 md:col-span-1">
+                    <div class="hidden md:flex gap-2 md:col-span-1">
                         <button id="btn_wb" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
                         <button id="hint_wb_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
                         <span id="res_wb" class="ml-2 font-medium text-sm"></span>
                     </div>
+                    <span id="res_wb" class="md:hidden ml-2 font-medium text-sm"></span>
                 </div>
                 <div id="hint_wb" class="hidden hint-box">
                     <strong class="text-yellow-900">Hint:</strong> 
@@ -389,14 +403,21 @@
                     </div>
                 </div>
 
-                <div class="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
-                    <label for="wc_input" class="block text-base md:text-lg font-medium md:col-span-1">c. Identify the <span class="math">\(x\)</span> and <span class="math">\(y\)</span> intercepts</label>
-                    <input type="text" id="wc_input" class="w-full md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., (0,0), (6,0)">
-                    <div class="flex gap-2 md:col-span-1">
+                <div class="space-y-2 md:grid md:grid-cols-3 md:gap-4 md:items-center">
+                    <div class="flex items-center gap-2 md:col-span-1">
+                        <label for="wc_input" class="text-base md:text-lg font-medium flex-1">c. Identify the <span class="math">\(x\)</span> and <span class="math">\(y\)</span> intercepts</label>
+                        <div class="flex gap-1 md:hidden">
+                            <button id="btn_wc" class="bg-indigo-600 text-white py-1.5 px-2 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs">Check</button>
+                            <button id="hint_wc_btn" class="bg-yellow-500 text-white py-1.5 px-2 rounded-lg hover:bg-yellow-600 transition-colors shadow text-xs" title="Get a hint">💡</button>
+                        </div>
+                    </div>
+                    <input type="text" id="wc_input" class="w-40 md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 md:col-span-1" placeholder="e.g., (0,0), (6,0)">
+                    <div class="hidden md:flex gap-2 md:col-span-1">
                         <button id="btn_wc" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
                         <button id="hint_wc_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
                         <span id="res_wc" class="ml-2 font-medium text-sm"></span>
                     </div>
+                    <span id="res_wc" class="md:hidden ml-2 font-medium text-sm"></span>
                 </div>
                 <div id="hint_wc" class="hidden hint-box">
                     <strong class="text-yellow-900">Hint:</strong>
@@ -409,14 +430,21 @@
                     </div>
                 </div>
                 
-                <div class="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
-                    <label for="wd_input" class="block text-base md:text-lg font-medium md:col-span-1">d. Determine the axis of symmetry.</label>
-                    <input type="text" id="wd_input" class="w-full md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="x = #">
-                    <div class="flex gap-2 md:col-span-1">
+                <div class="space-y-2 md:grid md:grid-cols-3 md:gap-4 md:items-center">
+                    <div class="flex items-center gap-2 md:col-span-1">
+                        <label for="wd_input" class="text-base md:text-lg font-medium flex-1">d. Determine the axis of symmetry.</label>
+                        <div class="flex gap-1 md:hidden">
+                            <button id="btn_wd" class="bg-indigo-600 text-white py-1.5 px-2 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs">Check</button>
+                            <button id="hint_wd_btn" class="bg-yellow-500 text-white py-1.5 px-2 rounded-lg hover:bg-yellow-600 transition-colors shadow text-xs" title="Get a hint">💡</button>
+                        </div>
+                    </div>
+                    <input type="text" id="wd_input" class="w-24 md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 md:col-span-1" placeholder="x = #">
+                    <div class="hidden md:flex gap-2 md:col-span-1">
                         <button id="btn_wd" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
                         <button id="hint_wd_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
                         <span id="res_wd" class="ml-2 font-medium text-sm"></span>
                     </div>
+                    <span id="res_wd" class="md:hidden ml-2 font-medium text-sm"></span>
                 </div>
                 <div id="hint_wd" class="hidden hint-box">
                     <strong class="text-yellow-900">Hint:</strong> 
@@ -428,14 +456,21 @@
                     </div>
                 </div>
                 
-                <div class="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
-                    <label for="we_input" class="block text-base md:text-lg font-medium md:col-span-1">e. Determine the Min/Max Value.</label>
-                    <input type="number" id="we_input" class="w-full md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Value">
-                    <div class="flex gap-2 md:col-span-1">
+                <div class="space-y-2 md:grid md:grid-cols-3 md:gap-4 md:items-center">
+                    <div class="flex items-center gap-2 md:col-span-1">
+                        <label for="we_input" class="text-base md:text-lg font-medium flex-1">e. Determine the Min/Max Value.</label>
+                        <div class="flex gap-1 md:hidden">
+                            <button id="btn_we" class="bg-indigo-600 text-white py-1.5 px-2 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs">Check</button>
+                            <button id="hint_we_btn" class="bg-yellow-500 text-white py-1.5 px-2 rounded-lg hover:bg-yellow-600 transition-colors shadow text-xs" title="Get a hint">💡</button>
+                        </div>
+                    </div>
+                    <input type="number" id="we_input" class="w-24 md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 md:col-span-1" placeholder="Value">
+                    <div class="hidden md:flex gap-2 md:col-span-1">
                         <button id="btn_we" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
                         <button id="hint_we_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
                         <span id="res_we" class="ml-2 font-medium text-sm"></span>
                     </div>
+                    <span id="res_we" class="md:hidden ml-2 font-medium text-sm"></span>
                 </div>
                 <div id="hint_we" class="hidden hint-box">
                     <strong class="text-yellow-900">Hint:</strong> 
@@ -447,27 +482,41 @@
                     </div>
                 </div>
                 
-                <div class="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
-                    <label for="wg_input" class="block text-base md:text-lg font-medium md:col-span-1">f. Write the Domain (Interval Notation).</label>
-                    <input type="text" id="wg_input" class="w-full md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., (-inf, inf)">
-                    <div class="flex gap-2 md:col-span-1">
+                <div class="space-y-2 md:grid md:grid-cols-3 md:gap-4 md:items-center">
+                    <div class="flex items-center gap-2 md:col-span-1">
+                        <label for="wg_input" class="text-base md:text-lg font-medium flex-1">f. Write the Domain (Interval Notation).</label>
+                        <div class="flex gap-1 md:hidden">
+                            <button id="btn_wg" class="bg-indigo-600 text-white py-1.5 px-2 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs">Check</button>
+                            <button id="hint_wg_btn" class="bg-yellow-500 text-white py-1.5 px-2 rounded-lg hover:bg-yellow-600 transition-colors shadow text-xs" title="Get a hint">💡</button>
+                        </div>
+                    </div>
+                    <input type="text" id="wg_input" class="w-40 md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 md:col-span-1" placeholder="e.g., (-inf, inf)">
+                    <div class="hidden md:flex gap-2 md:col-span-1">
                         <button id="btn_wg" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
                         <button id="hint_wg_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
                         <span id="res_wg" class="ml-2 font-medium text-sm"></span>
                     </div>
+                    <span id="res_wg" class="md:hidden ml-2 font-medium text-sm"></span>
                 </div>
                 <div id="hint_wg" class="hidden hint-box">
                     <strong class="text-yellow-900">Hint:</strong> <span>Quadratic functions are polynomials. All polynomials have domain <span class="math">\((-\infty, \infty)\)</span> (all real numbers) since you can plug any real number into <span class="math">\(x\)</span>.</span>
                 </div>
 
-                <div class="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
-                    <label for="wh_input" class="block text-base md:text-lg font-medium md:col-span-1">g. Write the Range (Interval Notation).</label>
-                    <input type="text" id="wh_input" class="w-full md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., [-9, inf)">
-                    <div class="flex gap-2 md:col-span-1">
+                <div class="space-y-2 md:grid md:grid-cols-3 md:gap-4 md:items-center">
+                    <div class="flex items-center gap-2 md:col-span-1">
+                        <label for="wh_input" class="text-base md:text-lg font-medium flex-1">g. Write the Range (Interval Notation).</label>
+                        <div class="flex gap-1 md:hidden">
+                            <button id="btn_wh" class="bg-indigo-600 text-white py-1.5 px-2 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs">Check</button>
+                            <button id="hint_wh_btn" class="bg-yellow-500 text-white py-1.5 px-2 rounded-lg hover:bg-yellow-600 transition-colors shadow text-xs" title="Get a hint">💡</button>
+                        </div>
+                    </div>
+                    <input type="text" id="wh_input" class="w-40 md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 md:col-span-1" placeholder="e.g., [-9, inf)">
+                    <div class="hidden md:flex gap-2 md:col-span-1">
                         <button id="btn_wh" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
                         <button id="hint_wh_btn" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
                         <span id="res_wh" class="ml-2 font-medium text-sm"></span>
                     </div>
+                    <span id="res_wh" class="md:hidden ml-2 font-medium text-sm"></span>
                 </div>
                 <div id="hint_wh" class="hidden hint-box">
                     <strong class="text-yellow-900">Hint:</strong> 
@@ -493,65 +542,119 @@
 
             <div class="mt-6 space-y-6">
                 <!-- Zero 1 -->
-                <div class="border border-stone-200 rounded-lg p-4 bg-stone-50 space-y-4">
-                    <p class="text-sm font-semibold text-stone-700 mb-3">Zero #1:</p>
-                    <div class="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
-                        <label class="block text-base font-medium md:col-span-1">Zero value:</label>
-                        <input type="number" id="cool1_zero" class="w-full md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 0">
+                <div class="border border-stone-200 rounded-lg p-4 bg-stone-50">
+                    <div class="flex items-center gap-2 mb-3">
+                        <p class="text-sm font-semibold text-stone-700 flex-1">Zero #1:</p>
+                        <button id="btnCool1_zero" class="md:hidden bg-indigo-600 text-white py-1.5 px-2 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs">Check Zero</button>
+                        <button id="btnCool1_mult" class="md:hidden bg-indigo-600 text-white py-1.5 px-2 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs">Check Mult</button>
+                    </div>
+                    <div class="md:hidden grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="block text-xs font-medium text-stone-600 mb-1">Zero value:</label>
+                            <input type="number" id="cool1_zero" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 0">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-stone-600 mb-1">Multiplicity:</label>
+                            <input type="number" id="cool1_mult" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 2">
+                        </div>
+                    </div>
+                    <div class="hidden md:grid md:grid-cols-3 md:gap-4 md:items-center">
+                        <label class="text-base font-medium md:col-span-1">Zero value:</label>
+                        <input type="number" id="cool1_zero" class="md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 md:col-span-1" placeholder="e.g., 0">
                         <div class="flex gap-2 md:col-span-1">
                             <button id="btnCool1_zero" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
                             <span id="resultCool1_zero" class="ml-2 font-medium text-sm"></span>
                         </div>
                     </div>
-                    <div class="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
-                        <label class="block text-base font-medium md:col-span-1">Multiplicity:</label>
-                        <input type="number" id="cool1_mult" class="w-full md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 2">
+                    <div class="hidden md:grid md:grid-cols-3 md:gap-4 md:items-center mt-3">
+                        <label class="text-base font-medium md:col-span-1">Multiplicity:</label>
+                        <input type="number" id="cool1_mult" class="md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 md:col-span-1" placeholder="e.g., 2">
                         <div class="flex gap-2 md:col-span-1">
                             <button id="btnCool1_mult" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
                             <span id="resultCool1_mult" class="ml-2 font-medium text-sm"></span>
                         </div>
                     </div>
+                    <div class="md:hidden mt-2 space-y-1">
+                        <span id="resultCool1_zero" class="font-medium text-sm"></span>
+                        <span id="resultCool1_mult" class="font-medium text-sm block"></span>
+                    </div>
                 </div>
 
                 <!-- Zero 2 -->
-                <div class="border border-stone-200 rounded-lg p-4 bg-stone-50 space-y-4">
-                    <p class="text-sm font-semibold text-stone-700 mb-3">Zero #2:</p>
-                    <div class="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
-                        <label class="block text-base font-medium md:col-span-1">Zero value:</label>
-                        <input type="number" id="cool2_zero" class="w-full md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 5">
+                <div class="border border-stone-200 rounded-lg p-4 bg-stone-50">
+                    <div class="flex items-center gap-2 mb-3">
+                        <p class="text-sm font-semibold text-stone-700 flex-1">Zero #2:</p>
+                        <button id="btnCool2_zero" class="md:hidden bg-indigo-600 text-white py-1.5 px-2 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs">Check Zero</button>
+                        <button id="btnCool2_mult" class="md:hidden bg-indigo-600 text-white py-1.5 px-2 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs">Check Mult</button>
+                    </div>
+                    <div class="md:hidden grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="block text-xs font-medium text-stone-600 mb-1">Zero value:</label>
+                            <input type="number" id="cool2_zero" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 5">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-stone-600 mb-1">Multiplicity:</label>
+                            <input type="number" id="cool2_mult" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 1">
+                        </div>
+                    </div>
+                    <div class="hidden md:grid md:grid-cols-3 md:gap-4 md:items-center">
+                        <label class="text-base font-medium md:col-span-1">Zero value:</label>
+                        <input type="number" id="cool2_zero" class="md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 md:col-span-1" placeholder="e.g., 5">
                         <div class="flex gap-2 md:col-span-1">
                             <button id="btnCool2_zero" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
                             <span id="resultCool2_zero" class="ml-2 font-medium text-sm"></span>
                         </div>
                     </div>
-                    <div class="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
-                        <label class="block text-base font-medium md:col-span-1">Multiplicity:</label>
-                        <input type="number" id="cool2_mult" class="w-full md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 1">
+                    <div class="hidden md:grid md:grid-cols-3 md:gap-4 md:items-center mt-3">
+                        <label class="text-base font-medium md:col-span-1">Multiplicity:</label>
+                        <input type="number" id="cool2_mult" class="md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 md:col-span-1" placeholder="e.g., 1">
                         <div class="flex gap-2 md:col-span-1">
                             <button id="btnCool2_mult" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
                             <span id="resultCool2_mult" class="ml-2 font-medium text-sm"></span>
                         </div>
                     </div>
+                    <div class="md:hidden mt-2 space-y-1">
+                        <span id="resultCool2_zero" class="font-medium text-sm"></span>
+                        <span id="resultCool2_mult" class="font-medium text-sm block"></span>
+                    </div>
                 </div>
 
                 <!-- Zero 3 -->
-                <div class="border border-stone-200 rounded-lg p-4 bg-stone-50 space-y-4">
-                    <p class="text-sm font-semibold text-stone-700 mb-3">Zero #3:</p>
-                    <div class="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
-                        <label class="block text-base font-medium md:col-span-1">Zero value:</label>
-                        <input type="number" id="cool3_zero" class="w-full md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., -2">
+                <div class="border border-stone-200 rounded-lg p-4 bg-stone-50">
+                    <div class="flex items-center gap-2 mb-3">
+                        <p class="text-sm font-semibold text-stone-700 flex-1">Zero #3:</p>
+                        <button id="btnCool3_zero" class="md:hidden bg-indigo-600 text-white py-1.5 px-2 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs">Check Zero</button>
+                        <button id="btnCool3_mult" class="md:hidden bg-indigo-600 text-white py-1.5 px-2 rounded-lg hover:bg-indigo-700 transition-colors shadow text-xs">Check Mult</button>
+                    </div>
+                    <div class="md:hidden grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="block text-xs font-medium text-stone-600 mb-1">Zero value:</label>
+                            <input type="number" id="cool3_zero" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., -2">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-stone-600 mb-1">Multiplicity:</label>
+                            <input type="number" id="cool3_mult" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 3">
+                        </div>
+                    </div>
+                    <div class="hidden md:grid md:grid-cols-3 md:gap-4 md:items-center">
+                        <label class="text-base font-medium md:col-span-1">Zero value:</label>
+                        <input type="number" id="cool3_zero" class="md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 md:col-span-1" placeholder="e.g., -2">
                         <div class="flex gap-2 md:col-span-1">
                             <button id="btnCool3_zero" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
                             <span id="resultCool3_zero" class="ml-2 font-medium text-sm"></span>
                         </div>
                     </div>
-                    <div class="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:items-center">
-                        <label class="block text-base font-medium md:col-span-1">Multiplicity:</label>
-                        <input type="number" id="cool3_mult" class="w-full md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 3">
+                    <div class="hidden md:grid md:grid-cols-3 md:gap-4 md:items-center mt-3">
+                        <label class="text-base font-medium md:col-span-1">Multiplicity:</label>
+                        <input type="number" id="cool3_mult" class="md:w-20 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 md:col-span-1" placeholder="e.g., 3">
                         <div class="flex gap-2 md:col-span-1">
                             <button id="btnCool3_mult" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
                             <span id="resultCool3_mult" class="ml-2 font-medium text-sm"></span>
                         </div>
+                    </div>
+                    <div class="md:hidden mt-2 space-y-1">
+                        <span id="resultCool3_zero" class="font-medium text-sm"></span>
+                        <span id="resultCool3_mult" class="font-medium text-sm block"></span>
                     </div>
                 </div>
 
