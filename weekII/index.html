@@ -927,7 +927,13 @@
         // --- CORE CHECKING FUNCTIONS ---
         function checkAnswer(checkFunc, resultId, buttonIds, correctAnswer, hintId, attemptCounterName, section, questionId) {
             const resultElement = document.getElementById(resultId);
-            const buttonElements = Array.isArray(buttonIds) ? buttonIds.map(id => document.getElementById(id)) : [document.getElementById(buttonIds)];
+            // Handle duplicate IDs (mobile/desktop versions) by using querySelectorAll
+            let buttonElements;
+            if (Array.isArray(buttonIds)) {
+                buttonElements = buttonIds.flatMap(id => Array.from(document.querySelectorAll(`#${id}`)));
+            } else {
+                buttonElements = Array.from(document.querySelectorAll(`#${buttonIds}`));
+            }
             const hintElement = document.getElementById(hintId);
             
             if (answered[questionId]) return;
@@ -1027,46 +1033,61 @@
         document.getElementById('btnWarmup3_F').addEventListener('click', () => checkW3(false));
 
         // --- WORKOUT LOGIC ---
-        document.getElementById('btn_wa').addEventListener('click', () => {
-            const input = normalize(document.getElementById('wa_input').value);
-            checkAnswer(() => input === 'up', 'res_wa', 'btn_wa', 'Up', 'hint_wa', 'workout_a', 'workout', 'workout_a');
+        // Use querySelectorAll to handle duplicate IDs (mobile and desktop versions)
+        document.querySelectorAll('#btn_wa').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = normalize(document.getElementById('wa_input').value);
+                checkAnswer(() => input === 'up', 'res_wa', 'btn_wa', 'Up', 'hint_wa', 'workout_a', 'workout', 'workout_a');
+            });
         });
 
-        document.getElementById('btn_wb').addEventListener('click', () => {
-            const h = parseFloat(document.getElementById('wb_h').value);
-            const k = parseFloat(document.getElementById('wb_k').value);
-            checkAnswer(() => (h === 3 && k === -9), 'res_wb', 'btn_wb', '(3, -9)', 'hint_wb', 'workout_b', 'workout', 'workout_b');
+        document.querySelectorAll('#btn_wb').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const h = parseFloat(document.getElementById('wb_h').value);
+                const k = parseFloat(document.getElementById('wb_k').value);
+                checkAnswer(() => (h === 3 && k === -9), 'res_wb', 'btn_wb', '(3, -9)', 'hint_wb', 'workout_b', 'workout', 'workout_b');
+            });
         });
         
-        document.getElementById('btn_wc').addEventListener('click', () => {
-            const input = normalize(document.getElementById('wc_input').value);
-            const correct1 = normalize('(0,0),(6,0)');
-            const correct2 = normalize('(6,0),(0,0)');
-            checkAnswer(() => (input === correct1 || input === correct2 || input === normalize('(0,0), (6,0)')), 'res_wc', 'btn_wc', '(0,0), (6,0)', 'hint_wc', 'workout_c', 'workout', 'workout_c');
+        document.querySelectorAll('#btn_wc').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = normalize(document.getElementById('wc_input').value);
+                const correct1 = normalize('(0,0),(6,0)');
+                const correct2 = normalize('(6,0),(0,0)');
+                checkAnswer(() => (input === correct1 || input === correct2 || input === normalize('(0,0), (6,0)')), 'res_wc', 'btn_wc', '(0,0), (6,0)', 'hint_wc', 'workout_c', 'workout', 'workout_c');
+            });
         });
         
-        document.getElementById('btn_wd').addEventListener('click', () => {
-            const input = normalize(document.getElementById('wd_input').value);
-            checkAnswer(() => (input === 'x=3' || input === 'x3'), 'res_wd', 'btn_wd', 'x = 3', 'hint_wd', 'workout_d', 'workout', 'workout_d');
+        document.querySelectorAll('#btn_wd').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = normalize(document.getElementById('wd_input').value);
+                checkAnswer(() => (input === 'x=3' || input === 'x3'), 'res_wd', 'btn_wd', 'x = 3', 'hint_wd', 'workout_d', 'workout', 'workout_d');
+            });
         });
         
-        document.getElementById('btn_we').addEventListener('click', () => {
-            const input = parseFloat(document.getElementById('we_input').value);
-            checkAnswer(() => (input === -9), 'res_we', 'btn_we', '-9', 'hint_we', 'workout_e', 'workout', 'workout_e');
+        document.querySelectorAll('#btn_we').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = parseFloat(document.getElementById('we_input').value);
+                checkAnswer(() => (input === -9), 'res_we', 'btn_we', '-9', 'hint_we', 'workout_e', 'workout', 'workout_e');
+            });
         });
 
-        document.getElementById('btn_wg').addEventListener('click', () => {
-            const input = normalize(document.getElementById('wg_input').value);
-            const correct1 = normalize('(-inf, inf)');
-            const correct2 = normalize('(-\\infty, \\infty)');
-            checkAnswer(() => (input === correct1 || input === correct2 || input === 'allreals'), 'res_wg', 'btn_wg', '(-∞, ∞)', 'hint_wg', 'workout_g', 'workout', 'workout_g');
+        document.querySelectorAll('#btn_wg').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = normalize(document.getElementById('wg_input').value);
+                const correct1 = normalize('(-inf, inf)');
+                const correct2 = normalize('(-\\infty, \\infty)');
+                checkAnswer(() => (input === correct1 || input === correct2 || input === 'allreals'), 'res_wg', 'btn_wg', '(-∞, ∞)', 'hint_wg', 'workout_g', 'workout', 'workout_g');
+            });
         });
         
-        document.getElementById('btn_wh').addEventListener('click', () => {
-            const input = normalize(document.getElementById('wh_input').value);
-            const correct1 = normalize('[-9, inf)');
-            const correct2 = normalize('[-9, \\infty)');
-            checkAnswer(() => (input === correct1 || input === correct2), 'res_wh', 'btn_wh', '[-9, ∞)', 'hint_wh', 'workout_h', 'workout', 'workout_h');
+        document.querySelectorAll('#btn_wh').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = normalize(document.getElementById('wh_input').value);
+                const correct1 = normalize('[-9, inf)');
+                const correct2 = normalize('[-9, \\infty)');
+                checkAnswer(() => (input === correct1 || input === correct2), 'res_wh', 'btn_wh', '[-9, ∞)', 'hint_wh', 'workout_h', 'workout', 'workout_h');
+            });
         });
         
         // --- COOL-DOWN LOGIC ---
@@ -1162,15 +1183,15 @@
         };
         
         Object.keys(hintButtons).forEach(btnId => {
-            const btn = document.getElementById(btnId);
-            if (btn) {
+            // Use querySelectorAll to handle duplicate IDs (mobile and desktop versions)
+            document.querySelectorAll(`#${btnId}`).forEach(btn => {
                 btn.addEventListener('click', () => {
                     const hintContent = document.getElementById(hintButtons[btnId]);
                     if (hintContent) {
                         hintContent.classList.toggle('hidden');
                     }
                 });
-            }
+            });
         });
 
         // --- SIDEBAR FUNCTIONALITY ---
