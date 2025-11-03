@@ -961,12 +961,24 @@
                 else if (questionId === 'workout_e') document.getElementById('we_input').disabled = true;
                 else if (questionId === 'workout_g') document.getElementById('wg_input').disabled = true;
                 else if (questionId === 'workout_h') document.getElementById('wh_input').disabled = true;
-                else if (questionId === 'cooldown1_zero') document.getElementById('cool1_zero').disabled = true;
-                else if (questionId === 'cooldown1_mult') document.getElementById('cool1_mult').disabled = true;
-                else if (questionId === 'cooldown2_zero') document.getElementById('cool2_zero').disabled = true;
-                else if (questionId === 'cooldown2_mult') document.getElementById('cool2_mult').disabled = true;
-                else if (questionId === 'cooldown3_zero') document.getElementById('cool3_zero').disabled = true;
-                else if (questionId === 'cooldown3_mult') document.getElementById('cool3_mult').disabled = true;
+                else if (questionId === 'cooldown1_zero') {
+                    document.querySelectorAll('#cool1_zero').forEach(input => input.disabled = true);
+                }
+                else if (questionId === 'cooldown1_mult') {
+                    document.querySelectorAll('#cool1_mult').forEach(input => input.disabled = true);
+                }
+                else if (questionId === 'cooldown2_zero') {
+                    document.querySelectorAll('#cool2_zero').forEach(input => input.disabled = true);
+                }
+                else if (questionId === 'cooldown2_mult') {
+                    document.querySelectorAll('#cool2_mult').forEach(input => input.disabled = true);
+                }
+                else if (questionId === 'cooldown3_zero') {
+                    document.querySelectorAll('#cool3_zero').forEach(input => input.disabled = true);
+                }
+                else if (questionId === 'cooldown3_mult') {
+                    document.querySelectorAll('#cool3_mult').forEach(input => input.disabled = true);
+                }
                 
                 if (hintElement) hintElement.classList.add('hidden');
                 attempts[attemptCounterName] = 0;
@@ -999,12 +1011,24 @@
                     else if (questionId === 'workout_e') document.getElementById('we_input').disabled = true;
                     else if (questionId === 'workout_g') document.getElementById('wg_input').disabled = true;
                     else if (questionId === 'workout_h') document.getElementById('wh_input').disabled = true;
-                    else if (questionId === 'cooldown1_zero') document.getElementById('cool1_zero').disabled = true;
-                    else if (questionId === 'cooldown1_mult') document.getElementById('cool1_mult').disabled = true;
-                    else if (questionId === 'cooldown2_zero') document.getElementById('cool2_zero').disabled = true;
-                    else if (questionId === 'cooldown2_mult') document.getElementById('cool2_mult').disabled = true;
-                    else if (questionId === 'cooldown3_zero') document.getElementById('cool3_zero').disabled = true;
-                    else if (questionId === 'cooldown3_mult') document.getElementById('cool3_mult').disabled = true;
+                    else if (questionId === 'cooldown1_zero') {
+                        document.querySelectorAll('#cool1_zero').forEach(input => input.disabled = true);
+                    }
+                    else if (questionId === 'cooldown1_mult') {
+                        document.querySelectorAll('#cool1_mult').forEach(input => input.disabled = true);
+                    }
+                    else if (questionId === 'cooldown2_zero') {
+                        document.querySelectorAll('#cool2_zero').forEach(input => input.disabled = true);
+                    }
+                    else if (questionId === 'cooldown2_mult') {
+                        document.querySelectorAll('#cool2_mult').forEach(input => input.disabled = true);
+                    }
+                    else if (questionId === 'cooldown3_zero') {
+                        document.querySelectorAll('#cool3_zero').forEach(input => input.disabled = true);
+                    }
+                    else if (questionId === 'cooldown3_mult') {
+                        document.querySelectorAll('#cool3_mult').forEach(input => input.disabled = true);
+                    }
                     
                     if (hintElement) hintElement.classList.add('hidden');
                 }
@@ -1092,33 +1116,53 @@
         
         // --- COOL-DOWN LOGIC ---
         // Zero 1: x = 0, multiplicity = 2
-        document.getElementById('btnCool1_zero').addEventListener('click', () => {
-            const zero = parseFloat(document.getElementById('cool1_zero').value);
-            checkAnswer(() => zero === 0, 'resultCool1_zero', 'btnCool1_zero', '0', 'hintCool1Content', 'cooldown1_zero', 'cooldown', 'cooldown1_zero');
+        // Use querySelectorAll to handle duplicate IDs (mobile and desktop versions)
+        document.querySelectorAll('#btnCool1_zero').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Get value from visible input (querySelector gets first match, which is fine since only one is visible)
+                const input = document.querySelector('#cool1_zero');
+                const zero = parseFloat(input ? input.value : 0);
+                checkAnswer(() => zero === 0, 'resultCool1_zero', 'btnCool1_zero', '0', 'hintCool1Content', 'cooldown1_zero', 'cooldown', 'cooldown1_zero');
+            });
         });
-        document.getElementById('btnCool1_mult').addEventListener('click', () => {
-            const mult = parseFloat(document.getElementById('cool1_mult').value);
-            checkAnswer(() => mult === 2, 'resultCool1_mult', 'btnCool1_mult', '2', 'hintCool1Content', 'cooldown1_mult', 'cooldown', 'cooldown1_mult');
+        document.querySelectorAll('#btnCool1_mult').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.querySelector('#cool1_mult');
+                const mult = parseFloat(input ? input.value : 0);
+                checkAnswer(() => mult === 2, 'resultCool1_mult', 'btnCool1_mult', '2', 'hintCool1Content', 'cooldown1_mult', 'cooldown', 'cooldown1_mult');
+            });
         });
 
         // Zero 2: x = 5, multiplicity = 1
-        document.getElementById('btnCool2_zero').addEventListener('click', () => {
-            const zero = parseFloat(document.getElementById('cool2_zero').value);
-            checkAnswer(() => zero === 5, 'resultCool2_zero', 'btnCool2_zero', '5', 'hintCool1Content', 'cooldown2_zero', 'cooldown', 'cooldown2_zero');
+        document.querySelectorAll('#btnCool2_zero').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.querySelector('#cool2_zero');
+                const zero = parseFloat(input ? input.value : 0);
+                checkAnswer(() => zero === 5, 'resultCool2_zero', 'btnCool2_zero', '5', 'hintCool1Content', 'cooldown2_zero', 'cooldown', 'cooldown2_zero');
+            });
         });
-        document.getElementById('btnCool2_mult').addEventListener('click', () => {
-            const mult = parseFloat(document.getElementById('cool2_mult').value);
-            checkAnswer(() => mult === 1, 'resultCool2_mult', 'btnCool2_mult', '1', 'hintCool1Content', 'cooldown2_mult', 'cooldown', 'cooldown2_mult');
+        document.querySelectorAll('#btnCool2_mult').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.querySelector('#cool2_mult');
+                const mult = parseFloat(input ? input.value : 0);
+                checkAnswer(() => mult === 1, 'resultCool2_mult', 'btnCool2_mult', '1', 'hintCool1Content', 'cooldown2_mult', 'cooldown', 'cooldown2_mult');
+            });
         });
 
         // Zero 3: x = -2, multiplicity = 3
-        document.getElementById('btnCool3_zero').addEventListener('click', () => {
-            const zero = parseFloat(document.getElementById('cool3_zero').value);
-            checkAnswer(() => zero === -2, 'resultCool3_zero', 'btnCool3_zero', '-2', 'hintCool1Content', 'cooldown3_zero', 'cooldown', 'cooldown3_zero');
+        document.querySelectorAll('#btnCool3_zero').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.querySelector('#cool3_zero');
+                const zero = parseFloat(input ? input.value : 0);
+                checkAnswer(() => zero === -2, 'resultCool3_zero', 'btnCool3_zero', '-2', 'hintCool1Content', 'cooldown3_zero', 'cooldown', 'cooldown3_zero');
+            });
         });
-        document.getElementById('btnCool3_mult').addEventListener('click', () => {
-            const mult = parseFloat(document.getElementById('cool3_mult').value);
-            checkAnswer(() => mult === 3, 'resultCool3_mult', 'btnCool3_mult', '3', 'hintCool1Content', 'cooldown3_mult', 'cooldown', 'cooldown3_mult');
+        document.querySelectorAll('#btnCool3_mult').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.querySelector('#cool3_mult');
+                const mult = parseFloat(input ? input.value : 0);
+                checkAnswer(() => mult === 3, 'resultCool3_mult', 'btnCool3_mult', '3', 'hintCool1Content', 'cooldown3_mult', 'cooldown', 'cooldown3_mult');
+            });
         });
 
         // --- BONUS LOGIC ---
