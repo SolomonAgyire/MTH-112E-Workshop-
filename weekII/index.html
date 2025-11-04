@@ -328,6 +328,33 @@
                         <p class="font-semibold mt-2">Remember: If a parabola opens downward (when <span class="math">\(a < 0\)</span>), does it have a maximum or minimum value?</p>
                     </div>
                 </div>
+
+                <!-- Warmup Question 4 -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="warmup4_h" class="block text-base md:text-lg font-medium md:flex-1">Q4. Find the vertex <span class="math">\((h, k)\)</span> of <span class="math">\(f(x) = 2x^2 - 12x + 5\)</span> using the vertex formula.</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <span class="font-mono font-bold">(</span>
+                        <input type="number" id="warmup4_h" class="w-16 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="h">
+                        <span class="font-mono font-bold">,</span>
+                        <input type="number" id="warmup4_k" class="w-16 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="k">
+                        <span class="font-mono font-bold">)</span>
+                        <button id="btnWarmup4" class="bg-indigo-600 text-white py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWarmup4" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWarmup4" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWarmup4Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong> 
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p>For <span class="math">\(f(x) = 2x^2 - 12x + 5\)</span>, we have <span class="math">\(a = 2\)</span> and <span class="math">\(b = -12\)</span>.</p>
+                        <p><strong>Step 1:</strong> Calculate <span class="math">\(h\)</span> using the vertex formula: <span class="math">\(h = -\frac{b}{2a}\)</span></p>
+                        <p>• <span class="math">\(h = -\frac{(-12)}{2(2)} = \frac{12}{4} = ?\)</span></p>
+                        <p><strong>Step 2:</strong> Calculate <span class="math">\(k\)</span> by evaluating <span class="math">\(f(h)\)</span>:</p>
+                        <p>• Substitute the value of <span class="math">\(h\)</span> into the function: <span class="math">\(k = f(h) = 2(h)^2 - 12(h) + 5\)</span></p>
+                        <p>• Simplify to find <span class="math">\(k\)</span>.</p>
+                        <p class="font-semibold mt-2 text-indigo-700">The vertex is at <span class="math">\((h, k)\)</span>.</p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -881,21 +908,21 @@
     <script>
         // --- GLOBAL STATE ---
         let attempts = {
-            warmup1: 3, warmup2: 1, warmup3: 1, // True/False have only 1 attempt
+            warmup1: 3, warmup2: 1, warmup3: 1, warmup4: 3, // True/False have only 1 attempt
             workout_a: 3, workout_b: 3, workout_c: 3, workout_d: 3, workout_e: 3, workout_g: 3, workout_h: 3,
             cooldown1_zero: 3, cooldown1_mult: 3, cooldown2_zero: 3, cooldown2_mult: 3, cooldown3_zero: 3, cooldown3_mult: 3,
             bonus1: 1, bonus2: 1, bonus3: 1, bonus4: 1, bonus5: 1, bonus6: 1, bonus7: 1, bonus8: 1, bonus9: 1 // True/False have only 1 attempt
         };
         
         let scores = {
-            warmup: { correct: 0, total: 3 },
+            warmup: { correct: 0, total: 4 },
             workout: { correct: 0, total: 7 },
             cooldown: { correct: 0, total: 6 }, // 3 zeros × 2 parts (zero + multiplicity) = 6 total points
             bonus: { correct: 0, total: 9 } // Now 9 bonus questions
         };
         
         let answered = {
-            warmup1: false, warmup2: false, warmup3: false,
+            warmup1: false, warmup2: false, warmup3: false, warmup4: false,
             workout_a: false, workout_b: false, workout_c: false, workout_d: false, workout_e: false, workout_g: false, workout_h: false,
             cooldown1_zero: false, cooldown1_mult: false, cooldown2_zero: false, cooldown2_mult: false, cooldown3_zero: false, cooldown3_mult: false,
             bonus1: false, bonus2: false, bonus3: false, bonus4: false, bonus5: false, bonus6: false, bonus7: false, bonus8: false, bonus9: false
@@ -956,6 +983,9 @@
                 if (questionId === 'warmup1') {
                     document.getElementById('warmup1_h').disabled = true;
                     document.getElementById('warmup1_k').disabled = true;
+                } else if (questionId === 'warmup4') {
+                    document.getElementById('warmup4_h').disabled = true;
+                    document.getElementById('warmup4_k').disabled = true;
                 } else if (questionId === 'workout_b') {
                     document.getElementById('wb_h').disabled = true;
                     document.getElementById('wb_k').disabled = true;
@@ -1012,6 +1042,9 @@
                     if (questionId === 'warmup1') {
                         document.getElementById('warmup1_h').disabled = true;
                         document.getElementById('warmup1_k').disabled = true;
+                    } else if (questionId === 'warmup4') {
+                        document.getElementById('warmup4_h').disabled = true;
+                        document.getElementById('warmup4_k').disabled = true;
                     } else if (questionId === 'workout_b') {
                         document.getElementById('wb_h').disabled = true;
                         document.getElementById('wb_k').disabled = true;
@@ -1065,6 +1098,13 @@
         };
         document.getElementById('btnWarmup3_T').addEventListener('click', () => checkW3(true));
         document.getElementById('btnWarmup3_F').addEventListener('click', () => checkW3(false));
+
+        // Warmup 4: Vertex formula - f(x) = 2x² - 12x + 5, vertex is (3, -13)
+        document.getElementById('btnWarmup4').addEventListener('click', () => {
+            const h = parseFloat(document.getElementById('warmup4_h').value);
+            const k = parseFloat(document.getElementById('warmup4_k').value);
+            checkAnswer(() => (h === 3 && k === -13), 'resultWarmup4', 'btnWarmup4', '(3, -13)', 'hintWarmup4Content', 'warmup4', 'warmup', 'warmup4');
+        });
 
         // --- WORKOUT LOGIC ---
         // Use querySelectorAll to handle duplicate IDs (mobile and desktop versions)
@@ -1238,6 +1278,7 @@
             'hintWarmup1': 'hintWarmup1Content',
             'hintWarmup2': 'hintWarmup2Content',
             'hintWarmup3': 'hintWarmup3Content',
+            'hintWarmup4': 'hintWarmup4Content',
             'hintCool1': 'hintCool1Content',
             'hintBonus1': 'hintBonus1Content',
             'hintBonus2': 'hintBonus2Content',
