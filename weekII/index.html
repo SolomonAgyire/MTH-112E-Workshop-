@@ -926,7 +926,8 @@
 
         // --- CORE CHECKING FUNCTIONS ---
         function checkAnswer(checkFunc, resultId, buttonIds, correctAnswer, hintId, attemptCounterName, section, questionId) {
-            const resultElement = document.getElementById(resultId);
+            // Handle duplicate result IDs (mobile/desktop versions) by using querySelectorAll
+            const resultElements = document.querySelectorAll(`#${resultId}`);
             // Handle duplicate IDs (mobile/desktop versions) by using querySelectorAll
             let buttonElements;
             if (Array.isArray(buttonIds)) {
@@ -944,8 +945,11 @@
             if (currentAttempts <= 0) return;
 
             if (isCorrect) {
-                resultElement.textContent = 'Correct! ✓';
-                resultElement.className = 'font-medium text-green-600';
+                // Update all result elements (mobile and desktop)
+                resultElements.forEach(el => {
+                    el.textContent = 'Correct! ✓';
+                    el.className = 'font-medium text-green-600';
+                });
                 buttonElements.forEach(btn => { if(btn) btn.disabled = true; });
                 
                 // Disable inputs based on questionId
@@ -990,12 +994,18 @@
                 attempts[attemptCounterName] = currentAttempts;
                 
                 if (currentAttempts > 0) {
-                    resultElement.textContent = `Incorrect. ${currentAttempts} trial${currentAttempts > 1 ? 's' : ''} remaining.`;
-                    resultElement.className = 'font-medium text-red-600';
+                    // Update all result elements (mobile and desktop)
+                    resultElements.forEach(el => {
+                        el.textContent = `Incorrect. ${currentAttempts} trial${currentAttempts > 1 ? 's' : ''} remaining.`;
+                        el.className = 'font-medium text-red-600';
+                    });
                     if (hintElement) hintElement.classList.remove('hidden');
                 } else {
-                    resultElement.textContent = `Incorrect. The correct answer is: ${correctAnswer}`;
-                    resultElement.className = 'font-bold text-red-700';
+                    // Update all result elements (mobile and desktop)
+                    resultElements.forEach(el => {
+                        el.textContent = `Incorrect. The correct answer is: ${correctAnswer}`;
+                        el.className = 'font-bold text-red-700';
+                    });
                     buttonElements.forEach(btn => { if(btn) btn.disabled = true; });
                     
                     // Disable inputs on final attempt
