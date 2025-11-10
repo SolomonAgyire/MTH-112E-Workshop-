@@ -1,0 +1,2077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTH 112E: Polynomial Long Division Review</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['$$', '$$']]
+            }
+        };
+    </script>
+    <style>
+        .container-base {
+            @apply max-w-2xl p-4 sm:p-8 space-y-8;
+            margin-left: calc(360px + 4rem);
+            margin-right: 5rem;
+        }
+        @media (max-width: 1024px) {
+            .container-base {
+                margin-left: calc(340px + 3rem);
+                margin-right: 4rem;
+            }
+        }
+        @media (max-width: 768px) {
+            .container-base {
+                margin-left: 0;
+                margin-right: 0;
+                max-width: 100%;
+            }
+        }
+        .section-card {
+            @apply bg-white rounded-2xl shadow-lg border border-stone-200;
+        }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 320px;
+            background: linear-gradient(to bottom, #ffffff, #f9fafb);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 320px;
+                max-width: 85vw;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+        .main-content {
+            transition: margin-left 0.3s ease;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        .progress-bar {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #a855f7);
+            transition: width 0.4s ease;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        .hint-box {
+            @apply bg-yellow-50 border border-yellow-200 p-4 rounded-lg mt-2;
+        }
+        .fab-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .fab-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5);
+        }
+        @media (min-width: 769px) {
+            .fab-button {
+                display: none;
+            }
+        }
+        .long-division-box {
+            font-family: 'Courier New', monospace;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .step-container {
+            @apply bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4;
+        }
+        .star-rating {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .star {
+            font-size: 32px;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .star:hover {
+            color: #fbbf24;
+            transform: scale(1.1);
+        }
+        .star.active {
+            color: #fbbf24;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="bg-stone-50 font-sans text-stone-800 antialiased">
+    
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <div class="p-4 sm:p-6 border-b-2 border-stone-200 bg-gradient-to-r from-blue-600 to-purple-600 text-white flex-shrink-0">
+            <button id="closeSidebar" class="md:hidden float-right text-white hover:text-gray-200 text-xl font-bold">×</button>
+            <h2 class="text-xl sm:text-2xl font-bold mb-1">Progress Tracker</h2>
+            <p class="text-xs sm:text-sm text-blue-100">Track your learning</p>
+        </div>
+        
+        <div class="p-4 sm:p-6 space-y-3 sm:space-y-4 flex-1 overflow-y-auto min-h-0">
+            <div>
+                <label class="block text-sm font-semibold text-stone-700 mb-2">Your Name</label>
+                <input type="text" id="studentName" placeholder="Enter your name" 
+                       class="w-full p-2 text-sm border-2 border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm mb-2">
+                <button id="submitName" class="w-full bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-xs sm:text-sm">
+                    Submit
+                </button>
+                <p id="nameStatus" class="text-xs text-stone-500 mt-1"></p>
+            </div>
+            
+            <!-- Leaderboard Section -->
+            <div class="border-t-2 border-stone-200 pt-3">
+                <h3 class="text-xs sm:text-sm font-bold text-stone-800 mb-2 flex items-center gap-2">
+                    🏆 Leaderboard
+                </h3>
+                <div id="leaderboard" class="space-y-1.5 max-h-40 sm:max-h-48 overflow-y-auto text-xs">
+                    <p class="text-xs text-stone-500 text-center py-2">No scores yet. Start working to see rankings!</p>
+                </div>
+            </div>
+            
+            <div class="space-y-3 sm:space-y-4">
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="font-semibold text-stone-700 text-xs sm:text-sm">Warm-up</span>
+                        <span id="scoreWarmup" class="font-bold text-blue-600 text-xs sm:text-sm">0/4</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progressWarmup" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="font-semibold text-stone-700 text-xs sm:text-sm">Workout A</span>
+                        <span id="scoreWorkoutA" class="font-bold text-blue-600 text-xs sm:text-sm">0/0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progressWorkoutA" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="font-semibold text-stone-700 text-xs sm:text-sm">Workout B</span>
+                        <span id="scoreWorkoutB" class="font-bold text-blue-600 text-xs sm:text-sm">0/7</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progressWorkoutB" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="font-semibold text-stone-700 text-xs sm:text-sm">Cool-Down</span>
+                        <span id="scoreCooldown" class="font-bold text-blue-600 text-xs sm:text-sm">0/4</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progressCooldown" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pt-4 border-t-2 border-stone-200 space-y-2 flex-shrink-0">
+                <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-3 rounded-lg border border-blue-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-sm sm:text-base text-stone-800">Total Score</span>
+                        <span id="totalScore" class="font-bold text-lg sm:text-xl text-blue-700">0/15</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progressTotal" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FAB Button for Mobile -->
+    <button id="openSidebar" class="fab-button">📊</button>
+    
+    <!-- Main Content -->
+    <main class="main-content container-base">
+        
+        <header class="text-center py-4">
+            <h1 class="text-2xl sm:text-4xl font-bold text-blue-700">MTH 112E Review: Polynomial Long Division</h1>
+            <p class="mt-2 text-lg text-stone-600">SLA Leader: Solomon Agyire</p>
+            <p class="mt-4 max-w-2xl mx-auto text-base">
+                <strong>Session Objective:</strong> Master polynomial long division through step-by-step guided practice. Learn to set up problems correctly, use placeholders, and express results in proper form.
+            </p>
+        </header>
+
+        <!-- Key Concepts Section -->
+        <section id="concepts" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200 my-8">
+            <h2 class="text-2xl font-bold text-blue-900 border-b border-stone-200 pb-2">📋 Key Concepts</h2>
+            
+            <div class="mt-6 space-y-4">
+                <div class="bg-green-50 border-l-4 border-green-600 p-4 rounded-lg">
+                    <p class="font-bold text-green-900 mb-2">Crucial Rule: Zero Placeholders</p>
+                    <p class="text-md text-stone-700">Before starting division, insert <span class="math">\(\mathbf{0x^n}\)</span> for any missing degrees in the dividend (numerator) to keep terms aligned (e.g., <span class="math">\(x^3 + 5\)</span> becomes <span class="math">\(x^3 + 0x^2 + 0x + 5\)</span>).</p>
+                </div>
+                <div class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-lg">
+                    <p class="font-bold text-blue-900 mb-2">Final Result Form (Mandatory)</p>
+                    <p class="text-xl font-mono text-center py-2"><span class="math">$$f(x) = \text{Quotient} + \frac{\text{Remainder}}{\text{Divisor}}$$</span></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Warm-up Section -->
+        <section id="warmup" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200 my-8">
+            <h2 class="text-2xl font-bold text-blue-900 border-b border-stone-200 pb-2">🚀 Part 1: Warm-up</h2>
+            <p class="mt-4 text-stone-600">Let's start with the basics. You have 3 trials for each question (except True/False which has 1 attempt).</p>
+            
+            <div class="mt-6 space-y-6 md:space-y-4">
+                <!-- Q1: Descending Order -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="warmup1_input" class="block text-base md:text-lg font-medium md:flex-1">Q1. Rewrite <span class="math">\(P(x) = 2x - 7 + 5x^3 - x^2\)</span> in standard form (descending powers).</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="warmup1_input" class="w-full md:w-64 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 5x^3 - x^2 + 2x - 7">
+                        <button id="btnWarmup1" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWarmup1" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWarmup1" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWarmup1Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Identify all terms and their degrees (powers).</p>
+                        <p><strong>Step 2:</strong> Arrange terms from highest power to lowest power (descending order).</p>
+                        <p><strong>Step 3:</strong> Write them in order, keeping the signs with each term.</p>
+                        <p class="mt-3"><strong>Example:</strong> For <span class="math">\(3x - 1 + 2x^2\)</span>, the descending order is <span class="math">\(2x^2 + 3x - 1\)</span>.</p>
+                        <p class="mt-2">Now apply this process to your polynomial!</p>
+                    </div>
+                </div>
+
+                <!-- Q2: Placeholder Setup -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="warmup2_input" class="block text-base md:text-lg font-medium md:flex-1">Q2. Rewrite <span class="math">\(D(x) = x^4 + 2x^2 - 1\)</span> using zero placeholders for missing terms.</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="warmup2_input" class="w-full md:w-64 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., x^4 + 0x^3 + 2x^2 + 0x - 1">
+                        <button id="btnWarmup2" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWarmup2" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWarmup2" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWarmup2Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Identify the highest degree (power) in your polynomial.</p>
+                        <p><strong>Step 2:</strong> List all degrees (powers) from the highest down to 0 (constant term).</p>
+                        <p><strong>Step 3:</strong> For each missing degree (power), add <span class="math">\(0x^n\)</span> as a placeholder.</p>
+                        <p class="mt-3"><strong>Example:</strong> For <span class="math">\(x^3 + 5\)</span>, we need:</p>
+                        <p>• <span class="math">\(x^3\)</span> (present)</p>
+                        <p>• <span class="math">\(x^2\)</span> (missing) → add <span class="math">\(0x^2\)</span></p>
+                        <p>• <span class="math">\(x\)</span> (missing) → add <span class="math">\(0x\)</span></p>
+                        <p>• Constant: <span class="math">\(5\)</span> (present)</p>
+                        <p>Result: <span class="math">\(x^3 + 0x^2 + 0x + 5\)</span></p>
+                        <p class="mt-2">Now apply this to your polynomial!</p>
+                    </div>
+                </div>
+
+                <!-- Q3: Terminology True/False -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label class="block text-base md:text-lg font-medium md:flex-1">Q3. True or False: The degree (power) of <span class="math">\(f(x) = 3x^5 - 2x^3 + 1\)</span> is 5.</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <button id="btnWarmup3_T" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">True</button>
+                        <button id="btnWarmup3_F" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">False</button>
+                        <button id="hintWarmup3" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWarmup3" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWarmup3Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Definition:</strong> The degree (power) of a polynomial is the highest power of <span class="math">\(x\)</span> that has a non-zero coefficient.</p>
+                        <p><strong>Step 1:</strong> Look at all the terms in the polynomial.</p>
+                        <p><strong>Step 2:</strong> Find the term with the highest power of <span class="math">\(x\)</span>.</p>
+                        <p><strong>Step 3:</strong> The power (exponent) of that term is the degree (power).</p>
+                        <p class="mt-3"><strong>Example:</strong> In <span class="math">\(4x^3 - 2x + 7\)</span>, the highest power is <span class="math">\(x^3\)</span>, so the degree (power) is 3.</p>
+                        <p class="mt-2">Now check the highest power in <span class="math">\(f(x) = 3x^5 - 2x^3 + 1\)</span>!</p>
+                    </div>
+                </div>
+
+                <!-- Q4: Leading Coefficient -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="warmup4_input" class="block text-base md:text-lg font-medium md:flex-1">Q4. What is the leading coefficient of <span class="math">\(g(x) = -2x^4 + 5x^2 - x + 3\)</span>?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="number" id="warmup4_input" class="w-24 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Number">
+                        <button id="btnWarmup4" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWarmup4" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWarmup4" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWarmup4Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Definition:</strong> The leading coefficient is the number (coefficient) multiplying the term with the highest degree (power).</p>
+                        <p><strong>Step 1:</strong> First, identify the term with the highest degree (power) of <span class="math">\(x\)</span>.</p>
+                        <p><strong>Step 2:</strong> Look at the number in front of that term - that's the leading coefficient.</p>
+                        <p><strong>Step 3:</strong> Don't forget the sign! If it's negative, include the negative sign.</p>
+                        <p class="mt-3"><strong>Example:</strong> In <span class="math">\(5x^3 - 2x + 1\)</span>, the highest degree (power) term is <span class="math">\(5x^3\)</span>, so the leading coefficient is <span class="math">\(5\)</span>.</p>
+                        <p class="mt-2">Now find the leading coefficient in your polynomial!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Practice Video -->
+            <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h3 class="text-lg font-bold text-blue-900 mb-3">📺 Additional Practice Video</h3>
+                <p class="text-stone-700 mb-4">Need more help with polynomial basics? Watch this video for additional practice:</p>
+                <div class="flex flex-col md:flex-row gap-4 items-center md:items-start">
+                    <a href="https://www.youtube.com/watch?v=_FSXJmESFmQ" target="_blank" class="flex-shrink-0">
+                        <img src="https://img.youtube.com/vi/_FSXJmESFmQ/mqdefault.jpg" alt="Polynomial Long Division Video" class="rounded-lg shadow-md hover:shadow-lg transition-shadow w-full md:w-64">
+                    </a>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-stone-800 mb-2">Long Division With Polynomials - The Easy Way!</h4>
+                        <p class="text-sm text-stone-600 mb-3">Learn polynomial long division step-by-step with clear examples from The Organic Chemistry Tutor. Perfect for understanding degrees (powers), placeholders, and the division process.</p>
+                        <a href="https://www.youtube.com/watch?v=_FSXJmESFmQ" target="_blank" class="inline-block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm font-semibold">
+                            ▶ Watch on YouTube
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Workout A: Guided Tutorial -->
+        <section id="workoutA" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200 my-8">
+            <h2 class="text-2xl font-bold text-blue-900 border-b border-stone-200 pb-2">💡 Part 2A: Guided Tutorial</h2>
+            <p class="mt-4 text-stone-600">Watch and learn! This is a fully worked example. Click "Show Step" buttons to reveal each step of the process.</p>
+            
+            <div class="mt-6 bg-stone-50 p-4 rounded-lg">
+                <p class="text-lg font-medium mb-2">Problem: Divide <span class="math">\((x^3 - 64) \div (x - 4)\)</span></p>
+            </div>
+
+            <div class="mt-6 space-y-4" id="guidedSteps">
+                <!-- Step 1: Setup -->
+                <div class="step-container">
+                    <button class="w-full text-left font-bold text-blue-900 mb-2 flex items-center justify-between" onclick="toggleStep('step1')">
+                        <span>Step 1: Setup with Placeholders</span>
+                        <span id="step1Toggle">▼</span>
+                    </button>
+                    <div id="step1" class="hidden">
+                        <p class="text-stone-700 mb-3">First, we need to set up the long division and add placeholders to the dividend (numerator).</p>
+                        <div class="long-division-box">
+                            <div class="text-sm">
+                                <div class="flex items-start">
+                                    <div class="mr-4">
+                                        <div class="border-b-2 border-stone-800 pb-1 mb-1">x - 4</div>
+                                        <div class="text-stone-600 text-xs mt-1">divisor</div>
+                                    </div>
+                                    <div>
+                                        <div>x³ + 0x² + 0x - 64</div>
+                                        <div class="text-stone-600 text-xs mt-1">dividend (numerator) (with placeholders)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-stone-700 mt-3"><strong>Explanation:</strong> Since <span class="math">\(x^3 - 64\)</span> is missing the <span class="math">\(x^2\)</span> and <span class="math">\(x\)</span> terms, we add <span class="math">\(0x^2\)</span> and <span class="math">\(0x\)</span> as placeholders.</p>
+                    </div>
+                </div>
+
+                <!-- Step 2: First Quotient Term -->
+                <div class="step-container">
+                    <button class="w-full text-left font-bold text-blue-900 mb-2 flex items-center justify-between" onclick="toggleStep('step2')">
+                        <span>Step 2: First Division</span>
+                        <span id="step2Toggle">▼</span>
+                    </button>
+                    <div id="step2" class="hidden">
+                        <p class="text-stone-700 mb-3">Divide the highest term of the dividend (numerator) by the highest term of the divisor.</p>
+                        <div class="long-division-box">
+                            <div class="text-sm">
+                                <div class="flex items-start">
+                                    <div class="mr-4">
+                                        <div class="border-b-2 border-stone-800 pb-1 mb-1">x - 4</div>
+                                    </div>
+                                    <div>
+                                        <div>x³ + 0x² + 0x - 64</div>
+                                        <div class="mt-2 text-blue-700 font-bold">x²</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-stone-700 mt-3"><strong>Calculation:</strong> <span class="math">\(\frac{x^3}{x} = x^2\)</span></p>
+                    </div>
+                </div>
+
+                <!-- Step 3: Multiply and Subtract -->
+                <div class="step-container">
+                    <button class="w-full text-left font-bold text-blue-900 mb-2 flex items-center justify-between" onclick="toggleStep('step3')">
+                        <span>Step 3: Multiply and Subtract</span>
+                        <span id="step3Toggle">▼</span>
+                    </button>
+                    <div id="step3" class="hidden">
+                        <p class="text-stone-700 mb-3">Multiply <span class="math">\(x^2\)</span> by the divisor <span class="math">\((x - 4)\)</span>, then subtract from the dividend (numerator).</p>
+                        <div class="long-division-box">
+                            <div class="text-sm">
+                                <div class="flex items-start">
+                                    <div class="mr-4">
+                                        <div class="border-b-2 border-stone-800 pb-1 mb-1">x - 4</div>
+                                    </div>
+                                    <div>
+                                        <div>x³ + 0x² + 0x - 64</div>
+                                        <div class="text-red-600">-(x³ - 4x²)</div>
+                                        <div class="border-t border-stone-400 pt-1 mt-1">4x² + 0x</div>
+                                        <div class="mt-2 text-blue-700 font-bold">x²</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-stone-700 mt-3"><strong>Calculation:</strong> <span class="math">\(x^2(x - 4) = x^3 - 4x^2\)</span></p>
+                        <p class="text-stone-700"><strong>Subtraction:</strong> <span class="math">\((x^3 + 0x^2) - (x^3 - 4x^2) = 4x^2\)</span>, then bring down <span class="math">\(0x\)</span></p>
+                    </div>
+                </div>
+
+                <!-- Step 4: Second Quotient Term -->
+                <div class="step-container">
+                    <button class="w-full text-left font-bold text-blue-900 mb-2 flex items-center justify-between" onclick="toggleStep('step4')">
+                        <span>Step 4: Second Division</span>
+                        <span id="step4Toggle">▼</span>
+                    </button>
+                    <div id="step4" class="hidden">
+                        <p class="text-stone-700 mb-3">Divide <span class="math">\(4x^2\)</span> by <span class="math">\(x\)</span>.</p>
+                        <div class="long-division-box">
+                            <div class="text-sm">
+                                <div class="flex items-start">
+                                    <div class="mr-4">
+                                        <div class="border-b-2 border-stone-800 pb-1 mb-1">x - 4</div>
+                                    </div>
+                                    <div>
+                                        <div>x³ + 0x² + 0x - 64</div>
+                                        <div class="text-red-600">-(x³ - 4x²)</div>
+                                        <div class="border-t border-stone-400 pt-1 mt-1">4x² + 0x</div>
+                                        <div class="text-red-600 mt-2">-(4x² - 16x)</div>
+                                        <div class="border-t border-stone-400 pt-1 mt-1">16x - 64</div>
+                                        <div class="mt-2 text-blue-700 font-bold">x² + 4x</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-stone-700 mt-3"><strong>Calculation:</strong> <span class="math">\(\frac{4x^2}{x} = 4x\)</span></p>
+                        <p class="text-stone-700"><strong>Multiply:</strong> <span class="math">\(4x(x - 4) = 4x^2 - 16x\)</span></p>
+                        <p class="text-stone-700"><strong>Subtract:</strong> <span class="math">\((4x^2 + 0x) - (4x^2 - 16x) = 16x\)</span>, bring down <span class="math">\(-64\)</span></p>
+                    </div>
+                </div>
+
+                <!-- Step 5: Final Quotient and Remainder -->
+                <div class="step-container">
+                    <button class="w-full text-left font-bold text-blue-900 mb-2 flex items-center justify-between" onclick="toggleStep('step5')">
+                        <span>Step 5: Final Division</span>
+                        <span id="step5Toggle">▼</span>
+                    </button>
+                    <div id="step5" class="hidden">
+                        <p class="text-stone-700 mb-3">Divide <span class="math">\(16x\)</span> by <span class="math">\(x\)</span> to complete the division.</p>
+                        <div class="long-division-box">
+                            <div class="text-sm">
+                                <div class="flex items-start">
+                                    <div class="mr-4">
+                                        <div class="border-b-2 border-stone-800 pb-1 mb-1">x - 4</div>
+                                    </div>
+                                    <div>
+                                        <div>x³ + 0x² + 0x - 64</div>
+                                        <div class="text-red-600">-(x³ - 4x²)</div>
+                                        <div class="border-t border-stone-400 pt-1 mt-1">4x² + 0x</div>
+                                        <div class="text-red-600">-(4x² - 16x)</div>
+                                        <div class="border-t border-stone-400 pt-1 mt-1">16x - 64</div>
+                                        <div class="text-red-600 mt-2">-(16x - 64)</div>
+                                        <div class="border-t border-stone-400 pt-1 mt-1 text-green-700 font-bold">0</div>
+                                        <div class="mt-2 text-blue-700 font-bold">x² + 4x + 16</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-stone-700 mt-3"><strong>Final Calculation:</strong></p>
+                        <p class="text-stone-700">• <span class="math">\(\frac{16x}{x} = 16\)</span></p>
+                        <p class="text-stone-700">• <span class="math">\(16(x - 4) = 16x - 64\)</span></p>
+                        <p class="text-stone-700">• <span class="math">\((16x - 64) - (16x - 64) = 0\)</span></p>
+                        <p class="text-stone-700 font-bold mt-3"><strong>Answer:</strong> <span class="math">\(x^2 + 4x + 16 + \frac{0}{x-4} = x^2 + 4x + 16\)</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Practice Video -->
+            <div class="mt-8 bg-green-50 border border-green-200 rounded-lg p-6">
+                <h3 class="text-lg font-bold text-green-900 mb-3">📺 Additional Practice Video</h3>
+                <p class="text-stone-700 mb-4">Want to see more worked examples of polynomial long division? Check out this video:</p>
+                <div class="flex flex-col md:flex-row gap-4 items-center md:items-start">
+                    <a href="https://www.youtube.com/watch?v=8lT00iLntFc" target="_blank" class="flex-shrink-0">
+                        <img src="https://img.youtube.com/vi/8lT00iLntFc/mqdefault.jpg" alt="Polynomial Long Division Tutorial Video" class="rounded-lg shadow-md hover:shadow-lg transition-shadow w-full md:w-64">
+                    </a>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-stone-800 mb-2">Polynomials - Long Division</h4>
+                        <p class="text-sm text-stone-600 mb-3">Watch detailed step-by-step examples of polynomial long division with placeholders and remainders from The Organic Chemistry Tutor.</p>
+                        <a href="https://www.youtube.com/watch?v=8lT00iLntFc" target="_blank" class="inline-block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm font-semibold">
+                            ▶ Watch on YouTube
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Workout B: Practice Problems -->
+        <section id="workoutB" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200 my-8">
+            <h2 class="text-2xl font-bold text-blue-900 border-b border-stone-200 pb-2">💪 Part 2B: Your Turn - Practice</h2>
+            <p class="mt-4 text-stone-600">Now it's your turn! Work through these problems step by step. You have 3 attempts for each question.</p>
+            
+            <!-- Problem 1 -->
+            <div class="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <p class="text-lg font-bold text-blue-900 mb-2">Problem 1: <span class="math">\((x^2 + 5x + 6) \div (x + 2)\)</span></p>
+                <p class="text-sm text-stone-600">This is a simpler problem to get you started.</p>
+            </div>
+
+            <div class="mt-6 space-y-6">
+                <!-- Problem 1, Step 1: Placeholder Setup -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB1_step1" class="block text-base md:text-lg font-medium md:flex-1">Step 1: Write the dividend (numerator) with placeholders (if needed).</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB1_step1" class="w-full md:w-64 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter with placeholders">
+                        <button id="btnWorkoutB1_step1" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB1_step1" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB1_step1" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB1_step1Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Check what degrees (powers) are present in the dividend (numerator).</p>
+                        <p><strong>Step 2:</strong> Determine if any degrees (powers) are missing from the highest degree (power) down to 0.</p>
+                        <p><strong>Step 3:</strong> If all degrees (powers) are present, no placeholders are needed. If any are missing, add <span class="math">\(0x^n\)</span> for each missing degree (power).</p>
+                        <p class="mt-3"><strong>Example:</strong> For <span class="math">\(x^2 + 3x + 1\)</span>, we have degrees (powers) 2, 1, and 0 - all present, so no placeholders needed.</p>
+                        <p class="mt-2">Now check your dividend (numerator)!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 1, Step 2: First Quotient Term -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB1_step2" class="block text-base md:text-lg font-medium md:flex-1">Step 2: What is the first term of the quotient? (Divide <span class="math">\(x^2 \div x\)</span>)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB1_step2" class="w-full md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., x">
+                        <button id="btnWorkoutB1_step2" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB1_step2" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB1_step2" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB1_step2Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Look at the highest degree (power) term in the dividend (numerator).</p>
+                        <p><strong>Step 2:</strong> Look at the highest degree (power) term in the divisor.</p>
+                        <p><strong>Step 3:</strong> Divide the coefficients and subtract the exponents: <span class="math">\(\frac{x^m}{x^n} = x^{m-n}\)</span></p>
+                        <p class="mt-3"><strong>Example:</strong> <span class="math">\(\frac{4x^3}{2x} = 2x^{3-1} = 2x^2\)</span></p>
+                        <p class="mt-2">Now divide <span class="math">\(\frac{x^2}{x}\)</span>!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 1, Step 3: First Remainder -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB1_step3" class="block text-base md:text-lg font-medium md:flex-1">Step 3: After multiplying <span class="math">\(x(x+2)\)</span> and subtracting, what is the remainder? (Bring down the next term)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB1_step3" class="w-full md:w-48 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 3x + 6">
+                        <button id="btnWorkoutB1_step3" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB1_step3" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB1_step3" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB1_step3Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Multiply the quotient term you found by the entire divisor.</p>
+                        <p><strong>Step 2:</strong> Subtract this result from the dividend (numerator) (be careful with signs!).</p>
+                        <p><strong>Step 3:</strong> Bring down the next term from the original dividend (numerator).</p>
+                        <p class="mt-3"><strong>Example:</strong> If quotient term is <span class="math">\(2x\)</span> and divisor is <span class="math">\(x+1\)</span>:</p>
+                        <p>• Multiply: <span class="math">\(2x(x+1) = 2x^2 + 2x\)</span></p>
+                        <p>• Subtract from dividend (numerator), then bring down next term.</p>
+                        <p class="mt-2">Now apply this process to your problem!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 1, Step 4: Final Quotient -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB1_step4" class="block text-base md:text-lg font-medium md:flex-1">Step 4: What is the complete quotient?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB1_step4" class="w-full md:w-48 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., x + 3">
+                        <button id="btnWorkoutB1_step4" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB1_step4" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB1_step4" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB1_step4Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Look at the remainder from the previous step.</p>
+                        <p><strong>Step 2:</strong> Divide the highest degree (power) term of the remainder by the highest degree (power) term of the divisor to get the next quotient term.</p>
+                        <p><strong>Step 3:</strong> Combine all quotient terms you've found so far.</p>
+                        <p class="mt-3"><strong>Example:</strong> If you found <span class="math">\(x\)</span> as the first term and <span class="math">\(2\)</span> as the second term, the complete quotient is <span class="math">\(x + 2\)</span>.</p>
+                        <p class="mt-2">Now find your complete quotient!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 1, Step 5: Final Remainder -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB1_step5" class="block text-base md:text-lg font-medium md:flex-1">Step 5: What is the final remainder?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="number" id="workoutB1_step5" class="w-24 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Number">
+                        <button id="btnWorkoutB1_step5" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB1_step5" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB1_step5" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB1_step5Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Multiply the last quotient term by the divisor.</p>
+                        <p><strong>Step 2:</strong> Subtract this from the current remainder.</p>
+                        <p><strong>Step 3:</strong> What's left is the final remainder. If it's 0, the division is exact!</p>
+                        <p class="mt-3"><strong>Example:</strong> If remainder is <span class="math">\(4x + 8\)</span> and you multiply <span class="math">\(4(x+2) = 4x + 8\)</span>, then <span class="math">\((4x + 8) - (4x + 8) = 0\)</span>.</p>
+                        <p class="mt-2">Now find your final remainder!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem 2 -->
+            <div class="mt-8 bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <p class="text-lg font-bold text-purple-900 mb-2">Problem 2: <span class="math">\((2x^3 - 3x^2 + x - 1) \div (x - 1)\)</span></p>
+                <p class="text-sm text-stone-600">A bit more challenging - work through all the steps!</p>
+            </div>
+
+            <div class="mt-6 space-y-6">
+                <!-- Problem 2, Step 1: Placeholder Setup -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB2_step1" class="block text-base md:text-lg font-medium md:flex-1">Step 1: Write the dividend (numerator) with placeholders (if needed).</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB2_step1" class="w-full md:w-64 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter with placeholders">
+                        <button id="btnWorkoutB2_step1" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB2_step1" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB2_step1" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB2_step1Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Check what degrees (powers) are present in the dividend (numerator).</p>
+                        <p><strong>Step 2:</strong> Determine if any degrees (powers) are missing from the highest degree (power) down to 0.</p>
+                        <p><strong>Step 3:</strong> If all degrees (powers) are present, no placeholders are needed. If any are missing, add <span class="math">\(0x^n\)</span> for each missing degree (power).</p>
+                        <p class="mt-3"><strong>Example:</strong> For <span class="math">\(x^3 + 2x - 5\)</span>, we're missing <span class="math">\(x^2\)</span>, so we add <span class="math">\(0x^2\)</span>.</p>
+                        <p class="mt-2">Now check your dividend (numerator)!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 2, Step 2: First Quotient Term -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB2_step2" class="block text-base md:text-lg font-medium md:flex-1">Step 2: What is the first term of the quotient? (Divide <span class="math">\(2x^3 \div x\)</span>)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB2_step2" class="w-full md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 2x^2">
+                        <button id="btnWorkoutB2_step2" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB2_step2" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB2_step2" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB2_step2Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Look at the highest degree (power) term in the dividend (numerator).</p>
+                        <p><strong>Step 2:</strong> Look at the highest degree (power) term in the divisor.</p>
+                        <p><strong>Step 3:</strong> Divide the coefficients and subtract the exponents: <span class="math">\(\frac{ax^m}{bx^n} = \frac{a}{b}x^{m-n}\)</span></p>
+                        <p class="mt-3"><strong>Example:</strong> <span class="math">\(\frac{6x^4}{3x} = 2x^{4-1} = 2x^3\)</span></p>
+                        <p class="mt-2">Now divide <span class="math">\(\frac{2x^3}{x}\)</span>!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 2, Step 3: First Remainder -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB2_step3" class="block text-base md:text-lg font-medium md:flex-1">Step 3: After first multiplication and subtraction, what is the remainder? (Bring down next term)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB2_step3" class="w-full md:w-48 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., -x^2 + x">
+                        <button id="btnWorkoutB2_step3" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB2_step3" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB2_step3" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB2_step3Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Multiply the quotient term you found by the entire divisor.</p>
+                        <p><strong>Step 2:</strong> Subtract this result from the dividend (numerator) (be very careful with negative signs!).</p>
+                        <p><strong>Step 3:</strong> Bring down the next term from the original dividend (numerator).</p>
+                        <p class="mt-3"><strong>Example:</strong> If quotient term is <span class="math">\(3x\)</span> and divisor is <span class="math">\(x-2\)</span>:</p>
+                        <p>• Multiply: <span class="math">\(3x(x-2) = 3x^2 - 6x\)</span></p>
+                        <p>• Subtract carefully, then bring down next term.</p>
+                        <p class="mt-2">Now apply this process to your problem!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 2, Step 4: Second Quotient Term -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB2_step4" class="block text-base md:text-lg font-medium md:flex-1">Step 4: What is the second term of the quotient? (Divide <span class="math">\(-x^2 \div x\)</span>)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB2_step4" class="w-full md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., -x">
+                        <button id="btnWorkoutB2_step4" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB2_step4" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB2_step4" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB2_step4Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Look at the highest degree (power) term in the current remainder.</p>
+                        <p><strong>Step 2:</strong> Divide it by the highest degree (power) term of the divisor.</p>
+                        <p><strong>Step 3:</strong> Remember: dividing a negative by a positive gives a negative result.</p>
+                        <p class="mt-3"><strong>Example:</strong> <span class="math">\(\frac{-4x^2}{2x} = -2x\)</span></p>
+                        <p class="mt-2">Now divide <span class="math">\(\frac{-x^2}{x}\)</span>!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 2, Step 5: Second Remainder -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB2_step5" class="block text-base md:text-lg font-medium md:flex-1">Step 5: After second multiplication and subtraction, what is the remainder? (Bring down next term)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB2_step5" class="w-full md:w-48 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 0x - 1">
+                        <button id="btnWorkoutB2_step5" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB2_step5" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB2_step5" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB2_step5Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Multiply the quotient term you just found by the divisor.</p>
+                        <p><strong>Step 2:</strong> Subtract this from the current remainder (watch the signs!).</p>
+                        <p><strong>Step 3:</strong> Bring down the next term from the original dividend (numerator).</p>
+                        <p class="mt-3"><strong>Example:</strong> If you subtract and get 0, then bring down the next term. The remainder might be just a constant.</p>
+                        <p class="mt-2">Now apply this process!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 2, Step 6: Final Quotient -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB2_step6" class="block text-base md:text-lg font-medium md:flex-1">Step 6: What is the complete quotient?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB2_step6" class="w-full md:w-48 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 2x^2 - x">
+                        <button id="btnWorkoutB2_step6" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB2_step6" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB2_step6" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB2_step6Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Look at all the quotient terms you've found so far.</p>
+                        <p><strong>Step 2:</strong> Combine them in order from highest degree (power) to lowest.</p>
+                        <p><strong>Step 3:</strong> If the last term would be 0, you can omit it (or include it - both are acceptable).</p>
+                        <p class="mt-3"><strong>Example:</strong> If you found <span class="math">\(x^2\)</span>, <span class="math">\(-3x\)</span>, and <span class="math">\(0\)</span>, the quotient is <span class="math">\(x^2 - 3x\)</span> (or <span class="math">\(x^2 - 3x + 0\)</span>).</p>
+                        <p class="mt-2">Now combine your quotient terms!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 2, Step 7: Final Remainder -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB2_step7" class="block text-base md:text-lg font-medium md:flex-1">Step 7: What is the final remainder?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="number" id="workoutB2_step7" class="w-24 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Number">
+                        <button id="btnWorkoutB2_step7" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB2_step7" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB2_step7" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB2_step7Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Check if you can divide the current remainder by the divisor.</p>
+                        <p><strong>Step 2:</strong> If the remainder's degree (power) is less than the divisor's degree (power), you're done!</p>
+                        <p><strong>Step 3:</strong> The final remainder is whatever is left (could be 0, a constant, or a polynomial of lower degree (power)).</p>
+                        <p class="mt-3"><strong>Example:</strong> If remainder is <span class="math">\(5\)</span> and divisor is <span class="math">\(x-2\)</span>, you can't divide further, so remainder is <span class="math">\(5\)</span>.</p>
+                        <p class="mt-2">Now find your final remainder!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem 3 -->
+            <div class="mt-8 bg-green-50 p-4 rounded-lg border border-green-200">
+                <p class="text-lg font-bold text-green-900 mb-2">Problem 3: <span class="math">\((x^3 + 2x^2 - 5x - 6) \div (x + 1)\)</span></p>
+                <p class="text-sm text-stone-600">Practice with a cubic polynomial.</p>
+            </div>
+
+            <div class="mt-6 space-y-6">
+                <!-- Problem 3, Step 1: Placeholder Setup -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB3_step1" class="block text-base md:text-lg font-medium md:flex-1">Step 1: Write the dividend (numerator) with placeholders (if needed).</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB3_step1" class="w-full md:w-64 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter with placeholders">
+                        <button id="btnWorkoutB3_step1" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB3_step1" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB3_step1" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB3_step1Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Check what degrees (powers) are present in the dividend (numerator).</p>
+                        <p><strong>Step 2:</strong> Determine if any degrees (powers) are missing from the highest degree (power) down to 0.</p>
+                        <p><strong>Step 3:</strong> If all degrees (powers) are present, no placeholders are needed. If any are missing, add <span class="math">\(0x^n\)</span> for each missing degree (power).</p>
+                        <p class="mt-3"><strong>Example:</strong> For <span class="math">\(x^3 + 2x^2 - 5x - 6\)</span>, we have degrees (powers) 3, 2, 1, and 0 - all present, so no placeholders needed.</p>
+                        <p class="mt-2">Now check your dividend (numerator)!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 3, Step 2: First Quotient Term -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB3_step2" class="block text-base md:text-lg font-medium md:flex-1">Step 2: What is the first term of the quotient? (Divide <span class="math">\(x^3 \div x\)</span>)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB3_step2" class="w-full md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., x^2">
+                        <button id="btnWorkoutB3_step2" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB3_step2" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB3_step2" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB3_step2Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Look at the highest degree (power) term in the dividend (numerator).</p>
+                        <p><strong>Step 2:</strong> Look at the highest degree (power) term in the divisor.</p>
+                        <p><strong>Step 3:</strong> Divide the coefficients and subtract the exponents: <span class="math">\(\frac{x^m}{x^n} = x^{m-n}\)</span></p>
+                        <p class="mt-3"><strong>Example:</strong> <span class="math">\(\frac{4x^3}{2x} = 2x^{3-1} = 2x^2\)</span></p>
+                        <p class="mt-2">Now divide <span class="math">\(\frac{x^3}{x}\)</span>!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 3, Step 3: First Remainder -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB3_step3" class="block text-base md:text-lg font-medium md:flex-1">Step 3: After first multiplication and subtraction, what is the remainder? (Bring down next term)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB3_step3" class="w-full md:w-48 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., x^2 - 5x">
+                        <button id="btnWorkoutB3_step3" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB3_step3" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB3_step3" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB3_step3Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Multiply the quotient term you found by the entire divisor.</p>
+                        <p><strong>Step 2:</strong> Subtract this result from the dividend (numerator) (be careful with signs!).</p>
+                        <p><strong>Step 3:</strong> Bring down the next term from the original dividend (numerator).</p>
+                        <p class="mt-3"><strong>Example:</strong> If quotient term is <span class="math">\(x^2\)</span> and divisor is <span class="math">\(x+1\)</span>:</p>
+                        <p>• Multiply: <span class="math">\(x^2(x+1) = x^3 + x^2\)</span></p>
+                        <p>• Subtract from dividend (numerator), then bring down next term.</p>
+                        <p class="mt-2">Now apply this process to your problem!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 3, Step 4: Final Quotient -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB3_step4" class="block text-base md:text-lg font-medium md:flex-1">Step 4: What is the complete quotient?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB3_step4" class="w-full md:w-48 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., x^2 + x - 6">
+                        <button id="btnWorkoutB3_step4" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB3_step4" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB3_step4" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB3_step4Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Look at the remainder from the previous step.</p>
+                        <p><strong>Step 2:</strong> Divide the highest degree (power) term of the remainder by the highest degree (power) term of the divisor to get the next quotient term.</p>
+                        <p><strong>Step 3:</strong> Continue this process and combine all quotient terms you've found.</p>
+                        <p class="mt-3"><strong>Example:</strong> If you found <span class="math">\(x^2\)</span> as the first term and <span class="math">\(x\)</span> as the second term, continue to find the third term, then combine all.</p>
+                        <p class="mt-2">Now find your complete quotient!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 3, Step 5: Final Remainder -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB3_step5" class="block text-base md:text-lg font-medium md:flex-1">Step 5: What is the final remainder?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="number" id="workoutB3_step5" class="w-24 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Number">
+                        <button id="btnWorkoutB3_step5" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB3_step5" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB3_step5" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB3_step5Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Multiply the last quotient term by the divisor.</p>
+                        <p><strong>Step 2:</strong> Subtract this from the current remainder.</p>
+                        <p><strong>Step 3:</strong> What's left is the final remainder. If it's 0, the division is exact!</p>
+                        <p class="mt-3"><strong>Example:</strong> If remainder is <span class="math">\(-6x - 6\)</span> and you multiply <span class="math">\(-6(x+1) = -6x - 6\)</span>, then <span class="math">\((-6x - 6) - (-6x - 6) = 0\)</span>.</p>
+                        <p class="mt-2">Now find your final remainder!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem 4 -->
+            <div class="mt-8 bg-orange-50 p-4 rounded-lg border border-orange-200">
+                <p class="text-lg font-bold text-orange-900 mb-2">Problem 4: <span class="math">\((x^3 - 8) \div (x - 2)\)</span></p>
+                <p class="text-sm text-stone-600">This problem requires placeholders! Watch out for missing terms.</p>
+            </div>
+
+            <div class="mt-6 space-y-6">
+                <!-- Problem 4, Step 1: Placeholder Setup -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB4_step1" class="block text-base md:text-lg font-medium md:flex-1">Step 1: Write the dividend (numerator) with placeholders (if needed).</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB4_step1" class="w-full md:w-64 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter with placeholders">
+                        <button id="btnWorkoutB4_step1" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB4_step1" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB4_step1" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB4_step1Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Check what degrees (powers) are present in the dividend (numerator).</p>
+                        <p><strong>Step 2:</strong> Determine if any degrees (powers) are missing from the highest degree (power) down to 0.</p>
+                        <p><strong>Step 3:</strong> If any are missing, add <span class="math">\(0x^n\)</span> for each missing degree (power).</p>
+                        <p class="mt-3"><strong>Example:</strong> For <span class="math">\(x^3 - 8\)</span>, we're missing <span class="math">\(x^2\)</span> and <span class="math">\(x\)</span>, so we add <span class="math">\(0x^2\)</span> and <span class="math">\(0x\)</span>.</p>
+                        <p class="mt-2">Now check your dividend (numerator)!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 4, Step 2: First Quotient Term -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB4_step2" class="block text-base md:text-lg font-medium md:flex-1">Step 2: What is the first term of the quotient? (Divide <span class="math">\(x^3 \div x\)</span>)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB4_step2" class="w-full md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., x^2">
+                        <button id="btnWorkoutB4_step2" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB4_step2" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB4_step2" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB4_step2Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Look at the highest degree (power) term in the dividend (numerator) (with placeholders).</p>
+                        <p><strong>Step 2:</strong> Look at the highest degree (power) term in the divisor.</p>
+                        <p><strong>Step 3:</strong> Divide: <span class="math">\(\frac{x^3}{x} = x^{3-1} = x^2\)</span></p>
+                        <p class="mt-3"><strong>Example:</strong> <span class="math">\(\frac{4x^3}{2x} = 2x^{3-1} = 2x^2\)</span></p>
+                        <p class="mt-2">Now divide <span class="math">\(\frac{x^3}{x}\)</span>!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 4, Step 3: First Remainder -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB4_step3" class="block text-base md:text-lg font-medium md:flex-1">Step 3: After first multiplication and subtraction, what is the remainder? (Bring down next term)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB4_step3" class="w-full md:w-48 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 2x^2 + 0x">
+                        <button id="btnWorkoutB4_step3" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB4_step3" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB4_step3" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB4_step3Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Multiply the quotient term you found by the entire divisor.</p>
+                        <p><strong>Step 2:</strong> Subtract this result from the dividend (numerator) (be careful with signs!).</p>
+                        <p><strong>Step 3:</strong> Bring down the next term (which might be a placeholder like <span class="math">\(0x\)</span>).</p>
+                        <p class="mt-3"><strong>Example:</strong> If quotient term is <span class="math">\(x^2\)</span> and divisor is <span class="math">\(x-2\)</span>:</p>
+                        <p>• Multiply: <span class="math">\(x^2(x-2) = x^3 - 2x^2\)</span></p>
+                        <p>• Subtract from dividend (numerator), then bring down next term.</p>
+                        <p class="mt-2">Now apply this process to your problem!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 4, Step 4: Second Quotient Term -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB4_step4" class="block text-base md:text-lg font-medium md:flex-1">Step 4: What is the second term of the quotient? (Divide <span class="math">\(2x^2 \div x\)</span>)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB4_step4" class="w-full md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 2x">
+                        <button id="btnWorkoutB4_step4" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB4_step4" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB4_step4" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB4_step4Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Look at the highest degree (power) term in the current remainder.</p>
+                        <p><strong>Step 2:</strong> Divide it by the highest degree (power) term of the divisor.</p>
+                        <p><strong>Step 3:</strong> <span class="math">\(\frac{2x^2}{x} = 2x\)</span></p>
+                        <p class="mt-3"><strong>Example:</strong> <span class="math">\(\frac{4x^2}{2x} = 2x\)</span></p>
+                        <p class="mt-2">Now divide <span class="math">\(\frac{2x^2}{x}\)</span>!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 4, Step 5: Final Quotient -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB4_step5" class="block text-base md:text-lg font-medium md:flex-1">Step 5: What is the complete quotient?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB4_step5" class="w-full md:w-48 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., x^2 + 2x + 4">
+                        <button id="btnWorkoutB4_step5" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB4_step5" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB4_step5" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB4_step5Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Continue the division process to find the third quotient term.</p>
+                        <p><strong>Step 2:</strong> Combine all quotient terms you've found in order from highest degree (power) to lowest.</p>
+                        <p><strong>Step 3:</strong> Make sure you've completed all steps before combining.</p>
+                        <p class="mt-3"><strong>Example:</strong> If you found <span class="math">\(x^2\)</span>, <span class="math">\(2x\)</span>, and <span class="math">\(4\)</span>, the quotient is <span class="math">\(x^2 + 2x + 4\)</span>.</p>
+                        <p class="mt-2">Now find your complete quotient!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 4, Step 6: Final Remainder -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB4_step6" class="block text-base md:text-lg font-medium md:flex-1">Step 6: What is the final remainder?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="number" id="workoutB4_step6" class="w-24 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Number">
+                        <button id="btnWorkoutB4_step6" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB4_step6" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB4_step6" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB4_step6Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Multiply the last quotient term by the divisor.</p>
+                        <p><strong>Step 2:</strong> Subtract this from the current remainder.</p>
+                        <p><strong>Step 3:</strong> What's left is the final remainder. If it's 0, the division is exact!</p>
+                        <p class="mt-3"><strong>Example:</strong> If remainder is <span class="math">\(8\)</span> and you multiply <span class="math">\(4(x-2) = 4x - 8\)</span>, then subtract, you should get 0.</p>
+                        <p class="mt-2">Now find your final remainder!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem 5 -->
+            <div class="mt-8 bg-teal-50 p-4 rounded-lg border border-teal-200">
+                <p class="text-lg font-bold text-teal-900 mb-2">Problem 5: <span class="math">\((x^4 - 16) \div (x - 2)\)</span></p>
+                <p class="text-sm text-stone-600">Most challenging! This requires placeholders and has more steps.</p>
+            </div>
+
+            <div class="mt-6 space-y-6">
+                <!-- Problem 5, Step 1: Placeholder Setup -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB5_step1" class="block text-base md:text-lg font-medium md:flex-1">Step 1: Write the dividend (numerator) with placeholders (if needed).</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB5_step1" class="w-full md:w-64 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter with placeholders">
+                        <button id="btnWorkoutB5_step1" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB5_step1" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB5_step1" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB5_step1Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Check what degrees (powers) are present in the dividend (numerator).</p>
+                        <p><strong>Step 2:</strong> Determine if any degrees (powers) are missing from the highest degree (power) down to 0.</p>
+                        <p><strong>Step 3:</strong> If any are missing, add <span class="math">\(0x^n\)</span> for each missing degree (power).</p>
+                        <p class="mt-3"><strong>Example:</strong> For <span class="math">\(x^4 - 16\)</span>, we're missing <span class="math">\(x^3\)</span>, <span class="math">\(x^2\)</span>, and <span class="math">\(x\)</span>, so we add <span class="math">\(0x^3\)</span>, <span class="math">\(0x^2\)</span>, and <span class="math">\(0x\)</span>.</p>
+                        <p class="mt-2">Now check your dividend (numerator)!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 5, Step 2: First Quotient Term -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB5_step2" class="block text-base md:text-lg font-medium md:flex-1">Step 2: What is the first term of the quotient? (Divide <span class="math">\(x^4 \div x\)</span>)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB5_step2" class="w-full md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., x^3">
+                        <button id="btnWorkoutB5_step2" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB5_step2" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB5_step2" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB5_step2Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Look at the highest degree (power) term in the dividend (numerator) (with placeholders).</p>
+                        <p><strong>Step 2:</strong> Look at the highest degree (power) term in the divisor.</p>
+                        <p><strong>Step 3:</strong> Divide: <span class="math">\(\frac{x^4}{x} = x^{4-1} = x^3\)</span></p>
+                        <p class="mt-3"><strong>Example:</strong> <span class="math">\(\frac{3x^4}{x} = 3x^3\)</span></p>
+                        <p class="mt-2">Now divide <span class="math">\(\frac{x^4}{x}\)</span>!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 5, Step 3: First Remainder -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB5_step3" class="block text-base md:text-lg font-medium md:flex-1">Step 3: After first multiplication and subtraction, what is the remainder? (Bring down next term)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB5_step3" class="w-full md:w-48 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 2x^3 + 0x^2">
+                        <button id="btnWorkoutB5_step3" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB5_step3" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB5_step3" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB5_step3Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Multiply the quotient term you found by the entire divisor.</p>
+                        <p><strong>Step 2:</strong> Subtract this result from the dividend (numerator) (be careful with signs!).</p>
+                        <p><strong>Step 3:</strong> Bring down the next term (which might be a placeholder like <span class="math">\(0x^3\)</span>).</p>
+                        <p class="mt-3"><strong>Example:</strong> If quotient term is <span class="math">\(x^3\)</span> and divisor is <span class="math">\(x-2\)</span>:</p>
+                        <p>• Multiply: <span class="math">\(x^3(x-2) = x^4 - 2x^3\)</span></p>
+                        <p>• Subtract from dividend (numerator), then bring down next term.</p>
+                        <p class="mt-2">Now apply this process to your problem!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 5, Step 4: Second Quotient Term -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB5_step4" class="block text-base md:text-lg font-medium md:flex-1">Step 4: What is the second term of the quotient? (Divide <span class="math">\(2x^3 \div x\)</span>)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB5_step4" class="w-full md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 2x^2">
+                        <button id="btnWorkoutB5_step4" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB5_step4" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB5_step4" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB5_step4Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Look at the highest degree (power) term in the current remainder.</p>
+                        <p><strong>Step 2:</strong> Divide it by the highest degree (power) term of the divisor.</p>
+                        <p><strong>Step 3:</strong> <span class="math">\(\frac{2x^3}{x} = 2x^2\)</span></p>
+                        <p class="mt-3"><strong>Example:</strong> <span class="math">\(\frac{4x^3}{2x} = 2x^2\)</span></p>
+                        <p class="mt-2">Now divide <span class="math">\(\frac{2x^3}{x}\)</span>!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 5, Step 5: Second Remainder -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB5_step5" class="block text-base md:text-lg font-medium md:flex-1">Step 5: After second multiplication and subtraction, what is the remainder? (Bring down next term)</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB5_step5" class="w-full md:w-48 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 4x^2 + 0x">
+                        <button id="btnWorkoutB5_step5" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB5_step5" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB5_step5" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB5_step5Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Multiply the quotient term you just found by the divisor.</p>
+                        <p><strong>Step 2:</strong> Subtract this from the current remainder (watch the signs!).</p>
+                        <p><strong>Step 3:</strong> Bring down the next term from the original dividend (numerator).</p>
+                        <p class="mt-3"><strong>Example:</strong> If you subtract and get a remainder, bring down the next term (which might be a placeholder).</p>
+                        <p class="mt-2">Now apply this process!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 5, Step 6: Final Quotient -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB5_step6" class="block text-base md:text-lg font-medium md:flex-1">Step 6: What is the complete quotient?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="workoutB5_step6" class="w-full md:w-48 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., x^3 + 2x^2 + 4x + 8">
+                        <button id="btnWorkoutB5_step6" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB5_step6" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB5_step6" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB5_step6Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Continue the division process to find the third and fourth quotient terms.</p>
+                        <p><strong>Step 2:</strong> Combine all quotient terms you've found in order from highest degree (power) to lowest.</p>
+                        <p><strong>Step 3:</strong> Make sure you've completed all steps before combining.</p>
+                        <p class="mt-3"><strong>Example:</strong> If you found <span class="math">\(x^3\)</span>, <span class="math">\(2x^2\)</span>, <span class="math">\(4x\)</span>, and <span class="math">\(8\)</span>, the quotient is <span class="math">\(x^3 + 2x^2 + 4x + 8\)</span>.</p>
+                        <p class="mt-2">Now find your complete quotient!</p>
+                    </div>
+                </div>
+
+                <!-- Problem 5, Step 7: Final Remainder -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="workoutB5_step7" class="block text-base md:text-lg font-medium md:flex-1">Step 7: What is the final remainder?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="number" id="workoutB5_step7" class="w-24 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Number">
+                        <button id="btnWorkoutB5_step7" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintWorkoutB5_step7" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultWorkoutB5_step7" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintWorkoutB5_step7Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Multiply the last quotient term by the divisor.</p>
+                        <p><strong>Step 2:</strong> Subtract this from the current remainder.</p>
+                        <p><strong>Step 3:</strong> What's left is the final remainder. If it's 0, the division is exact!</p>
+                        <p class="mt-3"><strong>Example:</strong> If remainder is <span class="math">\(16\)</span> and you multiply <span class="math">\(8(x-2) = 8x - 16\)</span>, then subtract, you should get 0.</p>
+                        <p class="mt-2">Now find your final remainder!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Practice Video -->
+            <div class="mt-8 bg-purple-50 border border-purple-200 rounded-lg p-6">
+                <h3 class="text-lg font-bold text-purple-900 mb-3">📺 Additional Practice Video</h3>
+                <p class="text-stone-700 mb-4">Need more practice with polynomial long division? Watch this comprehensive tutorial:</p>
+                <div class="flex flex-col md:flex-row gap-4 items-center md:items-start">
+                    <a href="https://www.youtube.com/watch?v=_FSXJmESFmQ" target="_blank" class="flex-shrink-0">
+                        <img src="https://img.youtube.com/vi/_FSXJmESFmQ/mqdefault.jpg" alt="Polynomial Long Division Practice Video" class="rounded-lg shadow-md hover:shadow-lg transition-shadow w-full md:w-64">
+                    </a>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-stone-800 mb-2">Long Division With Polynomials - The Easy Way!</h4>
+                        <p class="text-sm text-stone-600 mb-3">Practice with more examples of polynomial long division, including problems with remainders and placeholders from The Organic Chemistry Tutor.</p>
+                        <a href="https://www.youtube.com/watch?v=_FSXJmESFmQ" target="_blank" class="inline-block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm font-semibold">
+                            ▶ Watch on YouTube
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cool-Down Section -->
+        <section id="cooldown" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200 my-8">
+            <h2 class="text-2xl font-bold text-blue-900 border-b border-stone-200 pb-2">🧊 Part 3: Cool-Down</h2>
+            <p class="mt-4 text-stone-600">Great job! Let's finish with some final practice. You have 3 attempts for each question.</p>
+            
+            <div class="mt-6 space-y-6 md:space-y-4">
+                <!-- Q1: Final Form Expression -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="cooldown1_input" class="block text-base md:text-lg font-medium md:flex-1">Q1. Based on Problem 1 from Workout B, write the final answer in the form <span class="math">\(Q(x) + \frac{R}{d(x)}\)</span>.</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="cooldown1_input" class="w-full md:w-64 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., x + 3 + 0/(x+2)">
+                        <button id="btnCooldown1" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintCooldown1" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultCooldown1" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintCooldown1Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Recall the quotient and remainder you found in Problem 1.</p>
+                        <p><strong>Step 2:</strong> Write in the form <span class="math">\(Q(x) + \frac{R}{d(x)}\)</span>, where Q is quotient, R is remainder, and d is divisor.</p>
+                        <p><strong>Step 3:</strong> If the remainder is 0, you can simplify by removing the fraction (since <span class="math">\(\frac{0}{d(x)} = 0\)</span>).</p>
+                        <p class="mt-3"><strong>Example:</strong> If quotient is <span class="math">\(x + 2\)</span>, remainder is <span class="math">\(0\)</span>, and divisor is <span class="math">\(x - 1\)</span>:</p>
+                        <p>Form: <span class="math">\(x + 2 + \frac{0}{x-1}\)</span>, which simplifies to <span class="math">\(x + 2\)</span>.</p>
+                        <p class="mt-2">Now apply this to Problem 1's results!</p>
+                    </div>
+                </div>
+
+                <!-- Q2: Verification -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="cooldown2_input" class="block text-base md:text-lg font-medium md:flex-1">Q2. Verify Problem 1 by substituting <span class="math">\(x = -2\)</span> into the original dividend (numerator). What do you get?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="number" id="cooldown2_input" class="w-24 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Number">
+                        <button id="btnCooldown2" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintCooldown2" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultCooldown2" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintCooldown2Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Replace every <span class="math">\(x\)</span> in the dividend (numerator) with <span class="math">\(-2\)</span>.</p>
+                        <p><strong>Step 2:</strong> Evaluate each term carefully (watch the signs!).</p>
+                        <p><strong>Step 3:</strong> Add all the terms together.</p>
+                        <p class="mt-3"><strong>Example:</strong> For <span class="math">\(x^2 - 3x + 2\)</span> at <span class="math">\(x = 1\)</span>:</p>
+                        <p>• <span class="math">\(x^2 = (1)^2 = 1\)</span></p>
+                        <p>• <span class="math">\(-3x = -3(1) = -3\)</span></p>
+                        <p>• Constant: <span class="math">\(2\)</span></p>
+                        <p>• Sum: <span class="math">\(1 - 3 + 2 = 0\)</span></p>
+                        <p class="mt-2">Now substitute <span class="math">\(x = -2\)</span> into your dividend (numerator)!</p>
+                    </div>
+                </div>
+
+                <!-- Q3: Identify Divisor -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="cooldown3_input" class="block text-base md:text-lg font-medium md:flex-1">Q3. If <span class="math">\(f(x) = x^2 + 3x + 2 + \frac{5}{x-1}\)</span>, what is the divisor?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="cooldown3_input" class="w-full md:w-32 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., x - 1">
+                        <button id="btnCooldown3" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintCooldown3" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultCooldown3" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintCooldown3Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Identify the form: <span class="math">\(Q(x) + \frac{R}{d(x)}\)</span></p>
+                        <p><strong>Step 2:</strong> Look at the fraction part <span class="math">\(\frac{R}{d(x)}\)</span>.</p>
+                        <p><strong>Step 3:</strong> The divisor is the denominator of the fraction (the <span class="math">\(d(x)\)</span> part).</p>
+                        <p class="mt-3"><strong>Example:</strong> In <span class="math">\(x^2 + 3 + \frac{7}{x+4}\)</span>, the fraction is <span class="math">\(\frac{7}{x+4}\)</span>, so the divisor is <span class="math">\(x + 4\)</span>.</p>
+                        <p class="mt-2">Now identify the divisor in your expression!</p>
+                    </div>
+                </div>
+
+                <!-- Q4: Independent Problem -->
+                <div class="space-y-3 md:flex md:flex-row md:items-center md:gap-4">
+                    <label for="cooldown4_input" class="block text-base md:text-lg font-medium md:flex-1">Q4. What is the quotient when dividing <span class="math">\((x^2 - 9) \div (x + 3)\)</span>?</label>
+                    <div class="flex flex-wrap gap-2 items-center md:justify-end">
+                        <input type="text" id="cooldown4_input" class="w-full md:w-48 p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., x - 3">
+                        <button id="btnCooldown4" class="bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors shadow text-sm">Check</button>
+                        <button id="hintCooldown4" class="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm" title="Get a hint">💡</button>
+                        <span id="resultCooldown4" class="w-full md:w-auto md:ml-2 font-medium text-sm"></span>
+                    </div>
+                </div>
+                <div id="hintCooldown4Content" class="hidden hint-box">
+                    <strong class="text-yellow-900">Hint:</strong>
+                    <div class="text-stone-700 mt-2 space-y-1">
+                        <p><strong>Step 1:</strong> Set up the long division. Add placeholders if needed (here, add <span class="math">\(0x\)</span>).</p>
+                        <p><strong>Step 2:</strong> Divide the first term: highest degree (power) term of dividend (numerator) ÷ highest degree (power) term of divisor.</p>
+                        <p><strong>Step 3:</strong> Multiply, subtract, and bring down the next term. Repeat until done.</p>
+                        <p class="mt-3"><strong>Example process:</strong> For <span class="math">\((x^2 - 4) \div (x - 2)\)</span>:</p>
+                        <p>• Setup: <span class="math">\((x^2 + 0x - 4) \div (x - 2)\)</span></p>
+                        <p>• First quotient term: <span class="math">\(\frac{x^2}{x} = x\)</span></p>
+                        <p>• Multiply, subtract, bring down, then find next quotient term.</p>
+                        <p>• Continue until remainder's degree (power) is less than divisor's degree (power).</p>
+                        <p class="mt-2">Now work through your division step by step!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Practice Video -->
+            <div class="mt-8 bg-indigo-50 border border-indigo-200 rounded-lg p-6">
+                <h3 class="text-lg font-bold text-indigo-900 mb-3">📺 Additional Practice Video</h3>
+                <p class="text-stone-700 mb-4">Master polynomial long division with this comprehensive review video:</p>
+                <div class="flex flex-col md:flex-row gap-4 items-center md:items-start">
+                    <a href="https://www.youtube.com/watch?v=8lT00iLntFc" target="_blank" class="flex-shrink-0">
+                        <img src="https://img.youtube.com/vi/8lT00iLntFc/mqdefault.jpg" alt="Polynomial Long Division Review Video" class="rounded-lg shadow-md hover:shadow-lg transition-shadow w-full md:w-64">
+                    </a>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-stone-800 mb-2">Polynomials - Long Division</h4>
+                        <p class="text-sm text-stone-600 mb-3">Review all concepts including placeholders, remainders, and final form expressions from The Organic Chemistry Tutor.</p>
+                        <a href="https://www.youtube.com/watch?v=8lT00iLntFc" target="_blank" class="inline-block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm font-semibold">
+                            ▶ Watch on YouTube
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Survey Section -->
+        <section id="survey" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200 my-8">
+            <h2 class="text-2xl font-bold text-blue-900 border-b border-stone-200 pb-2">⭐ Feedback Survey</h2>
+            <p class="mt-4 text-stone-600">Please rate your understanding of polynomial long division up to this stage.</p>
+            
+            <div class="mt-6">
+                <p class="text-center font-semibold text-stone-700 mb-4">How would you rate your understanding?</p>
+                <div class="star-rating">
+                    <span class="star" data-rating="1" onclick="setRating(1)">☆</span>
+                    <span class="star" data-rating="2" onclick="setRating(2)">☆</span>
+                    <span class="star" data-rating="3" onclick="setRating(3)">☆</span>
+                    <span class="star" data-rating="4" onclick="setRating(4)">☆</span>
+                    <span class="star" data-rating="5" onclick="setRating(5)">☆</span>
+                </div>
+                <p id="ratingText" class="text-center text-stone-600 text-sm mt-2"></p>
+                
+                <div class="mt-6">
+                    <label for="surveyComment" class="block text-sm font-semibold text-stone-700 mb-2">Optional: Please explain your rating (not required)</label>
+                    <textarea id="surveyComment" rows="4" class="w-full p-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Share any thoughts, questions, or feedback..."></textarea>
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <button id="submitSurvey" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold">
+                        Submit Feedback
+                    </button>
+                    <p id="surveyStatus" class="text-sm text-green-600 mt-2 hidden">Thank you for your feedback!</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-6 text-gray-500 text-sm">
+        <p>SLA Review Session | Solomon Agyire | MTH 112E</p>
+    </footer>
+
+    <script>
+        // --- GLOBAL STATE ---
+        let attempts = {
+            warmup1: 3, warmup2: 3, warmup3: 1, warmup4: 3,
+            workoutB1_step1: 3, workoutB1_step2: 3, workoutB1_step3: 3, workoutB1_step4: 3, workoutB1_step5: 3,
+            workoutB2_step1: 3, workoutB2_step2: 3, workoutB2_step3: 3, workoutB2_step4: 3, workoutB2_step5: 3, workoutB2_step6: 3, workoutB2_step7: 3,
+            workoutB3_step1: 3, workoutB3_step2: 3, workoutB3_step3: 3, workoutB3_step4: 3, workoutB3_step5: 3,
+            workoutB4_step1: 3, workoutB4_step2: 3, workoutB4_step3: 3, workoutB4_step4: 3, workoutB4_step5: 3, workoutB4_step6: 3,
+            workoutB5_step1: 3, workoutB5_step2: 3, workoutB5_step3: 3, workoutB5_step4: 3, workoutB5_step5: 3, workoutB5_step6: 3, workoutB5_step7: 3,
+            cooldown1: 3, cooldown2: 3, cooldown3: 3, cooldown4: 3
+        };
+        
+        let scores = {
+            warmup: { correct: 0, total: 4 },
+            workoutA: { correct: 0, total: 0 },
+            workoutB: { correct: 0, total: 25 },
+            cooldown: { correct: 0, total: 4 }
+        };
+        
+        let answered = {
+            warmup1: false, warmup2: false, warmup3: false, warmup4: false,
+            workoutB1_step1: false, workoutB1_step2: false, workoutB1_step3: false, workoutB1_step4: false, workoutB1_step5: false,
+            workoutB2_step1: false, workoutB2_step2: false, workoutB2_step3: false, workoutB2_step4: false, workoutB2_step5: false, workoutB2_step6: false, workoutB2_step7: false,
+            workoutB3_step1: false, workoutB3_step2: false, workoutB3_step3: false, workoutB3_step4: false, workoutB3_step5: false,
+            workoutB4_step1: false, workoutB4_step2: false, workoutB4_step3: false, workoutB4_step4: false, workoutB4_step5: false, workoutB4_step6: false,
+            workoutB5_step1: false, workoutB5_step2: false, workoutB5_step3: false, workoutB5_step4: false, workoutB5_step5: false, workoutB5_step6: false, workoutB5_step7: false,
+            cooldown1: false, cooldown2: false, cooldown3: false, cooldown4: false
+        };
+
+        let currentRating = 0;
+        let surveySubmitted = false;
+
+        // Utility to normalize string input
+        const normalize = (str) => String(str).toLowerCase().replace(/[\s\^\*]/g, '').replace(/\+\-/g, '-').replace(/^\+/g, '');
+
+        // Toggle function for guided steps
+        function toggleStep(stepId) {
+            const step = document.getElementById(stepId);
+            const toggle = document.getElementById(stepId + 'Toggle');
+            if (step.classList.contains('hidden')) {
+                step.classList.remove('hidden');
+                toggle.textContent = '▲';
+            } else {
+                step.classList.add('hidden');
+                toggle.textContent = '▼';
+            }
+        }
+
+        // Star rating function
+        function setRating(rating) {
+            currentRating = rating;
+            const stars = document.querySelectorAll('.star');
+            const texts = ['Very Poor', 'Poor', 'Fair', 'Good', 'Excellent'];
+            
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                    star.textContent = '⭐';
+                } else {
+                    star.classList.remove('active');
+                    star.textContent = '☆';
+                }
+            });
+            
+            document.getElementById('ratingText').textContent = texts[rating - 1] || '';
+        }
+
+        // Auto-save function
+        function autoSave() {
+            const studentName = document.getElementById('studentName').value || 'Anonymous';
+            const totalCorrect = scores.warmup.correct + scores.workoutB.correct + scores.cooldown.correct;
+            const totalQuestions = scores.warmup.total + scores.workoutB.total + scores.cooldown.total;
+            
+            const scoreData = {
+                timestamp: new Date().toISOString(),
+                studentName: studentName,
+                scores: {
+                    warmup: { correct: scores.warmup.correct, total: scores.warmup.total },
+                    workoutA: { correct: scores.workoutA.correct, total: scores.workoutA.total },
+                    workoutB: { correct: scores.workoutB.correct, total: scores.workoutB.total },
+                    cooldown: { correct: scores.cooldown.correct, total: scores.cooldown.total }
+                },
+                totalCorrect,
+                totalQuestions,
+                percentage: totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0
+            };
+            
+            // Save to localStorage
+            const existingScores = JSON.parse(localStorage.getItem('mth112e_polynomials_scores') || '[]');
+            const existingIndex = existingScores.findIndex(s => s.studentName === studentName);
+            if (existingIndex >= 0) {
+                existingScores[existingIndex] = scoreData;
+            } else {
+                existingScores.push(scoreData);
+            }
+            localStorage.setItem('mth112e_polynomials_scores', JSON.stringify(existingScores));
+            
+            // Save progress
+            const saveData = {
+                studentName,
+                timestamp: new Date().toISOString(),
+                scores,
+                attempts,
+                answered
+            };
+            localStorage.setItem('mth112e_polynomials_progress', JSON.stringify(saveData));
+            
+            // Update leaderboard
+            updateLeaderboard();
+        }
+
+        // Update leaderboard
+        function updateLeaderboard() {
+            const leaderboard = document.getElementById('leaderboard');
+            const allScores = JSON.parse(localStorage.getItem('mth112e_polynomials_scores') || '[]');
+            const currentName = document.getElementById('studentName').value || '';
+            
+            if (allScores.length === 0) {
+                leaderboard.innerHTML = '<p class="text-xs text-stone-500 text-center py-2">No scores yet. Start working to see rankings!</p>';
+                return;
+            }
+            
+            const sorted = [...allScores].sort((a, b) => {
+                if (b.percentage !== a.percentage) {
+                    return b.percentage - a.percentage;
+                }
+                return b.totalCorrect - a.totalCorrect;
+            });
+            
+            leaderboard.innerHTML = sorted.map((entry, index) => {
+                const rank = index + 1;
+                const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `${rank}.`;
+                const isCurrent = entry.studentName === currentName;
+                const bgColor = isCurrent ? 'bg-blue-100 border-blue-300' : 'bg-stone-50 border-stone-200';
+                const textColor = isCurrent ? 'font-bold text-blue-700' : 'text-stone-700';
+                
+                return `
+                    <div class="border rounded-lg p-2 ${bgColor}">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold">${medal}</span>
+                                <span class="text-xs ${textColor}">${entry.studentName.length > 12 ? entry.studentName.substring(0, 12) + '...' : entry.studentName}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-bold ${isCurrent ? 'text-blue-700' : 'text-stone-600'}">${entry.percentage}%</span>
+                                <span class="text-xs text-stone-500 block">${entry.totalCorrect}/${entry.totalQuestions}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Progress tracking
+        function updateProgress() {
+            const warmupPercent = scores.warmup.total > 0 ? (scores.warmup.correct / scores.warmup.total) * 100 : 0;
+            const workoutBPercent = scores.workoutB.total > 0 ? (scores.workoutB.correct / scores.workoutB.total) * 100 : 0;
+            const cooldownPercent = scores.cooldown.total > 0 ? (scores.cooldown.correct / scores.cooldown.total) * 100 : 0;
+            
+            document.getElementById('progressWarmup').style.width = warmupPercent + '%';
+            document.getElementById('progressWorkoutB').style.width = workoutBPercent + '%';
+            document.getElementById('progressCooldown').style.width = cooldownPercent + '%';
+            
+            document.getElementById('scoreWarmup').textContent = `${scores.warmup.correct}/${scores.warmup.total}`;
+            document.getElementById('scoreWorkoutB').textContent = `${scores.workoutB.correct}/${scores.workoutB.total}`;
+            document.getElementById('scoreCooldown').textContent = `${scores.cooldown.correct}/${scores.cooldown.total}`;
+            
+            const totalCorrect = scores.warmup.correct + scores.workoutB.correct + scores.cooldown.correct;
+            const totalQuestions = scores.warmup.total + scores.workoutB.total + scores.cooldown.total;
+            const totalPercent = totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0;
+            
+            document.getElementById('totalScore').textContent = `${totalCorrect}/${totalQuestions}`;
+            document.getElementById('progressTotal').style.width = totalPercent + '%';
+        }
+
+        // Check answer function
+        function checkAnswer(checkFunc, resultId, buttonIds, correctAnswer, hintId, attemptCounterName, section, questionId) {
+            const resultElements = document.querySelectorAll(`#${resultId}`);
+            let buttonElements;
+            if (Array.isArray(buttonIds)) {
+                buttonElements = buttonIds.flatMap(id => Array.from(document.querySelectorAll(`#${id}`)));
+            } else {
+                buttonElements = Array.from(document.querySelectorAll(`#${buttonIds}`));
+            }
+            
+            if (answered[questionId]) {
+                return;
+            }
+            
+            const currentAttempts = attempts[attemptCounterName] || 3;
+            const isCorrect = checkFunc();
+            
+            if (isCorrect) {
+                resultElements.forEach(el => {
+                    el.textContent = 'Correct! ✓';
+                    el.className = 'font-medium text-green-600';
+                });
+                
+                buttonElements.forEach(btn => btn.disabled = true);
+                
+                if (questionId.startsWith('warmup')) {
+                    const inputId = questionId === 'warmup4' ? 'warmup4_input' : questionId + '_input';
+                    document.getElementById(inputId)?.setAttribute('disabled', 'true');
+                } else if (questionId.startsWith('workoutB') || questionId.startsWith('cooldown')) {
+                    const inputId = questionId.startsWith('cooldown') ? questionId + '_input' : questionId;
+                    document.getElementById(inputId)?.setAttribute('disabled', 'true');
+                }
+                
+                if (!answered[questionId]) {
+                    scores[section].correct++;
+                    answered[questionId] = true;
+                    attempts[attemptCounterName] = 0;
+                }
+                
+                updateProgress();
+                autoSave();
+            } else {
+                attempts[attemptCounterName] = currentAttempts - 1;
+                
+                if (currentAttempts > 1) {
+                    resultElements.forEach(el => {
+                        el.textContent = `Incorrect. ${currentAttempts - 1} trial${currentAttempts - 1 > 1 ? 's' : ''} remaining.`;
+                        el.className = 'font-medium text-red-600';
+                    });
+                } else {
+                    resultElements.forEach(el => {
+                        el.textContent = `Incorrect. The correct answer is: ${correctAnswer}`;
+                        el.className = 'font-bold text-red-700';
+                    });
+                    
+                    buttonElements.forEach(btn => btn.disabled = true);
+                    if (questionId.startsWith('warmup')) {
+                        const inputId = questionId === 'warmup4' ? 'warmup4_input' : questionId + '_input';
+                        document.getElementById(inputId)?.setAttribute('disabled', 'true');
+                    } else if (questionId.startsWith('workoutB') || questionId.startsWith('cooldown')) {
+                        const inputId = questionId.startsWith('cooldown') ? questionId + '_input' : questionId;
+                        document.getElementById(inputId)?.setAttribute('disabled', 'true');
+                    }
+                    
+                    answered[questionId] = true;
+                }
+                
+                updateProgress();
+                autoSave();
+            }
+        }
+
+        // Get visible input value helper
+        function getVisibleInputValue(id) {
+            const inputs = document.querySelectorAll(`#${id}`);
+            for (const input of inputs) {
+                if (input.offsetParent !== null) {
+                    return input.value;
+                }
+            }
+            for (const input of inputs) {
+                const style = window.getComputedStyle(input);
+                if (style.display !== 'none' && style.visibility !== 'hidden') {
+                    return input.value;
+                }
+            }
+            return inputs[0] ? inputs[0].value : '';
+        }
+
+        // Event listeners for all questions
+        document.addEventListener('DOMContentLoaded', () => {
+            // Warm-up questions
+            document.getElementById('btnWarmup1').addEventListener('click', () => {
+                const input = normalize(document.getElementById('warmup1_input').value);
+                const correct = normalize('5x^3-x^2+2x-7');
+                checkAnswer(() => input === correct, 'resultWarmup1', 'btnWarmup1', '5x³ - x² + 2x - 7', 'hintWarmup1Content', 'warmup1', 'warmup', 'warmup1');
+            });
+
+            document.getElementById('btnWarmup2').addEventListener('click', () => {
+                const input = normalize(document.getElementById('warmup2_input').value);
+                const correct = normalize('x^4+0x^3+2x^2+0x-1');
+                checkAnswer(() => input === correct, 'resultWarmup2', 'btnWarmup2', 'x⁴ + 0x³ + 2x² + 0x - 1', 'hintWarmup2Content', 'warmup2', 'warmup', 'warmup2');
+            });
+
+            document.getElementById('btnWarmup3_T').addEventListener('click', () => {
+                checkAnswer(() => true, 'resultWarmup3', ['btnWarmup3_T', 'btnWarmup3_F'], 'True', 'hintWarmup3Content', 'warmup3', 'warmup', 'warmup3');
+            });
+            document.getElementById('btnWarmup3_F').addEventListener('click', () => {
+                checkAnswer(() => false, 'resultWarmup3', ['btnWarmup3_T', 'btnWarmup3_F'], 'True', 'hintWarmup3Content', 'warmup3', 'warmup', 'warmup3');
+            });
+
+            document.getElementById('btnWarmup4').addEventListener('click', () => {
+                const input = parseFloat(document.getElementById('warmup4_input').value);
+                checkAnswer(() => input === -2, 'resultWarmup4', 'btnWarmup4', '-2', 'hintWarmup4Content', 'warmup4', 'warmup', 'warmup4');
+            });
+
+            // Workout B Problem 1
+            document.getElementById('btnWorkoutB1_step1').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB1_step1').value);
+                const correct = normalize('x^2+5x+6');
+                checkAnswer(() => input === correct, 'resultWorkoutB1_step1', 'btnWorkoutB1_step1', 'x² + 5x + 6', 'hintWorkoutB1_step1Content', 'workoutB1_step1', 'workoutB', 'workoutB1_step1');
+            });
+
+            document.getElementById('btnWorkoutB1_step2').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB1_step2').value);
+                const correct = normalize('x');
+                checkAnswer(() => input === correct, 'resultWorkoutB1_step2', 'btnWorkoutB1_step2', 'x', 'hintWorkoutB1_step2Content', 'workoutB1_step2', 'workoutB', 'workoutB1_step2');
+            });
+
+            document.getElementById('btnWorkoutB1_step3').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB1_step3').value);
+                const correct = normalize('3x+6');
+                checkAnswer(() => input === correct, 'resultWorkoutB1_step3', 'btnWorkoutB1_step3', '3x + 6', 'hintWorkoutB1_step3Content', 'workoutB1_step3', 'workoutB', 'workoutB1_step3');
+            });
+
+            document.getElementById('btnWorkoutB1_step4').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB1_step4').value);
+                const correct = normalize('x+3');
+                checkAnswer(() => input === correct, 'resultWorkoutB1_step4', 'btnWorkoutB1_step4', 'x + 3', 'hintWorkoutB1_step4Content', 'workoutB1_step4', 'workoutB', 'workoutB1_step4');
+            });
+
+            document.getElementById('btnWorkoutB1_step5').addEventListener('click', () => {
+                const input = parseFloat(document.getElementById('workoutB1_step5').value);
+                checkAnswer(() => input === 0, 'resultWorkoutB1_step5', 'btnWorkoutB1_step5', '0', 'hintWorkoutB1_step5Content', 'workoutB1_step5', 'workoutB', 'workoutB1_step5');
+            });
+
+            // Workout B Problem 2
+            document.getElementById('btnWorkoutB2_step1').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB2_step1').value);
+                const correct = normalize('2x^3-3x^2+x-1');
+                checkAnswer(() => input === correct, 'resultWorkoutB2_step1', 'btnWorkoutB2_step1', '2x³ - 3x² + x - 1', 'hintWorkoutB2_step1Content', 'workoutB2_step1', 'workoutB', 'workoutB2_step1');
+            });
+
+            document.getElementById('btnWorkoutB2_step2').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB2_step2').value);
+                const correct = normalize('2x^2');
+                checkAnswer(() => input === correct, 'resultWorkoutB2_step2', 'btnWorkoutB2_step2', '2x²', 'hintWorkoutB2_step2Content', 'workoutB2_step2', 'workoutB', 'workoutB2_step2');
+            });
+
+            document.getElementById('btnWorkoutB2_step3').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB2_step3').value);
+                const correct1 = normalize('-x^2+x');
+                const correct2 = normalize('-x2+x');
+                checkAnswer(() => input === correct1 || input === correct2, 'resultWorkoutB2_step3', 'btnWorkoutB2_step3', '-x² + x', 'hintWorkoutB2_step3Content', 'workoutB2_step3', 'workoutB', 'workoutB2_step3');
+            });
+
+            document.getElementById('btnWorkoutB2_step4').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB2_step4').value);
+                const correct = normalize('-x');
+                checkAnswer(() => input === correct, 'resultWorkoutB2_step4', 'btnWorkoutB2_step4', '-x', 'hintWorkoutB2_step4Content', 'workoutB2_step4', 'workoutB', 'workoutB2_step4');
+            });
+
+            document.getElementById('btnWorkoutB2_step5').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB2_step5').value);
+                const correct1 = normalize('0x-1');
+                const correct2 = normalize('-1');
+                checkAnswer(() => input === correct1 || input === correct2, 'resultWorkoutB2_step5', 'btnWorkoutB2_step5', '-1', 'hintWorkoutB2_step5Content', 'workoutB2_step5', 'workoutB', 'workoutB2_step5');
+            });
+
+            document.getElementById('btnWorkoutB2_step6').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB2_step6').value);
+                const correct = normalize('2x^2-x');
+                checkAnswer(() => input === correct, 'resultWorkoutB2_step6', 'btnWorkoutB2_step6', '2x² - x', 'hintWorkoutB2_step6Content', 'workoutB2_step6', 'workoutB', 'workoutB2_step6');
+            });
+
+            document.getElementById('btnWorkoutB2_step7').addEventListener('click', () => {
+                const input = parseFloat(document.getElementById('workoutB2_step7').value);
+                checkAnswer(() => input === -1, 'resultWorkoutB2_step7', 'btnWorkoutB2_step7', '-1', 'hintWorkoutB2_step7Content', 'workoutB2_step7', 'workoutB', 'workoutB2_step7');
+            });
+
+            // Workout B Problem 3
+            document.getElementById('btnWorkoutB3_step1').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB3_step1').value);
+                const correct = normalize('x^3+2x^2-5x-6');
+                checkAnswer(() => input === correct, 'resultWorkoutB3_step1', 'btnWorkoutB3_step1', 'x³ + 2x² - 5x - 6', 'hintWorkoutB3_step1Content', 'workoutB3_step1', 'workoutB', 'workoutB3_step1');
+            });
+
+            document.getElementById('btnWorkoutB3_step2').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB3_step2').value);
+                const correct = normalize('x^2');
+                checkAnswer(() => input === correct, 'resultWorkoutB3_step2', 'btnWorkoutB3_step2', 'x²', 'hintWorkoutB3_step2Content', 'workoutB3_step2', 'workoutB', 'workoutB3_step2');
+            });
+
+            document.getElementById('btnWorkoutB3_step3').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB3_step3').value);
+                const correct = normalize('x^2-5x');
+                checkAnswer(() => input === correct, 'resultWorkoutB3_step3', 'btnWorkoutB3_step3', 'x² - 5x', 'hintWorkoutB3_step3Content', 'workoutB3_step3', 'workoutB', 'workoutB3_step3');
+            });
+
+            document.getElementById('btnWorkoutB3_step4').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB3_step4').value);
+                const correct = normalize('x^2+x-6');
+                checkAnswer(() => input === correct, 'resultWorkoutB3_step4', 'btnWorkoutB3_step4', 'x² + x - 6', 'hintWorkoutB3_step4Content', 'workoutB3_step4', 'workoutB', 'workoutB3_step4');
+            });
+
+            document.getElementById('btnWorkoutB3_step5').addEventListener('click', () => {
+                const input = parseFloat(document.getElementById('workoutB3_step5').value);
+                checkAnswer(() => input === 0, 'resultWorkoutB3_step5', 'btnWorkoutB3_step5', '0', 'hintWorkoutB3_step5Content', 'workoutB3_step5', 'workoutB', 'workoutB3_step5');
+            });
+
+            // Workout B Problem 4
+            document.getElementById('btnWorkoutB4_step1').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB4_step1').value);
+                const correct = normalize('x^3+0x^2+0x-8');
+                checkAnswer(() => input === correct, 'resultWorkoutB4_step1', 'btnWorkoutB4_step1', 'x³ + 0x² + 0x - 8', 'hintWorkoutB4_step1Content', 'workoutB4_step1', 'workoutB', 'workoutB4_step1');
+            });
+
+            document.getElementById('btnWorkoutB4_step2').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB4_step2').value);
+                const correct = normalize('x^2');
+                checkAnswer(() => input === correct, 'resultWorkoutB4_step2', 'btnWorkoutB4_step2', 'x²', 'hintWorkoutB4_step2Content', 'workoutB4_step2', 'workoutB', 'workoutB4_step2');
+            });
+
+            document.getElementById('btnWorkoutB4_step3').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB4_step3').value);
+                const correct = normalize('2x^2+0x');
+                checkAnswer(() => input === correct, 'resultWorkoutB4_step3', 'btnWorkoutB4_step3', '2x² + 0x', 'hintWorkoutB4_step3Content', 'workoutB4_step3', 'workoutB', 'workoutB4_step3');
+            });
+
+            document.getElementById('btnWorkoutB4_step4').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB4_step4').value);
+                const correct = normalize('2x');
+                checkAnswer(() => input === correct, 'resultWorkoutB4_step4', 'btnWorkoutB4_step4', '2x', 'hintWorkoutB4_step4Content', 'workoutB4_step4', 'workoutB', 'workoutB4_step4');
+            });
+
+            document.getElementById('btnWorkoutB4_step5').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB4_step5').value);
+                const correct = normalize('x^2+2x+4');
+                checkAnswer(() => input === correct, 'resultWorkoutB4_step5', 'btnWorkoutB4_step5', 'x² + 2x + 4', 'hintWorkoutB4_step5Content', 'workoutB4_step5', 'workoutB', 'workoutB4_step5');
+            });
+
+            document.getElementById('btnWorkoutB4_step6').addEventListener('click', () => {
+                const input = parseFloat(document.getElementById('workoutB4_step6').value);
+                checkAnswer(() => input === 0, 'resultWorkoutB4_step6', 'btnWorkoutB4_step6', '0', 'hintWorkoutB4_step6Content', 'workoutB4_step6', 'workoutB', 'workoutB4_step6');
+            });
+
+            // Workout B Problem 5
+            document.getElementById('btnWorkoutB5_step1').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB5_step1').value);
+                const correct = normalize('x^4+0x^3+0x^2+0x-16');
+                checkAnswer(() => input === correct, 'resultWorkoutB5_step1', 'btnWorkoutB5_step1', 'x⁴ + 0x³ + 0x² + 0x - 16', 'hintWorkoutB5_step1Content', 'workoutB5_step1', 'workoutB', 'workoutB5_step1');
+            });
+
+            document.getElementById('btnWorkoutB5_step2').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB5_step2').value);
+                const correct = normalize('x^3');
+                checkAnswer(() => input === correct, 'resultWorkoutB5_step2', 'btnWorkoutB5_step2', 'x³', 'hintWorkoutB5_step2Content', 'workoutB5_step2', 'workoutB', 'workoutB5_step2');
+            });
+
+            document.getElementById('btnWorkoutB5_step3').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB5_step3').value);
+                const correct = normalize('2x^3+0x^2');
+                checkAnswer(() => input === correct, 'resultWorkoutB5_step3', 'btnWorkoutB5_step3', '2x³ + 0x²', 'hintWorkoutB5_step3Content', 'workoutB5_step3', 'workoutB', 'workoutB5_step3');
+            });
+
+            document.getElementById('btnWorkoutB5_step4').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB5_step4').value);
+                const correct = normalize('2x^2');
+                checkAnswer(() => input === correct, 'resultWorkoutB5_step4', 'btnWorkoutB5_step4', '2x²', 'hintWorkoutB5_step4Content', 'workoutB5_step4', 'workoutB', 'workoutB5_step4');
+            });
+
+            document.getElementById('btnWorkoutB5_step5').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB5_step5').value);
+                const correct = normalize('4x^2+0x');
+                checkAnswer(() => input === correct, 'resultWorkoutB5_step5', 'btnWorkoutB5_step5', '4x² + 0x', 'hintWorkoutB5_step5Content', 'workoutB5_step5', 'workoutB', 'workoutB5_step5');
+            });
+
+            document.getElementById('btnWorkoutB5_step6').addEventListener('click', () => {
+                const input = normalize(document.getElementById('workoutB5_step6').value);
+                const correct = normalize('x^3+2x^2+4x+8');
+                checkAnswer(() => input === correct, 'resultWorkoutB5_step6', 'btnWorkoutB5_step6', 'x³ + 2x² + 4x + 8', 'hintWorkoutB5_step6Content', 'workoutB5_step6', 'workoutB', 'workoutB5_step6');
+            });
+
+            document.getElementById('btnWorkoutB5_step7').addEventListener('click', () => {
+                const input = parseFloat(document.getElementById('workoutB5_step7').value);
+                checkAnswer(() => input === 0, 'resultWorkoutB5_step7', 'btnWorkoutB5_step7', '0', 'hintWorkoutB5_step7Content', 'workoutB5_step7', 'workoutB', 'workoutB5_step7');
+            });
+
+            // Cool-Down questions
+            document.getElementById('btnCooldown1').addEventListener('click', () => {
+                const input = normalize(document.getElementById('cooldown1_input').value);
+                const correct1 = normalize('x+3');
+                const correct2 = normalize('x+3+0/(x+2)');
+                checkAnswer(() => input === correct1 || input === correct2, 'resultCooldown1', 'btnCooldown1', 'x + 3', 'hintCooldown1Content', 'cooldown1', 'cooldown', 'cooldown1');
+            });
+
+            document.getElementById('btnCooldown2').addEventListener('click', () => {
+                const input = parseFloat(document.getElementById('cooldown2_input').value);
+                checkAnswer(() => input === 0, 'resultCooldown2', 'btnCooldown2', '0', 'hintCooldown2Content', 'cooldown2', 'cooldown', 'cooldown2');
+            });
+
+            document.getElementById('btnCooldown3').addEventListener('click', () => {
+                const input = normalize(document.getElementById('cooldown3_input').value);
+                const correct = normalize('x-1');
+                checkAnswer(() => input === correct, 'resultCooldown3', 'btnCooldown3', 'x - 1', 'hintCooldown3Content', 'cooldown3', 'cooldown', 'cooldown3');
+            });
+
+            document.getElementById('btnCooldown4').addEventListener('click', () => {
+                const input = normalize(document.getElementById('cooldown4_input').value);
+                const correct = normalize('x-3');
+                checkAnswer(() => input === correct, 'resultCooldown4', 'btnCooldown4', 'x - 3', 'hintCooldown4Content', 'cooldown4', 'cooldown', 'cooldown4');
+            });
+
+            // Hint buttons
+            const hintButtons = {
+                'hintWarmup1': 'hintWarmup1Content',
+                'hintWarmup2': 'hintWarmup2Content',
+                'hintWarmup3': 'hintWarmup3Content',
+                'hintWarmup4': 'hintWarmup4Content',
+                'hintWorkoutB1_step1': 'hintWorkoutB1_step1Content',
+                'hintWorkoutB1_step2': 'hintWorkoutB1_step2Content',
+                'hintWorkoutB1_step3': 'hintWorkoutB1_step3Content',
+                'hintWorkoutB1_step4': 'hintWorkoutB1_step4Content',
+                'hintWorkoutB1_step5': 'hintWorkoutB1_step5Content',
+                'hintWorkoutB2_step1': 'hintWorkoutB2_step1Content',
+                'hintWorkoutB2_step2': 'hintWorkoutB2_step2Content',
+                'hintWorkoutB2_step3': 'hintWorkoutB2_step3Content',
+                'hintWorkoutB2_step4': 'hintWorkoutB2_step4Content',
+                'hintWorkoutB2_step5': 'hintWorkoutB2_step5Content',
+                'hintWorkoutB2_step6': 'hintWorkoutB2_step6Content',
+                'hintWorkoutB2_step7': 'hintWorkoutB2_step7Content',
+                'hintWorkoutB3_step1': 'hintWorkoutB3_step1Content',
+                'hintWorkoutB3_step2': 'hintWorkoutB3_step2Content',
+                'hintWorkoutB3_step3': 'hintWorkoutB3_step3Content',
+                'hintWorkoutB3_step4': 'hintWorkoutB3_step4Content',
+                'hintWorkoutB3_step5': 'hintWorkoutB3_step5Content',
+                'hintWorkoutB4_step1': 'hintWorkoutB4_step1Content',
+                'hintWorkoutB4_step2': 'hintWorkoutB4_step2Content',
+                'hintWorkoutB4_step3': 'hintWorkoutB4_step3Content',
+                'hintWorkoutB4_step4': 'hintWorkoutB4_step4Content',
+                'hintWorkoutB4_step5': 'hintWorkoutB4_step5Content',
+                'hintWorkoutB4_step6': 'hintWorkoutB4_step6Content',
+                'hintWorkoutB5_step1': 'hintWorkoutB5_step1Content',
+                'hintWorkoutB5_step2': 'hintWorkoutB5_step2Content',
+                'hintWorkoutB5_step3': 'hintWorkoutB5_step3Content',
+                'hintWorkoutB5_step4': 'hintWorkoutB5_step4Content',
+                'hintWorkoutB5_step5': 'hintWorkoutB5_step5Content',
+                'hintWorkoutB5_step6': 'hintWorkoutB5_step6Content',
+                'hintWorkoutB5_step7': 'hintWorkoutB5_step7Content',
+                'hintCooldown1': 'hintCooldown1Content',
+                'hintCooldown2': 'hintCooldown2Content',
+                'hintCooldown3': 'hintCooldown3Content',
+                'hintCooldown4': 'hintCooldown4Content'
+            };
+
+            Object.keys(hintButtons).forEach(btnId => {
+                document.querySelectorAll(`#${btnId}`).forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const hintContent = document.getElementById(hintButtons[btnId]);
+                        if (hintContent) {
+                            hintContent.classList.toggle('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Sidebar functionality
+            document.getElementById('openSidebar').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.add('open');
+            });
+            document.getElementById('closeSidebar').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.remove('open');
+            });
+
+            // Name submission
+            let nameLocked = false;
+            document.getElementById('submitName').addEventListener('click', () => {
+                const name = document.getElementById('studentName').value.trim();
+                if (name) {
+                    nameLocked = true;
+                    document.getElementById('studentName').disabled = true;
+                    document.getElementById('submitName').disabled = true;
+                    document.getElementById('submitName').textContent = '✓ Submitted';
+                    document.getElementById('submitName').classList.add('bg-green-600', 'cursor-not-allowed');
+                    document.getElementById('nameStatus').textContent = 'Name locked.';
+                    document.getElementById('nameStatus').classList.add('text-green-600');
+                    localStorage.setItem('mth112e_polynomials_name', name);
+                    localStorage.setItem('mth112e_polynomials_name_locked', 'true');
+                    autoSave();
+                }
+            });
+
+            // Check for saved name
+            const savedName = localStorage.getItem('mth112e_polynomials_name');
+            const savedNameLocked = localStorage.getItem('mth112e_polynomials_name_locked');
+            if (savedName && savedNameLocked === 'true') {
+                document.getElementById('studentName').value = savedName;
+                document.getElementById('studentName').disabled = true;
+                document.getElementById('submitName').disabled = true;
+                document.getElementById('submitName').textContent = '✓ Submitted';
+                document.getElementById('submitName').classList.add('bg-green-600', 'cursor-not-allowed');
+                document.getElementById('nameStatus').textContent = 'Name locked.';
+                document.getElementById('nameStatus').classList.add('text-green-600');
+                nameLocked = true;
+            }
+
+            // Load saved progress
+            const savedProgress = localStorage.getItem('mth112e_polynomials_progress');
+            if (savedProgress) {
+                try {
+                    const progress = JSON.parse(savedProgress);
+                    if (progress.scores) scores = progress.scores;
+                    if (progress.attempts) attempts = { ...attempts, ...progress.attempts };
+                    if (progress.answered) answered = { ...answered, ...progress.answered };
+                    updateProgress();
+                } catch (e) {
+                    console.error('Error loading progress:', e);
+                }
+            }
+
+            // Survey submission
+            document.getElementById('submitSurvey').addEventListener('click', () => {
+                if (surveySubmitted) {
+                    alert('You have already submitted your feedback. Thank you!');
+                    return;
+                }
+                
+                if (currentRating === 0) {
+                    alert('Please select a rating (1-5 stars) before submitting.');
+                    return;
+                }
+                
+                const comment = document.getElementById('surveyComment').value.trim();
+                const surveyData = {
+                    timestamp: new Date().toISOString(),
+                    studentName: document.getElementById('studentName').value || 'Anonymous',
+                    rating: currentRating,
+                    comment: comment || ''
+                };
+                
+                const existingSurveys = JSON.parse(localStorage.getItem('mth112e_polynomials_surveys') || '[]');
+                existingSurveys.push(surveyData);
+                localStorage.setItem('mth112e_polynomials_surveys', JSON.stringify(existingSurveys));
+                
+                surveySubmitted = true;
+                document.getElementById('surveyStatus').classList.remove('hidden');
+                document.getElementById('submitSurvey').disabled = true;
+                document.getElementById('submitSurvey').textContent = '✓ Submitted';
+                document.getElementById('submitSurvey').classList.add('bg-green-600', 'cursor-not-allowed');
+            });
+
+            // Check if survey already submitted
+            const savedSurveys = JSON.parse(localStorage.getItem('mth112e_polynomials_surveys') || '[]');
+            const currentName = document.getElementById('studentName').value || 'Anonymous';
+            if (savedSurveys.some(s => s.studentName === currentName)) {
+                surveySubmitted = true;
+                document.getElementById('surveyStatus').classList.remove('hidden');
+                document.getElementById('submitSurvey').disabled = true;
+                document.getElementById('submitSurvey').textContent = '✓ Submitted';
+                document.getElementById('submitSurvey').classList.add('bg-green-600', 'cursor-not-allowed');
+            }
+
+            // Initialize
+            updateProgress();
+            updateLeaderboard();
+            
+            // Re-render MathJax
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        });
+    </script>
+</body>
+</html>
+
+

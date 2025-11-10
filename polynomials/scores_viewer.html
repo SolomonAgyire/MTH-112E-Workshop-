@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polynomials Exercise - Instructor Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .kahoot-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        .kahoot-card:hover {
+            transform: translateY(-5px);
+        }
+        .rank-badge {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .medal-gold { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+        .medal-silver { background: linear-gradient(135deg, #c0c0c0 0%, #808080 100%); }
+        .medal-bronze { background: linear-gradient(135deg, #cd7f32 0%, #8b4513 100%); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-purple-50 font-sans min-h-screen">
+    <div class="max-w-7xl mx-auto p-6">
+        <div id="loginSection" class="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">🔐 Instructor Access</h1>
+            <p class="text-gray-600 mb-4 text-center">Enter the instructor password to view student scores:</p>
+            <input type="password" id="passwordInput" placeholder="Enter instructor password" 
+                   class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500">
+            <button onclick="checkPassword()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg">
+                Access Dashboard
+            </button>
+            <p id="errorMessage" class="text-red-600 text-sm mt-2 text-center hidden"></p>
+        </div>
+        
+        <div id="dashboardSection" class="hidden">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2 text-center">🏆 Polynomials Exercise Leaderboard</h1>
+            <p class="text-center text-gray-600 mb-8">Real-time student progress and feedback</p>
+            
+            <!-- Kahoot-Style Leaderboard -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">📊 Leaderboard</h2>
+                    <button onclick="loadScores()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        🔄 Refresh
+                    </button>
+                </div>
+                
+                <div id="leaderboardContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Leaderboard cards will be displayed here -->
+                </div>
+            </div>
+            
+            <!-- Survey Responses -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">⭐ Survey Responses</h2>
+                <div id="surveyContainer" class="space-y-4">
+                    <!-- Survey responses will be displayed here -->
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Actions</h2>
+                <div class="flex flex-wrap gap-4">
+                    <button onclick="exportScores()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors shadow-lg">
+                        📥 Export Scores (CSV)
+                    </button>
+                    <button onclick="exportSurveys()" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors shadow-lg">
+                        📥 Export Surveys (CSV)
+                    </button>
+                    <button onclick="clearAllData()" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors shadow-lg">
+                        🗑️ Clear All Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password protection
+        const INSTRUCTOR_PASSWORD = "MTH112E_Polynomials_2024";
+        
+        // Check if user was previously authenticated
+        const isAuthenticated = sessionStorage.getItem('instructor_authenticated_polynomials') === 'true';
+        
+        function checkPassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const errorMessage = document.getElementById('errorMessage');
+            const loginSection = document.getElementById('loginSection');
+            const dashboardSection = document.getElementById('dashboardSection');
+            
+            if (passwordInput.value === INSTRUCTOR_PASSWORD) {
+                sessionStorage.setItem('instructor_authenticated_polynomials', 'true');
+                loginSection.classList.add('hidden');
+                dashboardSection.classList.remove('hidden');
+                loadScores();
+                loadSurveys();
+                // Auto-refresh every 5 seconds
+                setInterval(() => {
+                    loadScores();
+                    loadSurveys();
+                }, 5000);
+            } else {
+                errorMessage.textContent = 'Incorrect password. Please try again.';
+                errorMessage.classList.remove('hidden');
+                passwordInput.value = '';
+            }
+        }
+        
+        // Auto-login if previously authenticated
+        if (isAuthenticated) {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            loadScores();
+            loadSurveys();
+            setInterval(() => {
+                loadScores();
+                loadSurveys();
+            }, 5000);
+        }
+        
+        // Allow Enter key to submit
+        document.getElementById('passwordInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+        
+        function loadScores() {
+            const scores = JSON.parse(localStorage.getItem('mth112e_polynomials_scores') || '[]');
+            const container = document.getElementById('leaderboardContainer');
+            
+            if (scores.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No student data found yet. Students need to complete the exercise.</div>';
+                return;
+            }
+            
+            // Sort by percentage (descending)
+            const sorted = [...scores].sort((a, b) => {
+                if (b.percentage !== a.percentage) {
+                    return b.percentage - a.percentage;
+                }
+                return b.totalCorrect - a.totalCorrect;
+            });
+            
+            container.innerHTML = sorted.map((entry, index) => {
+                const rank = index + 1;
+                let medalClass = '';
+                let medalEmoji = `${rank}.`;
+                
+                if (rank === 1) {
+                    medalClass = 'medal-gold';
+                    medalEmoji = '🥇';
+                } else if (rank === 2) {
+                    medalClass = 'medal-silver';
+                    medalEmoji = '🥈';
+                } else if (rank === 3) {
+                    medalClass = 'medal-bronze';
+                    medalEmoji = '🥉';
+                }
+                
+                return `
+                    <div class="kahoot-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="rank-badge ${medalClass}">
+                                ${medalEmoji}
+                            </div>
+                            <div class="text-right">
+                                <div class="text-4xl font-bold">${entry.percentage}%</div>
+                                <div class="text-sm opacity-90">${entry.totalCorrect}/${entry.totalQuestions} questions</div>
+                            </div>
+                        </div>
+                        <div class="text-2xl font-bold mb-2">${entry.studentName || 'Anonymous'}</div>
+                        <div class="grid grid-cols-2 gap-2 text-sm mt-4">
+                            <div>
+                                <div class="opacity-75">Warm-up</div>
+                                <div class="font-bold">${entry.scores.warmup.correct}/${entry.scores.warmup.total}</div>
+                            </div>
+                            <div>
+                                <div class="opacity-75">Workout B</div>
+                                <div class="font-bold">${entry.scores.workoutB.correct}/${entry.scores.workoutB.total}</div>
+                            </div>
+                            <div>
+                                <div class="opacity-75">Cool-Down</div>
+                                <div class="font-bold">${entry.scores.cooldown.correct}/${entry.scores.cooldown.total}</div>
+                            </div>
+                            <div>
+                                <div class="opacity-75">Last Updated</div>
+                                <div class="font-bold text-xs">${new Date(entry.timestamp).toLocaleTimeString()}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function loadSurveys() {
+            const surveys = JSON.parse(localStorage.getItem('mth112e_polynomials_surveys') || '[]');
+            const container = document.getElementById('surveyContainer');
+            
+            if (surveys.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">No survey responses yet.</p>';
+                return;
+            }
+            
+            // Sort by timestamp (newest first)
+            const sorted = [...surveys].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            container.innerHTML = sorted.map(survey => {
+                const stars = '⭐'.repeat(survey.rating);
+                const date = new Date(survey.timestamp).toLocaleString();
+                
+                return `
+                    <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <div class="font-bold text-lg">${survey.studentName || 'Anonymous'}</div>
+                                <div class="text-sm text-gray-600">${date}</div>
+                            </div>
+                            <div class="text-2xl">${stars}</div>
+                        </div>
+                        ${survey.comment ? `
+                            <div class="mt-3 p-3 bg-white rounded border border-gray-200">
+                                <div class="text-sm text-gray-600 mb-1">Comment:</div>
+                                <div class="text-gray-800">${survey.comment}</div>
+                            </div>
+                        ` : '<div class="text-sm text-gray-500 italic">No comment provided.</div>'}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function exportScores() {
+            const scores = JSON.parse(localStorage.getItem('mth112e_polynomials_scores') || '[]');
+            if (scores.length === 0) {
+                alert('No scores to export!');
+                return;
+            }
+            
+            const sorted = [...scores].sort((a, b) => {
+                if (b.percentage !== a.percentage) {
+                    return b.percentage - a.percentage;
+                }
+                return b.totalCorrect - a.totalCorrect;
+            });
+            
+            const csvContent = [
+                'Rank,Student Name,Timestamp,Warm-up Correct,Warm-up Total,Workout B Correct,Workout B Total,Cool-Down Correct,Cool-Down Total,Total Correct,Total Questions,Percentage',
+                ...sorted.map((entry, index) => {
+                    return [
+                        index + 1,
+                        entry.studentName || 'Anonymous',
+                        entry.timestamp,
+                        entry.scores.warmup.correct,
+                        entry.scores.warmup.total,
+                        entry.scores.workoutB.correct,
+                        entry.scores.workoutB.total,
+                        entry.scores.cooldown.correct,
+                        entry.scores.cooldown.total,
+                        entry.totalCorrect,
+                        entry.totalQuestions,
+                        entry.percentage
+                    ].map(field => `"${String(field).replace(/"/g, '""')}"`).join(',');
+                })
+            ].join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `polynomials_scores_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function exportSurveys() {
+            const surveys = JSON.parse(localStorage.getItem('mth112e_polynomials_surveys') || '[]');
+            if (surveys.length === 0) {
+                alert('No surveys to export!');
+                return;
+            }
+            
+            const sorted = [...surveys].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            const csvContent = [
+                'Student Name,Timestamp,Rating,Comment',
+                ...sorted.map(survey => {
+                    return [
+                        survey.studentName || 'Anonymous',
+                        survey.timestamp,
+                        survey.rating,
+                        survey.comment || ''
+                    ].map(field => `"${String(field).replace(/"/g, '""')}"`).join(',');
+                })
+            ].join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `polynomials_surveys_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear ALL data? This includes scores and surveys. This cannot be undone.')) {
+                localStorage.removeItem('mth112e_polynomials_scores');
+                localStorage.removeItem('mth112e_polynomials_surveys');
+                localStorage.removeItem('mth112e_polynomials_progress');
+                alert('All data has been cleared.');
+                loadScores();
+                loadSurveys();
+            }
+        }
+    </script>
+</body>
+</html>
+
