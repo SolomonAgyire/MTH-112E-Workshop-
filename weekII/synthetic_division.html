@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTH 112E: Synthetic Division & Polynomial Theorems</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📐</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['$$', '$$']]
+            }
+        };
+    </script>
+    <style>
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+        .info-table th {
+            background-color: #e0e7ff;
+            color: #312e81;
+            font-weight: 600;
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 2px solid #c7d2fe;
+            border-right: 1px solid #c7d2fe;
+        }
+        .info-table th:last-child {
+            border-right: none;
+        }
+        .info-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            border-right: 1px solid #e5e7eb;
+            color: #374151;
+        }
+        .info-table td:last-child {
+            border-right: none;
+        }
+        .info-table tr:last-child td {
+            border-bottom: none;
+        }
+        .info-table tr:hover {
+            background-color: #f9fafb;
+        }
+        .step-box {
+            background-color: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 font-sans text-stone-800 antialiased">
+    <main class="max-w-5xl mx-auto p-4 sm:p-8 space-y-8">
+        
+        <header class="bg-white rounded-2xl shadow-xl border border-stone-200 overflow-hidden">
+            <div class="bg-gradient-to-br from-slate-50 via-indigo-50 to-slate-100 px-6 sm:px-12 py-8 border-b border-stone-200">
+                <div class="max-w-4xl mx-auto">
+                    <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-1">MTH 112E: Synthetic Division & Polynomial Theorems</h1>
+                </div>
+            </div>
+            
+            <div class="px-6 sm:px-12 py-6">
+                <div class="max-w-4xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <span class="text-indigo-600 font-semibold text-sm">SL</span>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500 uppercase tracking-wide font-medium">SLA Leader</p>
+                                <p class="text-base font-semibold text-slate-900">Solomon Agyire</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <span class="text-indigo-600 font-semibold text-sm">📅</span>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500 uppercase tracking-wide font-medium">Date</p>
+                                <p class="text-base font-semibold text-slate-900">Nov 17</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <span class="text-indigo-600 font-semibold text-sm">📚</span>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500 uppercase tracking-wide font-medium">Course</p>
+                                <p class="text-base font-semibold text-slate-900">MTH 112E</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <span class="text-indigo-600 font-semibold text-sm">👥</span>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500 uppercase tracking-wide font-medium">Instructors</p>
+                                <p class="text-base font-semibold text-slate-900">Professor Thompson and Professor Gordon</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 mb-4">
+                        <p class="text-xs text-slate-500 uppercase tracking-wide font-bold mb-2">Session Objective</p>
+                        <p class="text-sm text-slate-700 leading-relaxed">
+                            Students will practice applying the Rational Zero Theorem to list all possible rational zeros, 
+                            utilize Synthetic Division (including the use of zero placeholders) to test for actual zeros, 
+                            and use Descartes' Rule of Signs to determine the possible number of positive, negative, and imaginary roots.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                        <p class="text-xs text-amber-800 font-bold mb-1">Materials Needed</p>
+                        <p class="text-xs text-amber-700">Dry erase markers, Student worksheets (70 copies), Scratch paper, Calculator, Attendance sheets, Pen</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Warm-up Section -->
+        <section id="warmup" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200">
+            <h2 class="text-2xl font-bold text-indigo-900 border-b border-stone-200 pb-3 mb-4">🚀 Part 1: Warm-up - Synthetic Division</h2>
+            
+            <!-- Info Table -->
+            <div class="mb-6 overflow-x-auto">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 200px;">Field</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-semibold">Content to Cover</td>
+                            <td>Synthetic Division (Review & Placeholder Practice)</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Collaborative Learning Technique</td>
+                            <td>Think–Pair–Share (Students solve individually, discuss with a partner, and share responses.)</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Study Strategy to be Used</td>
+                            <td>Note Review, Practice Problems (To promote quick recall and build confidence)</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Activity Material</td>
+                            <td>Students' notes, textbook, calculator, sheets of paper</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Instructions</td>
+                            <td>Use your class notes and the synthetic division process to find the quotient and the remainder. Be careful when dealing with missing terms.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="mt-4 text-stone-600 mb-6">Let's start with synthetic division practice. Remember to include placeholders (0) for missing terms! You have 3 trials for each question.</p>
+            
+            <!-- Problem 1 -->
+            <div class="mt-6 bg-stone-50 p-4 rounded-lg border border-stone-200">
+                <p class="text-lg font-medium mb-3">Q1. Divide \(f(x) = x^3 - 4x^2 - 17x + 60\) by \(d(x) = x-5\).</p>
+                <p class="text-sm text-stone-600 mb-3 italic bg-blue-50 p-2 rounded border border-blue-200">Hint: The value of \(c\) you use in the box is \(5\).</p>
+                
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-2">Quotient \(Q(x)\) (e.g., 1x^2 + 5x - 4):</label>
+                            <input type="text" id="warmup1-quotient" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="e.g., 1x^2 + 5x - 4">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-2">Remainder \(R\):</label>
+                            <input type="number" id="warmup1-remainder" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="R">
+                        </div>
+                    </div>
+                    <div class="flex gap-2 items-center">
+                        <button id="btnWarmup1" class="bg-indigo-600 text-white py-1.5 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check Q1</button>
+                        <button id="hintWarmup1" class="bg-yellow-500 text-white py-1.5 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm">💡 Hint</button>
+                        <span id="resultWarmup1" class="ml-3 font-medium flex items-center"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem 2 -->
+            <div class="mt-6 bg-stone-50 p-4 rounded-lg border border-stone-200">
+                <p class="text-lg font-medium mb-3">Q2. <strong>Placeholder Required:</strong> Divide \(f(x) = 2x^4 + 5x^2 - 1\) by \(d(x) = x+1\).</p>
+                <p class="text-sm text-stone-600 mb-3 italic bg-blue-50 p-2 rounded border border-blue-200">Hint: Remember to insert \(\mathbf{0}\) for the missing \(x^3\) and \(x\) terms in your synthetic division setup. The value of \(c\) is \(-1\).</p>
+                
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-2">Quotient \(Q(x)\) (e.g., 2x^3 - 2x^2 + 7x - 7):</label>
+                            <input type="text" id="warmup2-quotient" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="e.g., 2x^3 - 2x^2 + 7x - 7">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-2">Remainder \(R\):</label>
+                            <input type="number" id="warmup2-remainder" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="R">
+                        </div>
+                    </div>
+                    <div class="flex gap-2 items-center">
+                        <button id="btnWarmup2" class="bg-indigo-600 text-white py-1.5 px-3 rounded-lg hover:bg-indigo-700 transition-colors shadow text-sm">Check Q2</button>
+                        <button id="hintWarmup2" class="bg-yellow-500 text-white py-1.5 px-3 rounded-lg hover:bg-yellow-600 transition-colors shadow text-sm">💡 Hint</button>
+                        <span id="resultWarmup2" class="ml-3 font-medium flex items-center"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Workout Section -->
+        <section id="workout" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200">
+            <h2 class="text-2xl font-bold text-indigo-900 border-b border-stone-200 pb-3 mb-4">💪 Part 2: Workout - Finding All Zeros</h2>
+            
+            <!-- Info Table -->
+            <div class="mb-6 overflow-x-auto">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 200px;">Field</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-semibold">Content to Cover</td>
+                            <td>Rational Zero Theorem, Factor Theorem, and Depressed Polynomials</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Collaborative Learning Technique</td>
+                            <td>Small Group Problem-Solving (Groups of 3)</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Study Strategy to be Used</td>
+                            <td>Collaborative discussion and step-by-step reasoning</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Activity Material</td>
+                            <td>Students' notes, scratch paper</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Instructions</td>
+                            <td>Students work in groups to find all zeros of the polynomial. Follow the specific steps below.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-6 bg-stone-50 p-4 rounded-lg border border-stone-200">
+                <p class="text-lg font-medium mb-3">Problem: Find all zeros of</p>
+                <p class="text-2xl font-mono text-center py-2 mb-6">$$f(x) = x^3 - 7x - 6$$</p>
+
+                <!-- Step-by-step interface -->
+                <div class="space-y-6">
+                    <!-- Step 1: Rational Zero Theorem -->
+                    <div class="step-box">
+                        <h3 class="font-bold text-lg mb-3">Step 1: Rational Zero Theorem</h3>
+                        <p class="mb-3">List all possible rational zeros using the formula \(\frac{P}{Q}\) where:</p>
+                        <ul class="list-disc list-inside mb-3 space-y-1 text-stone-700">
+                            <li>P = factors of the constant term (-6)</li>
+                            <li>Q = factors of the leading coefficient (1)</li>
+                        </ul>
+                        <div class="bg-white p-3 rounded border border-stone-300">
+                            <label class="block text-sm font-medium text-stone-700 mb-2">Enter all possible rational zeros (comma-separated, e.g., ±1, ±2, ±3, ±6 or +-1, +-2, +-3, +-6):</label>
+                            <input type="text" id="step1-zeros" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="±1, ±2, ±3, ±6 or +-1, +-2, +-3, +-6">
+                            <div class="flex gap-2 mt-2">
+                                <button id="btnStep1" class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Check Step 1</button>
+                                <span id="resultStep1" class="ml-3 font-medium flex items-center"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Synthetic Division -->
+                    <div class="step-box">
+                        <h3 class="font-bold text-lg mb-3">Step 2: Synthetic Division</h3>
+                        <p class="mb-3">Test c = -1 using synthetic division. Remember to use placeholders for missing terms!</p>
+                        <p class="text-sm text-stone-600 mb-3 italic">The polynomial is \(x^3 + 0x^2 - 7x - 6\) (include placeholder for \(x^2\))</p>
+                        <div class="bg-white p-3 rounded border border-stone-300">
+                            <label class="block text-sm font-medium text-stone-700 mb-2">Enter the depressed polynomial (the quotient):</label>
+                            <input type="text" id="step2-quotient" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500 mb-3" placeholder="e.g., x^2-x-6">
+                            <label class="block text-sm font-medium text-stone-700 mb-2">Enter the remainder:</label>
+                            <input type="number" id="step2-remainder" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="0">
+                            <div class="flex gap-2 mt-2">
+                                <button id="btnStep2" class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Check Step 2</button>
+                                <span id="resultStep2" class="ml-3 font-medium flex items-center"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Factor Theorem -->
+                    <div class="step-box">
+                        <h3 class="font-bold text-lg mb-3">Step 3: Factor Theorem</h3>
+                        <p class="mb-3">Since the remainder is 0, what does this tell us about \((x+1)\)?</p>
+                        <div class="bg-white p-3 rounded border border-stone-300">
+                            <label class="block text-sm font-medium text-stone-700 mb-2">Is \((x+1)\) a factor? (yes/no):</label>
+                            <input type="text" id="step3-factor" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="yes">
+                            <div class="flex gap-2 mt-2">
+                                <button id="btnStep3" class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Check Step 3</button>
+                                <span id="resultStep3" class="ml-3 font-medium flex items-center"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Solve Depressed Polynomial -->
+                    <div class="step-box">
+                        <h3 class="font-bold text-lg mb-3">Step 4: Solve the Depressed Polynomial</h3>
+                        <p class="mb-3">Factor the depressed polynomial \(x^2 - x - 6\) and find the remaining zeros.</p>
+                        <div class="bg-white p-3 rounded border border-stone-300">
+                            <label class="block text-sm font-medium text-stone-700 mb-2">Enter all zeros (comma-separated, e.g., -1, 3, -2):</label>
+                            <input type="text" id="step4-zeros" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="-1, 3, -2">
+                            <div class="flex gap-2 mt-2">
+                                <button id="btnStep4" class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Check Step 4</button>
+                                <span id="resultStep4" class="ml-3 font-medium flex items-center"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cool-Down Section -->
+        <section id="cooldown" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200">
+            <h2 class="text-2xl font-bold text-indigo-900 border-b border-stone-200 pb-3 mb-4">🧊 Part 3: Cool-Down - Descartes' Rule of Signs</h2>
+            
+            <!-- Info Table -->
+            <div class="mb-6 overflow-x-auto">
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 200px;">Field</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-semibold">Content to Cover</td>
+                            <td>Descartes' Rule of Signs</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Collaborative Learning Technique</td>
+                            <td>Whole-class discussion and synthesis</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Study Strategy to be Used</td>
+                            <td>Group reflection and synthesis</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Activity Material</td>
+                            <td>Students' notes, worksheets</td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Instructions</td>
+                            <td>Use Descartes' Rule of Signs to determine the possible number of positive, negative, and imaginary zeros for the polynomial.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-6 bg-stone-50 p-4 rounded-lg border border-stone-200">
+                <p class="text-lg font-medium mb-3">Problem: Use Descartes' Rule of Signs for</p>
+                <p class="text-2xl font-mono text-center py-2 mb-6">$$f(x) = x^5 - 2x^4 + 3x^3 + x^2 - 5x + 1$$</p>
+
+                <div class="space-y-4">
+                    <div class="bg-white p-4 rounded border border-stone-300">
+                        <h3 class="font-bold mb-3">Analysis:</h3>
+                        <p class="mb-3 text-stone-700">Count the sign changes in \(f(x)\) and \(f(-x)\):</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-2">Possible Positive Zeros:</label>
+                                <input type="text" id="cooldown-positive" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="e.g., 4, 2, 0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-2">Possible Negative Zeros:</label>
+                                <input type="text" id="cooldown-negative" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="e.g., 1">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-2">Possible Imaginary Zeros:</label>
+                                <input type="text" id="cooldown-imaginary" class="w-full p-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="e.g., 0, 2, 4">
+                            </div>
+                        </div>
+                        
+                        <button id="btnCooldown" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">Check Answer</button>
+                        <span id="resultCooldown" class="block mt-3 font-medium"></span>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <p class="text-sm text-blue-800"><strong>Note:</strong> The number of positive/negative zeros must decrease by an even number (2, 4, etc.), and the total of all zeros must always equal the degree of the polynomial (5 in this case).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-6 text-stone-500 text-sm">
+        <p>SLA Review Session | Solomon Agyire | MTH 112E</p>
+    </footer>
+
+    <!-- Hint Modal -->
+    <div id="hintModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-lg w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-indigo-900">💡 Hint</h3>
+                <button id="closeHintModal" class="text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>
+            </div>
+            <div id="hintContent" class="mb-4">
+                <!-- Hint content will be inserted here -->
+            </div>
+            <button id="closeHintModalBtn" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors font-medium">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Attempt counters
+        window.attemptsWarmup1 = 3;
+        window.attemptsWarmup2 = 3;
+        window.attemptsStep1 = 3;
+        window.attemptsStep2 = 3;
+        window.attemptsStep3 = 3;
+        window.attemptsStep4 = 3;
+        window.attemptsCooldown = 3;
+
+        // Hint data
+        const hintData = {
+            warmup1: {
+                hint: [
+                    "Step 1: Identify c from the divisor (x-5). Since it's (x-5), c = 5.",
+                    "Step 2: Write the coefficients in order: 1 (for x³), -4 (for x²), -17 (for x), 60 (constant).",
+                    "Step 3: Set up your synthetic division box with c = 5 on the left and the coefficients 1, -4, -17, 60 in a row.",
+                    "Step 4: Bring down the first coefficient (1), multiply by c (5), add to the next coefficient, and repeat."
+                ],
+                solution: "Quotient: x² + x - 12, Remainder: 0"
+            },
+            warmup2: {
+                hint: [
+                    "Step 1: Identify c from the divisor (x+1). Since it's (x+1), c = -1 (opposite sign!).",
+                    "Step 2: The polynomial has missing terms! Write it as: 2x⁴ + 0x³ + 5x² + 0x - 1.",
+                    "Step 3: Use coefficients: 2, 0, 5, 0, -1 (don't forget the zeros for missing x³ and x terms!).",
+                    "Step 4: Set up synthetic division with c = -1 and these 5 coefficients."
+                ],
+                solution: "Quotient: 2x³ - 2x² + 7x - 7, Remainder: 6"
+            }
+        };
+
+        // Normalize polynomial string for comparison
+        function normalizePolynomial(poly) {
+            if (!poly) return '';
+            return poly.replace(/\s+/g, '').toLowerCase()
+                .replace(/\^/g, '')
+                .replace(/x(\d)/g, 'x$1')
+                .replace(/(\d)x/g, '$1x')
+                .replace(/²/g, '2')
+                .replace(/³/g, '3')
+                .replace(/⁴/g, '4');
+        }
+
+        // Check if two polynomial strings are equivalent
+        function comparePolynomials(userPoly, correctPoly) {
+            const user = normalizePolynomial(userPoly);
+            const correct = normalizePolynomial(correctPoly);
+            
+            // Try exact match first
+            if (user === correct) return true;
+            
+            // Try with different formats
+            const variations = [
+                correct,
+                correct.replace(/x(\d)/g, 'x^$1'),
+                correct.replace(/x\^(\d)/g, 'x$1'),
+                correct.replace(/([+-])/g, ' $1 ').replace(/\s+/g, '')
+            ];
+            
+            return variations.some(v => normalizePolynomial(v) === user);
+        }
+
+        // Function to show hint modal
+        function showHintModal(hintKey) {
+            const modal = document.getElementById('hintModal');
+            const content = document.getElementById('hintContent');
+            const hint = hintData[hintKey];
+            
+            if (hint) {
+                // Format hint as array of steps or single string
+                let hintHTML = '';
+                if (Array.isArray(hint.hint)) {
+                    hintHTML = hint.hint.map(step => `<p class="text-blue-800 mb-3">${step}</p>`).join('');
+                } else {
+                    hintHTML = `<p class="text-blue-800">${hint.hint}</p>`;
+                }
+                
+                content.innerHTML = `
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <p class="text-blue-900 font-semibold mb-3">💡 Hint:</p>
+                        ${hintHTML}
+                    </div>
+                `;
+                modal.classList.remove('hidden');
+                
+                // Re-render MathJax in modal
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([content]).catch((err) => {
+                        console.log('MathJax error:', err);
+                    });
+                }
+            }
+        }
+
+        // Function to close hint modal
+        function closeHintModal() {
+            document.getElementById('hintModal').classList.add('hidden');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Wait for MathJax to be ready
+            if (window.MathJax) {
+                // MathJax 3 uses startup.promise
+                if (window.MathJax.startup && window.MathJax.startup.promise) {
+                    MathJax.startup.promise.then(() => {
+                        if (window.MathJax.typesetPromise) {
+                            MathJax.typesetPromise().catch((err) => {
+                                console.log('MathJax typeset error:', err);
+                            });
+                        }
+                    }).catch((err) => {
+                        console.log('MathJax startup error:', err);
+                    });
+                } else {
+                    // Fallback: try to typeset after a short delay
+                    setTimeout(() => {
+                        if (window.MathJax && window.MathJax.typesetPromise) {
+                            MathJax.typesetPromise().catch((err) => {
+                                console.log('MathJax typeset error:', err);
+                            });
+                        }
+                    }, 500);
+                }
+            }
+
+            // Modal close handlers
+            const closeBtn = document.getElementById('closeHintModal');
+            const closeBtn2 = document.getElementById('closeHintModalBtn');
+            const modal = document.getElementById('hintModal');
+            
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeHintModal);
+            }
+            if (closeBtn2) {
+                closeBtn2.addEventListener('click', closeHintModal);
+            }
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target.id === 'hintModal') {
+                        closeHintModal();
+                    }
+                });
+            }
+
+            // Warm-up Problem 1
+            const btnWarmup1 = document.getElementById('btnWarmup1');
+            if (btnWarmup1) {
+                btnWarmup1.addEventListener('click', () => {
+                const quotient = document.getElementById('warmup1-quotient').value.trim();
+                const remainder = parseInt(document.getElementById('warmup1-remainder').value);
+                const result = document.getElementById('resultWarmup1');
+                
+                if (window.attemptsWarmup1 <= 0) return;
+                
+                const correctQuotient = "x^2+x-12";
+                const correctRemainder = 0;
+                
+                if (comparePolynomials(quotient, correctQuotient) && remainder === correctRemainder) {
+                    result.textContent = '✓ Correct! Great job.';
+                    result.className = 'ml-3 font-medium text-green-600 flex items-center';
+                    document.getElementById('btnWarmup1').disabled = true;
+                    document.getElementById('warmup1-quotient').disabled = true;
+                    document.getElementById('warmup1-remainder').disabled = true;
+                } else {
+                    window.attemptsWarmup1--;
+                    if (window.attemptsWarmup1 > 0) {
+                        result.textContent = `Incorrect. ${window.attemptsWarmup1} trial${window.attemptsWarmup1 > 1 ? 's' : ''} remaining.`;
+                        result.className = 'ml-3 font-medium text-red-600 flex items-center';
+                    } else {
+                        result.textContent = `Incorrect. Correct: Quotient = ${correctQuotient}, Remainder = ${correctRemainder}`;
+                        result.className = 'ml-3 font-bold text-red-700 flex items-center';
+                        document.getElementById('btnWarmup1').disabled = true;
+                        document.getElementById('warmup1-quotient').disabled = true;
+                        document.getElementById('warmup1-remainder').disabled = true;
+                    }
+                }
+                });
+            }
+
+            // Warm-up Problem 2
+            const btnWarmup2 = document.getElementById('btnWarmup2');
+            if (btnWarmup2) {
+                btnWarmup2.addEventListener('click', () => {
+                const quotient = document.getElementById('warmup2-quotient').value.trim();
+                const remainder = parseInt(document.getElementById('warmup2-remainder').value);
+                const result = document.getElementById('resultWarmup2');
+                
+                if (window.attemptsWarmup2 <= 0) return;
+                
+                const correctQuotient = "2x^3-2x^2+7x-7";
+                const correctRemainder = 6;
+                
+                if (comparePolynomials(quotient, correctQuotient) && remainder === correctRemainder) {
+                    result.textContent = '✓ Correct! Great job.';
+                    result.className = 'ml-3 font-medium text-green-600 flex items-center';
+                    document.getElementById('btnWarmup2').disabled = true;
+                    document.getElementById('warmup2-quotient').disabled = true;
+                    document.getElementById('warmup2-remainder').disabled = true;
+                } else {
+                    window.attemptsWarmup2--;
+                    if (window.attemptsWarmup2 > 0) {
+                        result.textContent = `Incorrect. ${window.attemptsWarmup2} trial${window.attemptsWarmup2 > 1 ? 's' : ''} remaining.`;
+                        result.className = 'ml-3 font-medium text-red-600 flex items-center';
+                    } else {
+                        result.textContent = `Incorrect. Correct: Quotient = ${correctQuotient}, Remainder = ${correctRemainder}`;
+                        result.className = 'ml-3 font-bold text-red-700 flex items-center';
+                        document.getElementById('btnWarmup2').disabled = true;
+                        document.getElementById('warmup2-quotient').disabled = true;
+                        document.getElementById('warmup2-remainder').disabled = true;
+                    }
+                }
+                });
+            }
+
+            // Step 1: Rational Zero Theorem
+            const btnStep1 = document.getElementById('btnStep1');
+            if (btnStep1) {
+                btnStep1.addEventListener('click', () => {
+                const zeros = document.getElementById('step1-zeros').value.trim();
+                const result = document.getElementById('resultStep1');
+                
+                if (window.attemptsStep1 <= 0) return;
+                
+                // Accept various formats (including +- for phone keyboards)
+                const correctAnswers = [
+                    "±1, ±2, ±3, ±6",
+                    "±1,±2,±3,±6",
+                    "+-1, +-2, +-3, +-6",
+                    "+-1,+-2,+-3,+-6",
+                    "1, -1, 2, -2, 3, -3, 6, -6",
+                    "+1, -1, +2, -2, +3, -3, +6, -6"
+                ];
+                
+                // Normalize input: convert +- to ±, remove spaces
+                let normalized = zeros.replace(/\s+/g, '').toLowerCase();
+                normalized = normalized.replace(/\+\-/g, '±');
+                
+                const correctNormalized = correctAnswers.map(a => {
+                    let ans = a.replace(/\s+/g, '').toLowerCase();
+                    ans = ans.replace(/\+\-/g, '±');
+                    return ans;
+                });
+                
+                // Check if user input contains all required zeros
+                const hasAllZeros = normalized.includes('1') && normalized.includes('2') && 
+                                   normalized.includes('3') && normalized.includes('6') &&
+                                   (normalized.includes('-1') || normalized.includes('±1') || normalized.includes('+-1'));
+                
+                if (correctNormalized.some(c => normalized === c) || hasAllZeros) {
+                    result.textContent = '✓ Correct! The possible rational zeros are ±1, ±2, ±3, ±6.';
+                    result.className = 'ml-3 font-medium text-green-600';
+                    document.getElementById('btnStep1').disabled = true;
+                    document.getElementById('step1-zeros').disabled = true;
+                } else {
+                    window.attemptsStep1--;
+                    if (window.attemptsStep1 > 0) {
+                        result.textContent = `Incorrect. ${window.attemptsStep1} trial${window.attemptsStep1 > 1 ? 's' : ''} remaining.`;
+                        result.className = 'ml-3 font-medium text-red-600';
+                    } else {
+                        result.textContent = 'Incorrect. Correct answer: ±1, ±2, ±3, ±6';
+                        result.className = 'ml-3 font-bold text-red-700';
+                        document.getElementById('btnStep1').disabled = true;
+                        document.getElementById('step1-zeros').disabled = true;
+                    }
+                }
+                });
+            }
+
+            // Step 2: Synthetic Division
+            const btnStep2 = document.getElementById('btnStep2');
+            if (btnStep2) {
+                btnStep2.addEventListener('click', () => {
+                const quotient = document.getElementById('step2-quotient').value.trim();
+                const remainder = parseInt(document.getElementById('step2-remainder').value);
+                const result = document.getElementById('resultStep2');
+                
+                if (window.attemptsStep2 <= 0) return;
+                
+                const correctQuotient = "x^2-x-6";
+                const correctRemainder = 0;
+                
+                if (comparePolynomials(quotient, correctQuotient) && remainder === correctRemainder) {
+                    result.textContent = '✓ Correct! The depressed polynomial is x² - x - 6 and the remainder is 0.';
+                    result.className = 'ml-3 font-medium text-green-600';
+                    document.getElementById('btnStep2').disabled = true;
+                    document.getElementById('step2-quotient').disabled = true;
+                    document.getElementById('step2-remainder').disabled = true;
+                } else {
+                    window.attemptsStep2--;
+                    if (window.attemptsStep2 > 0) {
+                        result.textContent = `Incorrect. ${window.attemptsStep2} trial${window.attemptsStep2 > 1 ? 's' : ''} remaining.`;
+                        result.className = 'ml-3 font-medium text-red-600';
+                    } else {
+                        result.textContent = `Incorrect. Correct: Quotient = ${correctQuotient}, Remainder = ${correctRemainder}`;
+                        result.className = 'ml-3 font-bold text-red-700';
+                        document.getElementById('btnStep2').disabled = true;
+                        document.getElementById('step2-quotient').disabled = true;
+                        document.getElementById('step2-remainder').disabled = true;
+                    }
+                }
+                });
+            }
+
+            // Step 3: Factor Theorem
+            const btnStep3 = document.getElementById('btnStep3');
+            if (btnStep3) {
+                btnStep3.addEventListener('click', () => {
+                const answer = document.getElementById('step3-factor').value.trim().toLowerCase();
+                const result = document.getElementById('resultStep3');
+                
+                if (window.attemptsStep3 <= 0) return;
+                
+                if (answer === 'yes' || answer === 'y') {
+                    result.textContent = '✓ Correct! Since the remainder is 0, (x+1) is a factor of f(x).';
+                    result.className = 'ml-3 font-medium text-green-600';
+                    document.getElementById('btnStep3').disabled = true;
+                    document.getElementById('step3-factor').disabled = true;
+                } else {
+                    window.attemptsStep3--;
+                    if (window.attemptsStep3 > 0) {
+                        result.textContent = `Incorrect. ${window.attemptsStep3} trial${window.attemptsStep3 > 1 ? 's' : ''} remaining.`;
+                        result.className = 'ml-3 font-medium text-red-600';
+                    } else {
+                        result.textContent = 'Incorrect. Correct answer: yes (since remainder is 0)';
+                        result.className = 'ml-3 font-bold text-red-700';
+                        document.getElementById('btnStep3').disabled = true;
+                        document.getElementById('step3-factor').disabled = true;
+                    }
+                }
+                });
+            }
+
+            // Step 4: Final Zeros
+            const btnStep4 = document.getElementById('btnStep4');
+            if (btnStep4) {
+                btnStep4.addEventListener('click', () => {
+                const zeros = document.getElementById('step4-zeros').value.trim();
+                const result = document.getElementById('resultStep4');
+                
+                if (window.attemptsStep4 <= 0) return;
+                
+                // Accept various formats
+                const correctAnswers = ["-1, 3, -2", "-1, -2, 3", "3, -2, -1", "-2, -1, 3"];
+                const normalized = zeros.replace(/\s+/g, '').toLowerCase();
+                
+                // Check if all three zeros are present (order-independent)
+                const hasAllZeros = normalized.includes('-1') && normalized.includes('3') && normalized.includes('-2');
+                
+                if (correctAnswers.some(c => {
+                    const cNormalized = c.replace(/\s+/g, '').toLowerCase();
+                    return normalized === cNormalized;
+                }) || hasAllZeros) {
+                    result.textContent = '✓ Correct! All zeros are: -1, 3, -2';
+                    result.className = 'ml-3 font-medium text-green-600';
+                    document.getElementById('btnStep4').disabled = true;
+                    document.getElementById('step4-zeros').disabled = true;
+                } else {
+                    window.attemptsStep4--;
+                    if (window.attemptsStep4 > 0) {
+                        result.textContent = `Incorrect. ${window.attemptsStep4} trial${window.attemptsStep4 > 1 ? 's' : ''} remaining.`;
+                        result.className = 'ml-3 font-medium text-red-600';
+                    } else {
+                        result.textContent = 'Incorrect. Correct answer: -1, 3, -2';
+                        result.className = 'ml-3 font-bold text-red-700';
+                        document.getElementById('btnStep4').disabled = true;
+                        document.getElementById('step4-zeros').disabled = true;
+                    }
+                }
+                });
+            }
+
+            // Cool-Down: Descartes' Rule
+            const btnCooldown = document.getElementById('btnCooldown');
+            if (btnCooldown) {
+                btnCooldown.addEventListener('click', () => {
+                const positive = document.getElementById('cooldown-positive').value.trim();
+                const negative = document.getElementById('cooldown-negative').value.trim();
+                const imaginary = document.getElementById('cooldown-imaginary').value.trim();
+                const result = document.getElementById('resultCooldown');
+                
+                if (window.attemptsCooldown <= 0) return;
+                
+                // Check answers (accept various formats)
+                const correctPositive = ["4, 2, 0", "4,2,0", "0, 2, 4", "4,2,0"];
+                const correctNegative = ["1", "1 "];
+                const correctImaginary = ["0, 2, 4", "0,2,4", "4, 2, 0", "0,2,4"];
+                
+                const posNormalized = positive.replace(/\s+/g, '');
+                const negNormalized = negative.trim();
+                const imagNormalized = imaginary.replace(/\s+/g, '');
+                
+                const posMatch = correctPositive.some(c => posNormalized === c.replace(/\s+/g, ''));
+                const negMatch = correctNegative.some(c => negNormalized === c.trim());
+                const imagMatch = correctImaginary.some(c => imagNormalized === c.replace(/\s+/g, ''));
+                
+                // Also check if they have the right numbers even if order is different
+                const posHasNumbers = posNormalized.includes('4') && posNormalized.includes('2') && posNormalized.includes('0');
+                const imagHasNumbers = imagNormalized.includes('0') && imagNormalized.includes('2') && imagNormalized.includes('4');
+                
+                if ((posMatch || posHasNumbers) && negMatch && (imagMatch || imagHasNumbers)) {
+                    result.innerHTML = '✓ Correct! <br>Positive zeros: 4, 2, or 0<br>Negative zeros: 1<br>Imaginary zeros: 0, 2, or 4';
+                    result.className = 'block mt-3 font-medium text-green-600';
+                    document.getElementById('btnCooldown').disabled = true;
+                    document.getElementById('cooldown-positive').disabled = true;
+                    document.getElementById('cooldown-negative').disabled = true;
+                    document.getElementById('cooldown-imaginary').disabled = true;
+                } else {
+                    window.attemptsCooldown--;
+                    if (window.attemptsCooldown > 0) {
+                        result.textContent = `Incorrect. ${window.attemptsCooldown} trial${window.attemptsCooldown > 1 ? 's' : ''} remaining.`;
+                        result.className = 'block mt-3 font-medium text-red-600';
+                    } else {
+                        result.innerHTML = 'Incorrect. Correct answers:<br>Positive: 4, 2, 0<br>Negative: 1<br>Imaginary: 0, 2, 4';
+                        result.className = 'block mt-3 font-bold text-red-700';
+                        document.getElementById('btnCooldown').disabled = true;
+                        document.getElementById('cooldown-positive').disabled = true;
+                        document.getElementById('cooldown-negative').disabled = true;
+                        document.getElementById('cooldown-imaginary').disabled = true;
+                    }
+                }
+                });
+            }
+
+            // Hint buttons
+            const hintBtn1 = document.getElementById('hintWarmup1');
+            const hintBtn2 = document.getElementById('hintWarmup2');
+            
+            if (hintBtn1) {
+                hintBtn1.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showHintModal('warmup1');
+                });
+            }
+            
+            if (hintBtn2) {
+                hintBtn2.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showHintModal('warmup2');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
