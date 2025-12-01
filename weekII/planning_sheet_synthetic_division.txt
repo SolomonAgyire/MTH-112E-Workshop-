@@ -1,0 +1,219 @@
+SLA Leader: Solomon Agyire               Course: MTH 112E 
+
+Day and Time: Nov 17       Course Instructor: Professor Thompson and Professor Gordon 
+
+ 
+
+Session Objective: Students will practice applying the Rational Zero Theorem to list all possible rational zeros, utilize Synthetic Division (including the use of zero placeholders) to test for actual zeros, and use Descartes' Rule of Signs to determine the possible number of positive, negative, and imaginary roots. 
+
+Materials Needed: 
+
+Dry erase markers 
+
+70 student worksheets 
+
+Scratch paper 
+
+Calculator 
+
+Attendance sheets 
+
+Pen 
+
+ 
+
+Warm-up / Opening (5 mins) 
+
+Course Content to Cover 
+
+Synthetic Division (Review & Placeholder Practice) 
+
+Collaborative Learning Technique 
+
+Think–Pair–Share 
+
+(Students solve individually, discuss with a partner, and share responses.) 
+
+Study Strategy to be Used 
+
+Note Review, Practice Problems 
+
+(To promote quick recall and build confidence) 
+
+Activity Material 
+
+Students' notes, textbook, calculator, sheets of paper 
+
+Instructions: Use your class notes and the synthetic division process to find the quotient and the remainder. Be careful when dealing with missing terms. 
+
+ 
+
+Problem Q1: Divide f(x) = x³ - 4x² - 17x + 60 by d(x) = x - 5.
+
+Hint: The value of c you use in the box is 5.
+
+Step-by-step Solution:  
+
+Step 1 — Set up: Use the divisor c = 5 (opposite sign of x-5) and coefficients: 1, -4, -17, 60
+
+Step 2 — Divide: Perform synthetic division:
+    Bring down 1
+    Multiply 1 × 5 = 5, add to -4 → 1
+    Multiply 1 × 5 = 5, add to -17 → -12
+    Multiply -12 × 5 = -60, add to 60 → 0
+
+Step 3 — Result: The resulting depressed polynomial is Q(x) = x² + x - 12. The Remainder is R = 0.
+
+Solution Check: Q(x) = x² + x - 12, R = 0.
+
+Common Error & Note: Students must remember to use the opposite sign of the divisor. For (x-5), use c = 5, not c = -5.
+
+ 
+
+Problem Q2: Divide f(x) = 2x⁴ + 5x² - 1 by d(x) = x + 1.
+
+Hint: Remember to insert 0 for the missing x³ and x terms in your synthetic division setup. The value of c is -1.
+
+Step-by-step Solution:  
+
+Step 1 — Set up: Use the divisor c = -1 (opposite sign of x+1) and coefficients: 2, 0, 5, 0, -1 (must include placeholders for x³ and x).
+
+Common Error: Forgetting to include 0 placeholders for missing terms like x³ and x.
+
+Step 2 — Divide: Perform synthetic division:
+    Bring down 2
+    Multiply 2 × (-1) = -2, add to 0 → -2
+    Multiply -2 × (-1) = 2, add to 5 → 7
+    Multiply 7 × (-1) = -7, add to 0 → -7
+    Multiply -7 × (-1) = 7, add to -1 → 6
+
+Step 3 — Result: The resulting depressed polynomial is Q(x) = 2x³ - 2x² + 7x - 7. The Remainder is R = 6.
+
+Solution Check: Q(x) = 2x³ - 2x² + 7x - 7, R = 6.
+
+Note: Students must be reminded that the dividend is 2x⁴ + 0x³ + 5x² + 0x - 1.
+
+ 
+
+Workout (35 mins) 
+
+Content to Cover 
+
+Rational Zero Theorem, Factor Theorem, and Depressed Polynomials 
+
+Collaborative Learning Technique 
+
+Small Group Problem-Solving (Groups of 3) 
+
+Study Strategy to be Used 
+
+Collaborative discussion and step-by-step reasoning 
+
+Activity Material 
+
+Students' notes, scratch paper 
+
+Instructions 
+
+Students work in groups to find all zeros of the polynomial. Follow the specific steps below. 
+
+ 
+
+Problem A: Find all zeros of f(x) = x³ - 7x - 6.
+
+Step-by-step Solution 
+
+Common Error & Note 
+
+Step 1: Rational Zero Theorem (P/Q): List all possible rational zeros. P = factors of -6 and Q = factors of 1
+
+Possible rational zeros: ±1, ±2, ±3, ±6
+
+Step 2: Synthetic Division (Test c = -1): Use coefficients: 1, 0, -7, -6 (placeholder for x² is required). 
+
+Step 3: Factor Theorem: Since the remainder is 0, (x+1) is a factor.
+
+Common Error: Students forget to switch the sign (i.e., if c = -1, the factor is x+1).
+
+Step 4: Depressed Polynomial: The quotient is x² - x - 6.
+
+Note: The problem reduces to solving the quadratic equation x² - x - 6 = 0.
+
+Step 5: Factor and Solve: Factor the depressed polynomial: (x-3)(x+2) = 0. Solutions are x = 3 and x = -2.
+
+Final Zeros: {-1, 3, -2}.
+
+ 
+
+Cool-Down / Closing (10 mins) 
+
+Content to Cover 
+
+Descartes' Rule of Signs 
+
+Collaborative Learning Technique 
+
+Whole-class discussion and synthesis 
+
+Study Strategy to be Used 
+
+Group reflection and synthesis 
+
+Activity Material 
+
+Students' notes, worksheets 
+
+Instructions 
+
+Use Descartes' Rule of Signs to determine the possible number of positive, negative, and imaginary zeros for the polynomial. 
+
+ 
+
+Problem: Use Descartes' Rule of Signs for f(x) = x⁵ - 2x⁴ + 3x³ + x² - 5x + 1.
+
+Analysis 
+
+Calculation 
+
+Positive Zeros (Sign changes in f(x)) 
+
+f(x) = +x⁵ - 2x⁴ + 3x³ + x² - 5x + 1. 4 sign changes. Possible positive zeros: 4, 2, or 0.
+
+Negative Zeros (Sign changes in f(-x)) 
+
+f(-x) = -x⁵ - 2x⁴ - 3x³ + x² + 5x + 1. 1 sign change. Possible negative zeros: 1.
+
+Possible Positive Zeros 
+
+Possible Negative Zeros 
+
+Possible Imaginary Zeros 
+
+Total Zeros (Degree 5) 
+
+4 
+
+1 
+
+0 
+
+5 
+
+2 
+
+1 
+
+2 
+
+5 
+
+0 
+
+1 
+
+4 
+
+5 
+
+Note: Remind students that the number of positive/negative zeros must decrease by an even number (2, 4, etc.), and the total of all zeros must always equal the degree of the polynomial.
+
