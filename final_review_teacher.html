@@ -19,442 +19,633 @@
         @media print {
             body { margin: 0; }
             .page-break { page-break-after: always; }
-        }
-        body {
-            font-family: 'Times New Roman', serif;
-            max-width: 8.5in;
-            margin: 0.5in auto;
-            padding: 0.5in;
-            line-height: 1.6;
-            color: #000;
-        }
-        .header {
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        .header-line {
-            margin: 5px 0;
-        }
-        h1 {
-            font-size: 16pt;
-            font-weight: bold;
-            margin: 15px 0 10px 0;
-        }
-        h2 {
-            font-size: 14pt;
-            font-weight: bold;
-            margin: 12px 0 8px 0;
-            text-decoration: underline;
-        }
-        .section {
-            margin: 15px 0;
-        }
-        .problem {
-            margin: 15px 0;
-            padding: 10px;
-            border-left: 3px solid #000;
-            padding-left: 15px;
-        }
-        .step {
-            margin: 8px 0;
-        }
-        .step-number {
-            font-weight: bold;
-        }
-        .note {
-            font-style: italic;
-            margin: 5px 0;
-        }
-        .error {
-            color: #d00;
-            font-weight: bold;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 10px 0;
-        }
-        table td, table th {
-            border: 1px solid #000;
-            padding: 5px;
-            text-align: left;
-        }
-        table th {
-            background-color: #f0f0f0;
-            font-weight: bold;
+            .no-print { display: none; }
         }
     </style>
 </head>
-<body>
-    <div class="header">
-        <div class="header-line"><strong>SLA Leader:</strong> Solomon Agyire &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Course:</strong> MTH 112E</div>
-        <div class="header-line"><strong>Day and Time:</strong> December 1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Course Instructor:</strong> Prof. Thompson and Prof. Gordon</div>
-    </div>
-
-    <div class="section">
-        <h2>Session Objective:</h2>
-        <p>Students will master the analysis of rational functions (asymptotes), strengthen foundational skills (function identity, evaluation, domain), find polynomial zeros using synthetic division and theorems, and determine linear equation properties (intercepts, slopes).</p>
-    </div>
-
-    <div class="section">
-        <h2>Materials Needed:</h2>
-        <ul>
-            <li>Dry erase markers</li>
-            <li>Student worksheets</li>
-            <li>Scratch paper</li>
-            <li>Calculator</li>
-            <li>Attendance sheets</li>
-        </ul>
-    </div>
-
-    <div class="page-break"></div>
-
-    <h1>Warm-up / Opening (10 mins)</h1>
-    
-    <table>
-        <tr>
-            <th style="width: 200px;">Field</th>
-            <th>Details</th>
-        </tr>
-        <tr>
-            <td><strong>Content to Cover</strong></td>
-            <td>Vertical, Horizontal, and Slant Asymptotes (VA, HA, SA)</td>
-        </tr>
-        <tr>
-            <td><strong>Collaborative Learning Technique</strong></td>
-            <td>Think–Pair–Share</td>
-        </tr>
-        <tr>
-            <td><strong>Study Strategy to be Used</strong></td>
-            <td>Application of Rules (Quick recall and verification)</td>
-        </tr>
-        <tr>
-            <td><strong>Instructions</strong></td>
-            <td>Analyze the three functions below to determine the type and equation of the required asymptote.</td>
-        </tr>
-    </table>
-
-    <div class="problem">
-        <h2>Problem A: Vertical Asymptote (VA)</h2>
-        <p><strong>Instruction:</strong> Find the Vertical Asymptote(s) for \(f(x) = \frac{x-4}{x^2-4x+3}\).</p>
+<body class="bg-stone-50 font-sans text-stone-800 antialiased">
+    <main class="max-w-5xl mx-auto p-4 sm:p-8 space-y-8">
         
-        <h3>Step-by-step Solution</h3>
-        <div class="step">
-            <span class="step-number">Step 1 — Factor the denominator:</span> \(x^2 - 4x + 3 = (x - 3)(x - 1)\).
-        </div>
-        <p class="note"><strong>Note:</strong> VA occurs where the simplified denominator is zero. Check for common factors (holes).</p>
-        <div class="step">
-            <span class="step-number">Step 2 — Set factors to zero:</span> \(x - 3 = 0 \rightarrow x = 3\); \(x - 1 = 0 \rightarrow x = 1\).
-        </div>
-        <p>Neither zero cancels with the numerator \((x-4)\).</p>
-        <p><strong>Solution:</strong> The VAs are the lines \(x = 3\) and \(x = 1\).</p>
-    </div>
+        <!-- Header -->
+        <header class="bg-white rounded-2xl shadow-xl border border-stone-200 overflow-hidden">
+            <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 px-6 sm:px-12 py-8 text-white">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-2">MTH 112E: Final Week Review</h1>
+                <p class="text-indigo-100 text-lg">Teacher Answer Key</p>
+            </div>
+            
+            <div class="px-6 sm:px-12 py-6 bg-white">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                            <span class="text-indigo-600 font-semibold text-sm">SL</span>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wide font-medium">SLA Leader</p>
+                            <p class="text-base font-semibold text-slate-900">Solomon Agyire</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                            <span class="text-indigo-600 font-semibold text-sm">📅</span>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wide font-medium">Date</p>
+                            <p class="text-base font-semibold text-slate-900">December 1</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                            <span class="text-indigo-600 font-semibold text-sm">📚</span>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wide font-medium">Course</p>
+                            <p class="text-base font-semibold text-slate-900">MTH 112E</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                            <span class="text-indigo-600 font-semibold text-sm">👥</span>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-wide font-medium">Instructors</p>
+                            <p class="text-base font-semibold text-slate-900">Prof. Thompson and Prof. Gordon</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-indigo-50 rounded-xl p-5 border border-indigo-200 mb-4">
+                    <p class="text-xs text-indigo-800 uppercase tracking-wide font-bold mb-2">Session Objective</p>
+                    <p class="text-sm text-indigo-900 leading-relaxed">
+                        Students will master the analysis of rational functions (asymptotes), strengthen foundational skills (function identity, evaluation, domain), find polynomial zeros using synthetic division and theorems, and determine linear equation properties (intercepts, slopes).
+                    </p>
+                </div>
+                
+                <div class="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                    <p class="text-xs text-amber-800 font-bold mb-1">Materials Needed</p>
+                    <ul class="text-xs text-amber-700 list-disc list-inside space-y-1">
+                        <li>Dry erase markers</li>
+                        <li>Student worksheets</li>
+                        <li>Scratch paper</li>
+                        <li>Calculator</li>
+                        <li>Attendance sheets</li>
+                    </ul>
+                </div>
+            </div>
+        </header>
 
-    <div class="problem">
-        <h2>Problem B: Horizontal Asymptote (HA)</h2>
-        <p><strong>Instruction:</strong> Find the Horizontal Asymptote for \(g(x) = \frac{9x^3-2x^2+1}{3x^3+7}\).</p>
-        
-        <h3>Step-by-step Solution</h3>
-        <div class="step">
-            <span class="step-number">Step 1 — Compare Degrees (n vs. d):</span> Degree of numerator (n) is 3. Degree of denominator (d) is 3. Since n = d, use the ratio of leading coefficients.
-        </div>
-        <p class="note"><strong>Rule:</strong> When degrees are equal, HA is \(y = \frac{\text{leading coefficient of N}}{\text{leading coefficient of D}}\).</p>
-        <div class="step">
-            <span class="step-number">Step 2 — Use Leading Coefficients:</span> Numerator leading coefficient is 9. Denominator leading coefficient is 3.
-        </div>
-        <p>Ratio is \(\frac{9}{3}\).</p>
-        <p><strong>Solution:</strong> The HA is the line \(y = 3\).</p>
-    </div>
+        <!-- Warm-up Section -->
+        <section class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200">
+            <h2 class="text-2xl font-bold text-indigo-900 border-b-2 border-indigo-300 pb-3 mb-6">🚀 Warm-up / Opening (10 mins)</h2>
+            
+            <!-- Info Table -->
+            <div class="mb-6 overflow-x-auto">
+                <table class="w-full border-collapse border border-stone-300 rounded-lg overflow-hidden">
+                    <thead>
+                        <tr class="bg-indigo-100">
+                            <th class="border border-stone-300 px-4 py-3 text-left font-semibold text-indigo-900" style="width: 200px;">Field</th>
+                            <th class="border border-stone-300 px-4 py-3 text-left font-semibold text-indigo-900">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="hover:bg-stone-50">
+                            <td class="border border-stone-300 px-4 py-3 font-semibold text-stone-700">Content to Cover</td>
+                            <td class="border border-stone-300 px-4 py-3 text-stone-700">Vertical, Horizontal, and Slant Asymptotes (VA, HA, SA)</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="border border-stone-300 px-4 py-3 font-semibold text-stone-700">Collaborative Learning Technique</td>
+                            <td class="border border-stone-300 px-4 py-3 text-stone-700">Think–Pair–Share</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="border border-stone-300 px-4 py-3 font-semibold text-stone-700">Study Strategy to be Used</td>
+                            <td class="border border-stone-300 px-4 py-3 text-stone-700">Application of Rules (Quick recall and verification)</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="border border-stone-300 px-4 py-3 font-semibold text-stone-700">Instructions</td>
+                            <td class="border border-stone-300 px-4 py-3 text-stone-700">Analyze the three functions below to determine the type and equation of the required asymptote.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-    <div class="problem">
-        <h2>Problem C: Slant Asymptote (SA)</h2>
-        <p><strong>Instruction:</strong> Find the Slant Asymptote for \(h(x) = \frac{x^2-3x+1}{x+2}\).</p>
-        
-        <h3>Step-by-step Solution</h3>
-        <div class="step">
-            <span class="step-number">Step 1 — Compare Degrees (n vs. d):</span> n = 2, d = 1. Since n = d + 1, a SA exists.
-        </div>
-        <p class="note"><strong>Note:</strong> The divisor must be linear \((x + 2)\) for synthetic division to apply.</p>
-        <div class="step">
-            <span class="step-number">Step 2 — Perform Synthetic Division:</span> Use c = -2 on the coefficients 1, -3, 1.
-        </div>
-        <p>Remember to ignore the remainder.</p>
-        <p>Synthetic Division Steps:</p>
-        <pre style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px;">
--2 |  1  -3   1
+            <!-- Problem A -->
+            <div class="mt-6 bg-blue-50 p-5 rounded-lg border-l-4 border-blue-500 shadow-sm">
+                <h3 class="text-xl font-bold text-blue-900 mb-3">Problem A: Vertical Asymptote (VA)</h3>
+                <p class="mb-4 text-stone-700"><strong>Instruction:</strong> Find the Vertical Asymptote(s) for \(f(x) = \frac{x-4}{x^2-4x+3}\).</p>
+                
+                <div class="bg-white p-4 rounded-lg border border-blue-200">
+                    <h4 class="font-bold text-blue-800 mb-3">Step-by-step Solution</h4>
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-blue-600 min-w-[100px]">Step 1:</span>
+                            <span>Factor the denominator: \(x^2 - 4x + 3 = (x - 3)(x - 1)\).</span>
+                        </div>
+                        <div class="bg-yellow-50 p-3 rounded border-l-2 border-yellow-400 italic text-sm">
+                            <strong>Note:</strong> VA occurs where the simplified denominator is zero. Check for common factors (holes).
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-blue-600 min-w-[100px]">Step 2:</span>
+                            <span>Set factors to zero: \(x - 3 = 0 \rightarrow x = 3\); \(x - 1 = 0 \rightarrow x = 1\).</span>
+                        </div>
+                        <p>Neither zero cancels with the numerator \((x-4)\).</p>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">The VAs are the lines \(x = 3\) and \(x = 1\).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem B -->
+            <div class="mt-6 bg-purple-50 p-5 rounded-lg border-l-4 border-purple-500 shadow-sm">
+                <h3 class="text-xl font-bold text-purple-900 mb-3">Problem B: Horizontal Asymptote (HA)</h3>
+                <p class="mb-4 text-stone-700"><strong>Instruction:</strong> Find the Horizontal Asymptote for \(g(x) = \frac{9x^3-2x^2+1}{3x^3+7}\).</p>
+                
+                <div class="bg-white p-4 rounded-lg border border-purple-200">
+                    <h4 class="font-bold text-purple-800 mb-3">Step-by-step Solution</h4>
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-purple-600 min-w-[100px]">Step 1:</span>
+                            <span>Compare Degrees (n vs. d): Degree of numerator (n) is 3. Degree of denominator (d) is 3. Since n = d, use the ratio of leading coefficients.</span>
+                        </div>
+                        <div class="bg-yellow-50 p-3 rounded border-l-2 border-yellow-400 italic text-sm">
+                            <strong>Rule:</strong> When degrees are equal, HA is \(y = \frac{\text{leading coefficient of N}}{\text{leading coefficient of D}}\).
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-purple-600 min-w-[100px]">Step 2:</span>
+                            <span>Use Leading Coefficients: Numerator leading coefficient is 9. Denominator leading coefficient is 3.</span>
+                        </div>
+                        <p>Ratio is \(\frac{9}{3}\).</p>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">The HA is the line \(y = 3\).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem C -->
+            <div class="mt-6 bg-teal-50 p-5 rounded-lg border-l-4 border-teal-500 shadow-sm">
+                <h3 class="text-xl font-bold text-teal-900 mb-3">Problem C: Slant Asymptote (SA)</h3>
+                <p class="mb-4 text-stone-700"><strong>Instruction:</strong> Find the Slant Asymptote for \(h(x) = \frac{x^2-3x+1}{x+2}\).</p>
+                
+                <div class="bg-white p-4 rounded-lg border border-teal-200">
+                    <h4 class="font-bold text-teal-800 mb-3">Step-by-step Solution</h4>
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-teal-600 min-w-[100px]">Step 1:</span>
+                            <span>Compare Degrees (n vs. d): n = 2, d = 1. Since n = d + 1, a SA exists.</span>
+                        </div>
+                        <div class="bg-yellow-50 p-3 rounded border-l-2 border-yellow-400 italic text-sm">
+                            <strong>Note:</strong> The divisor must be linear \((x + 2)\) for synthetic division to apply.
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-teal-600 min-w-[100px]">Step 2:</span>
+                            <span>Perform Synthetic Division: Use c = -2 on the coefficients 1, -3, 1.</span>
+                        </div>
+                        <p>Remember to ignore the remainder.</p>
+                        <p class="font-semibold">Synthetic Division Steps:</p>
+                        <pre class="bg-stone-100 p-4 rounded-lg border border-stone-300 font-mono text-sm overflow-x-auto">-2 |  1  -3   1
    |    -2  10
-   |  1  -5  11
-        </pre>
-        <div class="step">
-            <span class="step-number">Step 3 — Identify Quotient:</span> The quotient is \(1x - 5\).
-        </div>
-        <p>The remainder (11) is ignored for the SA equation.</p>
-        <p><strong>Solution:</strong> The SA is the line \(y = x - 5\).</p>
-    </div>
+   |  1  -5  11</pre>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-teal-600 min-w-[100px]">Step 3:</span>
+                            <span>Identify Quotient: The quotient is \(1x - 5\).</span>
+                        </div>
+                        <p>The remainder (11) is ignored for the SA equation.</p>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">The SA is the line \(y = x - 5\).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <div class="page-break"></div>
+        <div class="page-break"></div>
 
-    <h1>Workout Part 1: Function Fundamentals and Domain (15 mins)</h1>
-    
-    <table>
-        <tr>
-            <th style="width: 200px;">Field</th>
-            <th>Details</th>
-        </tr>
-        <tr>
-            <td><strong>Content to Cover</strong></td>
-            <td>Relation vs. Function (VLT), Function Evaluation, Domain (Rational & Radical)</td>
-        </tr>
-        <tr>
-            <td><strong>Collaborative Learning Technique</strong></td>
-            <td>Small Group Problem-Solving (Groups of 3)</td>
-        </tr>
-        <tr>
-            <td><strong>Instructions</strong></td>
-            <td>Students work in groups to solve the following problems.</td>
-        </tr>
-    </table>
+        <!-- Workout Part 1 -->
+        <section class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200">
+            <h2 class="text-2xl font-bold text-indigo-900 border-b-2 border-indigo-300 pb-3 mb-6">💪 Workout Part 1: Function Fundamentals and Domain (15 mins)</h2>
+            
+            <!-- Info Table -->
+            <div class="mb-6 overflow-x-auto">
+                <table class="w-full border-collapse border border-stone-300 rounded-lg overflow-hidden">
+                    <thead>
+                        <tr class="bg-indigo-100">
+                            <th class="border border-stone-300 px-4 py-3 text-left font-semibold text-indigo-900" style="width: 200px;">Field</th>
+                            <th class="border border-stone-300 px-4 py-3 text-left font-semibold text-indigo-900">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="hover:bg-stone-50">
+                            <td class="border border-stone-300 px-4 py-3 font-semibold text-stone-700">Content to Cover</td>
+                            <td class="border border-stone-300 px-4 py-3 text-stone-700">Relation vs. Function (VLT), Function Evaluation, Domain (Rational & Radical)</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="border border-stone-300 px-4 py-3 font-semibold text-stone-700">Collaborative Learning Technique</td>
+                            <td class="border border-stone-300 px-4 py-3 text-stone-700">Small Group Problem-Solving (Groups of 3)</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="border border-stone-300 px-4 py-3 font-semibold text-stone-700">Instructions</td>
+                            <td class="border border-stone-300 px-4 py-3 text-stone-700">Students work in groups to solve the following problems.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-    <div class="problem">
-        <h2>Q1 (Function Check): Does the relation define y as a function? \(\{(5, 8), (-1, 4), (5, -3)\}\)</h2>
-        <p><strong>Check:</strong> Does any input (x) map to more than one output (y)?</p>
-        
-        <div class="step">
-            <span class="step-number">Step 1:</span> List the domain (x-values): 5, -1, 5.
-        </div>
-        <p class="note"><strong>Note:</strong> The input x=5 appears twice.</p>
-        <div class="step">
-            <span class="step-number">Step 2:</span> Check mappings: 5 → 8 AND 5 → -3.
-        </div>
-        <p>One input (5) has two different outputs (8 and -3).</p>
-        <p><strong>Solution:</strong> No, it is not a function.</p>
-    </div>
+            <!-- Q1 -->
+            <div class="mt-6 bg-stone-50 p-5 rounded-lg border-l-4 border-stone-400 shadow-sm">
+                <h3 class="text-xl font-bold text-stone-900 mb-3">Q1 (Function Check): Does the relation define y as a function? \(\{(5, 8), (-1, 4), (5, -3)\}\)</h3>
+                <p class="mb-4 text-stone-700"><strong>Check:</strong> Does any input (x) map to more than one output (y)?</p>
+                
+                <div class="bg-white p-4 rounded-lg border border-stone-300">
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 1:</span>
+                            <span>List the domain (x-values): 5, -1, 5.</span>
+                        </div>
+                        <div class="bg-yellow-50 p-3 rounded border-l-2 border-yellow-400 italic text-sm">
+                            <strong>Note:</strong> The input x=5 appears twice.
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 2:</span>
+                            <span>Check mappings: 5 → 8 AND 5 → -3.</span>
+                        </div>
+                        <p>One input (5) has two different outputs (8 and -3).</p>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">No, it is not a function.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="problem">
-        <h2>Q2 (Evaluation): Evaluate \(f(x) = x^2 - 4x + 1\) for \(f(2a)\)</h2>
-        <p><strong>Goal:</strong> Practice substitution and simplification.</p>
-        
-        <div class="step">
-            <span class="step-number">Step 1:</span> Replace x with (2a): \(f(2a) = (2a)^2 - 4(2a) + 1\).
-        </div>
-        <div class="step">
-            <span class="step-number">Step 2:</span> Simplify the terms: \((2a)^2 = 4a^2\); \(-4(2a) = -8a\).
-        </div>
-        <p><strong>Solution:</strong> \(f(2a) = 4a^2 - 8a + 1\).</p>
-    </div>
+            <!-- Q2 -->
+            <div class="mt-6 bg-stone-50 p-5 rounded-lg border-l-4 border-stone-400 shadow-sm">
+                <h3 class="text-xl font-bold text-stone-900 mb-3">Q2 (Evaluation): Evaluate \(f(x) = x^2 - 4x + 1\) for \(f(2a)\)</h3>
+                <p class="mb-4 text-stone-700"><strong>Goal:</strong> Practice substitution and simplification.</p>
+                
+                <div class="bg-white p-4 rounded-lg border border-stone-300">
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 1:</span>
+                            <span>Replace x with (2a): \(f(2a) = (2a)^2 - 4(2a) + 1\).</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 2:</span>
+                            <span>Simplify the terms: \((2a)^2 = 4a^2\); \(-4(2a) = -8a\).</span>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">\(f(2a) = 4a^2 - 8a + 1\).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="problem">
-        <h2>Q3 (Rational Domain): Find the domain of \(f(x) = \frac{x+7}{x^2-16}\)</h2>
-        <p><strong>Rule:</strong> Denominator cannot be zero.</p>
-        
-        <div class="step">
-            <span class="step-number">Step 1:</span> Set the denominator not equal to zero: \(x^2 - 16 \neq 0\).
-        </div>
-        <div class="step">
-            <span class="step-number">Step 2:</span> Factor and solve: \((x - 4)(x + 4) \neq 0\).
-        </div>
-        <p>\(x \neq 4\) and \(x \neq -4\).</p>
-        <p><strong>Solution:</strong> Domain: \(\{x | x \neq 4, x \neq -4\}\) or \((-\infty, -4) \cup (-4, 4) \cup (4, \infty)\).</p>
-    </div>
+            <!-- Q3 -->
+            <div class="mt-6 bg-stone-50 p-5 rounded-lg border-l-4 border-stone-400 shadow-sm">
+                <h3 class="text-xl font-bold text-stone-900 mb-3">Q3 (Rational Domain): Find the domain of \(f(x) = \frac{x+7}{x^2-16}\)</h3>
+                <p class="mb-4 text-stone-700"><strong>Rule:</strong> Denominator cannot be zero.</p>
+                
+                <div class="bg-white p-4 rounded-lg border border-stone-300">
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 1:</span>
+                            <span>Set the denominator not equal to zero: \(x^2 - 16 \neq 0\).</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 2:</span>
+                            <span>Factor and solve: \((x - 4)(x + 4) \neq 0\).</span>
+                        </div>
+                        <p>\(x \neq 4\) and \(x \neq -4\).</p>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">Domain: \(\{x | x \neq 4, x \neq -4\}\) or \((-\infty, -4) \cup (-4, 4) \cup (4, \infty)\).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="problem">
-        <h2>Q4 (Radical Domain): Find the domain of \(g(x) = \sqrt{3x+9}\)</h2>
-        <p><strong>Rule:</strong> Radicand (stuff under the even root) must be greater than or equal to zero.</p>
-        
-        <div class="step">
-            <span class="step-number">Step 1:</span> Set the radicand ≥ 0: \(3x + 9 \geq 0\).
-        </div>
-        <div class="step">
-            <span class="step-number">Step 2:</span> Solve for x: \(3x \geq -9 \rightarrow x \geq -3\).
-        </div>
-        <p><strong>Solution:</strong> Domain: \([-3, \infty)\).</p>
-    </div>
+            <!-- Q4 -->
+            <div class="mt-6 bg-stone-50 p-5 rounded-lg border-l-4 border-stone-400 shadow-sm">
+                <h3 class="text-xl font-bold text-stone-900 mb-3">Q4 (Radical Domain): Find the domain of \(g(x) = \sqrt{3x+9}\)</h3>
+                <p class="mb-4 text-stone-700"><strong>Rule:</strong> Radicand (stuff under the even root) must be greater than or equal to zero.</p>
+                
+                <div class="bg-white p-4 rounded-lg border border-stone-300">
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 1:</span>
+                            <span>Set the radicand ≥ 0: \(3x + 9 \geq 0\).</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 2:</span>
+                            <span>Solve for x: \(3x \geq -9 \rightarrow x \geq -3\).</span>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">Domain: \([-3, \infty)\).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <div class="page-break"></div>
+        <div class="page-break"></div>
 
-    <h1>Workout Part 2: Polynomial Zeros and Factorization (15 mins)</h1>
-    
-    <table>
-        <tr>
-            <th style="width: 200px;">Field</th>
-            <th>Details</th>
-        </tr>
-        <tr>
-            <td><strong>Content to Cover</strong></td>
-            <td>Factorization, Synthetic Division, Remainder/Factor Theorems, Rational Zero Theorem</td>
-        </tr>
-        <tr>
-            <td><strong>Collaborative Learning Technique</strong></td>
-            <td>Small Group Problem-Solving (Groups of 3)</td>
-        </tr>
-        <tr>
-            <td><strong>Instructions</strong></td>
-            <td>Students work in groups to solve the following problems.</td>
-        </tr>
-    </table>
+        <!-- Workout Part 2 -->
+        <section class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200">
+            <h2 class="text-2xl font-bold text-indigo-900 border-b-2 border-indigo-300 pb-3 mb-6">💪 Workout Part 2: Polynomial Zeros and Factorization (15 mins)</h2>
+            
+            <!-- Info Table -->
+            <div class="mb-6 overflow-x-auto">
+                <table class="w-full border-collapse border border-stone-300 rounded-lg overflow-hidden">
+                    <thead>
+                        <tr class="bg-indigo-100">
+                            <th class="border border-stone-300 px-4 py-3 text-left font-semibold text-indigo-900" style="width: 200px;">Field</th>
+                            <th class="border border-stone-300 px-4 py-3 text-left font-semibold text-indigo-900">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="hover:bg-stone-50">
+                            <td class="border border-stone-300 px-4 py-3 font-semibold text-stone-700">Content to Cover</td>
+                            <td class="border border-stone-300 px-4 py-3 text-stone-700">Factorization, Synthetic Division, Remainder/Factor Theorems, Rational Zero Theorem</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="border border-stone-300 px-4 py-3 font-semibold text-stone-700">Collaborative Learning Technique</td>
+                            <td class="border border-stone-300 px-4 py-3 text-stone-700">Small Group Problem-Solving (Groups of 3)</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="border border-stone-300 px-4 py-3 font-semibold text-stone-700">Instructions</td>
+                            <td class="border border-stone-300 px-4 py-3 text-stone-700">Students work in groups to solve the following problems.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-    <div class="problem">
-        <h2>Q1 (Factor by Grouping): Factor completely: \(x^3 + 5x^2 - 4x - 20\)</h2>
-        <p><strong>Goal:</strong> Review non-synthetic factoring methods.</p>
-        
-        <div class="step">
-            <span class="step-number">Step 1:</span> Group the first two terms and the last two terms: \((x^3 + 5x^2) + (-4x - 20)\).
-        </div>
-        <div class="step">
-            <span class="step-number">Step 2:</span> Factor out the Greatest Common Factor (GCF) from each group: \(x^2(x + 5) - 4(x + 5)\).
-        </div>
-        <p class="note"><strong>Note:</strong> Note the sign change in the second group.</p>
-        <div class="step">
-            <span class="step-number">Step 3:</span> Factor out the common binomial factor \((x + 5)\): \((x + 5)(x^2 - 4)\).
-        </div>
-        <div class="step">
-            <span class="step-number">Step 4:</span> Factor the Difference of Squares: \((x^2 - 4) = (x - 2)(x + 2)\).
-        </div>
-        <p><strong>Solution:</strong> \((x + 5)(x - 2)(x + 2)\).</p>
-    </div>
+            <!-- Q1 -->
+            <div class="mt-6 bg-stone-50 p-5 rounded-lg border-l-4 border-stone-400 shadow-sm">
+                <h3 class="text-xl font-bold text-stone-900 mb-3">Q1 (Factor by Grouping): Factor completely: \(x^3 + 5x^2 - 4x - 20\)</h3>
+                <p class="mb-4 text-stone-700"><strong>Goal:</strong> Review non-synthetic factoring methods.</p>
+                
+                <div class="bg-white p-4 rounded-lg border border-stone-300">
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 1:</span>
+                            <span>Group the first two terms and the last two terms: \((x^3 + 5x^2) + (-4x - 20)\).</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 2:</span>
+                            <span>Factor out the Greatest Common Factor (GCF) from each group: \(x^2(x + 5) - 4(x + 5)\).</span>
+                        </div>
+                        <div class="bg-yellow-50 p-3 rounded border-l-2 border-yellow-400 italic text-sm">
+                            <strong>Note:</strong> Note the sign change in the second group.
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 3:</span>
+                            <span>Factor out the common binomial factor \((x + 5)\): \((x + 5)(x^2 - 4)\).</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 4:</span>
+                            <span>Factor the Difference of Squares: \((x^2 - 4) = (x - 2)(x + 2)\).</span>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">\((x + 5)(x - 2)(x + 2)\).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="problem">
-        <h2>Q2 (Synthetic Division): Find the quotient and remainder: \(\frac{4x^4+2x^2-5x+1}{x-1}\)</h2>
-        <p class="note"><strong>Note:</strong> Must use a placeholder for the missing \(x^3\) term.</p>
-        
-        <div class="step">
-            <span class="step-number">Step 1:</span> Use c = 1 (from x - 1) and coefficients 4, 0, 2, -5, 1.
-        </div>
-        <div class="step">
-            <span class="step-number">Step 2:</span> Perform synthetic division.
-        </div>
-        <pre style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px;">
- 1 |  4   0   2  -5   1
+            <!-- Q2 -->
+            <div class="mt-6 bg-stone-50 p-5 rounded-lg border-l-4 border-stone-400 shadow-sm">
+                <h3 class="text-xl font-bold text-stone-900 mb-3">Q2 (Synthetic Division): Find the quotient and remainder: \(\frac{4x^4+2x^2-5x+1}{x-1}\)</h3>
+                <div class="bg-yellow-50 p-3 rounded border-l-2 border-yellow-400 italic text-sm mb-4">
+                    <strong>Note:</strong> Must use a placeholder for the missing \(x^3\) term.
+                </div>
+                
+                <div class="bg-white p-4 rounded-lg border border-stone-300">
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 1:</span>
+                            <span>Use c = 1 (from x - 1) and coefficients 4, 0, 2, -5, 1.</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 2:</span>
+                            <span>Perform synthetic division.</span>
+                        </div>
+                        <pre class="bg-stone-100 p-4 rounded-lg border border-stone-300 font-mono text-sm overflow-x-auto"> 1 |  4   0   2  -5   1
    |     4   4   6   1
-   |  4   4   6   1   2
-        </pre>
-        <div class="step">
-            <span class="step-number">Step 3:</span> Identify the quotient polynomial (degree one less than the dividend).
-        </div>
-        <p><strong>Solution:</strong> \(Q(x) = 4x^3 + 4x^2 + 6x + 1\), \(R = 2\).</p>
-    </div>
+   |  4   4   6   1   2</pre>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 3:</span>
+                            <span>Identify the quotient polynomial (degree one less than the dividend).</span>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">\(Q(x) = 4x^3 + 4x^2 + 6x + 1\), \(R = 2\).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="problem">
-        <h2>Q3 (Factor Theorem): Use synthetic division to determine if \((x + 3)\) is a factor of \(f(x) = x^3 + 8x^2 + 15x\)</h2>
-        <p><strong>Rule:</strong> If the remainder R = 0, then \((x + 3)\) is a factor.</p>
-        
-        <div class="step">
-            <span class="step-number">Step 1:</span> Use c = -3 and coefficients 1, 8, 15, 0 (must use 0 for the constant term).
-        </div>
-        <div class="step">
-            <span class="step-number">Step 2:</span> Perform division.
-        </div>
-        <pre style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px;">
--3 |  1   8  15   0
+            <!-- Q3 -->
+            <div class="mt-6 bg-stone-50 p-5 rounded-lg border-l-4 border-stone-400 shadow-sm">
+                <h3 class="text-xl font-bold text-stone-900 mb-3">Q3 (Factor Theorem): Use synthetic division to determine if \((x + 3)\) is a factor of \(f(x) = x^3 + 8x^2 + 15x\)</h3>
+                <p class="mb-4 text-stone-700"><strong>Rule:</strong> If the remainder R = 0, then \((x + 3)\) is a factor.</p>
+                
+                <div class="bg-white p-4 rounded-lg border border-stone-300">
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 1:</span>
+                            <span>Use c = -3 and coefficients 1, 8, 15, 0 (must use 0 for the constant term).</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 2:</span>
+                            <span>Perform division.</span>
+                        </div>
+                        <pre class="bg-stone-100 p-4 rounded-lg border border-stone-300 font-mono text-sm overflow-x-auto">-3 |  1   8  15   0
    |    -3 -15   0
-   |  1   5   0   0
-        </pre>
-        <div class="step">
-            <span class="step-number">Step 3:</span> Check the remainder.
-        </div>
-        <p>Since the remainder is 0, it is a factor.</p>
-        <p><strong>Solution:</strong> Yes, \((x + 3)\) is a factor.</p>
-    </div>
+   |  1   5   0   0</pre>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 3:</span>
+                            <span>Check the remainder.</span>
+                        </div>
+                        <p>Since the remainder is 0, it is a factor.</p>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">Yes, \((x + 3)\) is a factor.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="problem">
-        <h2>Q4 (Rational Zero Theorem): List all possible rational zeros for \(f(x) = 4x^3 - x^2 - 7x + 3\)</h2>
-        <p><strong>Rule:</strong> Possible zeros are \(\frac{P}{Q}\), where P is a factor of the constant (3) and Q is a factor of the leading coefficient (4).</p>
-        
-        <div class="step">
-            <span class="step-number">Step 1:</span> Identify factors of P (constant, 3) and Q (leading coefficient, 4).
-        </div>
-        <p>P: ±1, ±3; Q: ±1, ±2, ±4.</p>
-        <div class="step">
-            <span class="step-number">Step 2:</span> Create the \(\frac{P}{Q}\) list (include positive and negative versions).
-        </div>
-        <p>\(\frac{P}{Q}\): \(\frac{1}{1}, \frac{3}{1}, \frac{1}{2}, \frac{3}{2}, \frac{1}{4}, \frac{3}{4}\).</p>
-        <p><strong>Solution:</strong> The possible rational zeros are ±1, ±3, ±\(\frac{1}{2}\), ±\(\frac{3}{2}\), ±\(\frac{1}{4}\), ±\(\frac{3}{4}\).</p>
-    </div>
+            <!-- Q4 -->
+            <div class="mt-6 bg-stone-50 p-5 rounded-lg border-l-4 border-stone-400 shadow-sm">
+                <h3 class="text-xl font-bold text-stone-900 mb-3">Q4 (Rational Zero Theorem): List all possible rational zeros for \(f(x) = 4x^3 - x^2 - 7x + 3\)</h3>
+                <p class="mb-4 text-stone-700"><strong>Rule:</strong> Possible zeros are \(\frac{P}{Q}\), where P is a factor of the constant (3) and Q is a factor of the leading coefficient (4).</p>
+                
+                <div class="bg-white p-4 rounded-lg border border-stone-300">
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 1:</span>
+                            <span>Identify factors of P (constant, 3) and Q (leading coefficient, 4).</span>
+                        </div>
+                        <p>P: ±1, ±3; Q: ±1, ±2, ±4.</p>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 2:</span>
+                            <span>Create the \(\frac{P}{Q}\) list (include positive and negative versions).</span>
+                        </div>
+                        <p>\(\frac{P}{Q}\): \(\frac{1}{1}, \frac{3}{1}, \frac{1}{2}, \frac{3}{2}, \frac{1}{4}, \frac{3}{4}\).</p>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">The possible rational zeros are ±1, ±3, ±\(\frac{1}{2}\), ±\(\frac{3}{2}\), ±\(\frac{1}{4}\), ±\(\frac{3}{4}\).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <div class="page-break"></div>
+        <div class="page-break"></div>
 
-    <h1>Cool-Down / Closing (10 mins)</h1>
-    
-    <table>
-        <tr>
-            <th style="width: 200px;">Field</th>
-            <th>Details</th>
-        </tr>
-        <tr>
-            <td><strong>Content to Cover</strong></td>
-            <td>X and Y Intercepts, Parallel/Perpendicular Slopes, Zeros Synthesis</td>
-        </tr>
-        <tr>
-            <td><strong>Collaborative Learning Technique</strong></td>
-            <td>Whole-class discussion</td>
-        </tr>
-        <tr>
-            <td><strong>Instructions</strong></td>
-            <td>Solve the closing problems collaboratively, applying various concepts.</td>
-        </tr>
-    </table>
+        <!-- Cool-Down -->
+        <section class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-stone-200">
+            <h2 class="text-2xl font-bold text-indigo-900 border-b-2 border-indigo-300 pb-3 mb-6">🧊 Cool-Down / Closing (10 mins)</h2>
+            
+            <!-- Info Table -->
+            <div class="mb-6 overflow-x-auto">
+                <table class="w-full border-collapse border border-stone-300 rounded-lg overflow-hidden">
+                    <thead>
+                        <tr class="bg-indigo-100">
+                            <th class="border border-stone-300 px-4 py-3 text-left font-semibold text-indigo-900" style="width: 200px;">Field</th>
+                            <th class="border border-stone-300 px-4 py-3 text-left font-semibold text-indigo-900">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="hover:bg-stone-50">
+                            <td class="border border-stone-300 px-4 py-3 font-semibold text-stone-700">Content to Cover</td>
+                            <td class="border border-stone-300 px-4 py-3 text-stone-700">X and Y Intercepts, Parallel/Perpendicular Slopes, Zeros Synthesis</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="border border-stone-300 px-4 py-3 font-semibold text-stone-700">Collaborative Learning Technique</td>
+                            <td class="border border-stone-300 px-4 py-3 text-stone-700">Whole-class discussion</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="border border-stone-300 px-4 py-3 font-semibold text-stone-700">Instructions</td>
+                            <td class="border border-stone-300 px-4 py-3 text-stone-700">Solve the closing problems collaboratively, applying various concepts.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-    <div class="problem">
-        <h2>Q1 (Intercepts): Find the x- and y-intercepts of \(3x - 2y = 12\)</h2>
-        <p><strong>Goal:</strong> Find intercepts algebraically.</p>
-        
-        <div class="step">
-            <span class="step-number">Step 1 (Y-Intercept):</span> Set x = 0: \(3(0) - 2y = 12 \rightarrow -2y = 12\).
-        </div>
-        <p>\(y = -6\).</p>
-        <div class="step">
-            <span class="step-number">Step 2 (X-Intercept):</span> Set y = 0: \(3x - 2(0) = 12 \rightarrow 3x = 12\).
-        </div>
-        <p>\(x = 4\).</p>
-        <p><strong>Solution:</strong> Y-intercept: \((0, -6)\); X-intercept: \((4, 0)\).</p>
-    </div>
+            <!-- Q1 -->
+            <div class="mt-6 bg-stone-50 p-5 rounded-lg border-l-4 border-stone-400 shadow-sm">
+                <h3 class="text-xl font-bold text-stone-900 mb-3">Q1 (Intercepts): Find the x- and y-intercepts of \(3x - 2y = 12\)</h3>
+                <p class="mb-4 text-stone-700"><strong>Goal:</strong> Find intercepts algebraically.</p>
+                
+                <div class="bg-white p-4 rounded-lg border border-stone-300">
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[120px]">Step 1 (Y-Intercept):</span>
+                            <span>Set x = 0: \(3(0) - 2y = 12 \rightarrow -2y = 12\).</span>
+                        </div>
+                        <p>\(y = -6\).</p>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[120px]">Step 2 (X-Intercept):</span>
+                            <span>Set y = 0: \(3x - 2(0) = 12 \rightarrow 3x = 12\).</span>
+                        </div>
+                        <p>\(x = 4\).</p>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">Y-intercept: \((0, -6)\); X-intercept: \((4, 0)\).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="problem">
-        <h2>Q2 (Parallel/Perpendicular Slopes): Find the slope of a line parallel to and a line perpendicular to \(2x + 5y = 10\)</h2>
-        <p><strong>Goal:</strong> Review slope definitions (m, -1/m).</p>
-        
-        <div class="step">
-            <span class="step-number">Step 1:</span> Convert to slope-intercept form \((y = mx + b)\) to find the original slope (m): \(5y = -2x + 10 \rightarrow y = \frac{-2}{5}x + 2\).
-        </div>
-        <p>The original slope is \(m = \frac{-2}{5}\).</p>
-        <div class="step">
-            <span class="step-number">Step 2 (Parallel):</span> A parallel line has the same slope.
-        </div>
-        <p>Parallel slope = \(m = \frac{-2}{5}\).</p>
-        <div class="step">
-            <span class="step-number">Step 3 (Perpendicular):</span> A perpendicular line has the negative reciprocal slope.
-        </div>
-        <p>Perpendicular slope = \(-\frac{1}{m} = -\frac{1}{-2/5} = \frac{5}{2}\).</p>
-        <p><strong>Solution:</strong> Parallel slope: \(\frac{-2}{5}\). Perpendicular slope: \(\frac{5}{2}\).</p>
-    </div>
+            <!-- Q2 -->
+            <div class="mt-6 bg-stone-50 p-5 rounded-lg border-l-4 border-stone-400 shadow-sm">
+                <h3 class="text-xl font-bold text-stone-900 mb-3">Q2 (Parallel/Perpendicular Slopes): Find the slope of a line parallel to and a line perpendicular to \(2x + 5y = 10\)</h3>
+                <p class="mb-4 text-stone-700"><strong>Goal:</strong> Review slope definitions (m, -1/m).</p>
+                
+                <div class="bg-white p-4 rounded-lg border border-stone-300">
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 1:</span>
+                            <span>Convert to slope-intercept form \((y = mx + b)\) to find the original slope (m): \(5y = -2x + 10 \rightarrow y = \frac{-2}{5}x + 2\).</span>
+                        </div>
+                        <p>The original slope is \(m = \frac{-2}{5}\).</p>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[120px]">Step 2 (Parallel):</span>
+                            <span>A parallel line has the same slope.</span>
+                        </div>
+                        <p>Parallel slope = \(m = \frac{-2}{5}\).</p>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[120px]">Step 3 (Perpendicular):</span>
+                            <span>A perpendicular line has the negative reciprocal slope.</span>
+                        </div>
+                        <p>Perpendicular slope = \(-\frac{1}{m} = -\frac{1}{-2/5} = \frac{5}{2}\).</p>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">Parallel slope: \(\frac{-2}{5}\). Perpendicular slope: \(\frac{5}{2}\).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="problem">
-        <h2>Q3 (Full Zeros Synthesis): Find all zeros of \(g(x) = x^3 + 2x^2 - 5x - 6\)</h2>
-        
-        <h3>Step-by-step Solution</h3>
-        <div class="step">
-            <span class="step-number">Step 1:</span> List P/Q possibilities: P (factors of 6) = ±1, ±2, ±3, ±6. Q (factors of 1) = ±1. Possibilities: ±1, ±2, ±3, ±6.
-        </div>
-        <div class="step">
-            <span class="step-number">Step 2:</span> Test a value, c = 2, using synthetic division on 1, 2, -5, -6.
-        </div>
-        <pre style="font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px;">
- 2 |  1   2  -5  -6
+            <!-- Q3 -->
+            <div class="mt-6 bg-stone-50 p-5 rounded-lg border-l-4 border-stone-400 shadow-sm">
+                <h3 class="text-xl font-bold text-stone-900 mb-3">Q3 (Full Zeros Synthesis): Find all zeros of \(g(x) = x^3 + 2x^2 - 5x - 6\)</h3>
+                
+                <div class="bg-white p-4 rounded-lg border border-stone-300">
+                    <h4 class="font-bold text-indigo-800 mb-3">Step-by-step Solution</h4>
+                    <div class="space-y-3 text-stone-700">
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 1:</span>
+                            <span>List P/Q possibilities: P (factors of 6) = ±1, ±2, ±3, ±6. Q (factors of 1) = ±1. Possibilities: ±1, ±2, ±3, ±6.</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 2:</span>
+                            <span>Test a value, c = 2, using synthetic division on 1, 2, -5, -6.</span>
+                        </div>
+                        <pre class="bg-stone-100 p-4 rounded-lg border border-stone-300 font-mono text-sm overflow-x-auto"> 2 |  1   2  -5  -6
    |     2   8   6
-   |  1   4   3   0
-        </pre>
-        <div class="step">
-            <span class="step-number">Step 3:</span> Use the depressed polynomial \(x^2 + 4x + 3\) and factor it.
-        </div>
-        <p>\((x + 3)(x + 1) = 0\).</p>
-        <div class="step">
-            <span class="step-number">Step 4:</span> Solve the remaining factors for the last two zeros.
-        </div>
-        <p>\(x = -3\) and \(x = -1\).</p>
-        <p><strong>Solution:</strong> The zeros are \(x = 2\), \(x = -3\), \(x = -1\).</p>
-    </div>
+   |  1   4   3   0</pre>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 3:</span>
+                            <span>Use the depressed polynomial \(x^2 + 4x + 3\) and factor it.</span>
+                        </div>
+                        <p>\((x + 3)(x + 1) = 0\).</p>
+                        <div class="flex gap-3">
+                            <span class="font-bold text-indigo-600 min-w-[80px]">Step 4:</span>
+                            <span>Solve the remaining factors for the last two zeros.</span>
+                        </div>
+                        <p>\(x = -3\) and \(x = -1\).</p>
+                        <div class="bg-green-50 p-3 rounded border-l-2 border-green-500">
+                            <strong class="text-green-800">Solution:</strong> <span class="text-green-900">The zeros are \(x = 2\), \(x = -3\), \(x = -1\).</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+    </main>
+
+    <footer class="text-center py-6 text-stone-500 text-sm">
+        <p>SLA Review Session | Solomon Agyire | MTH 112E</p>
+    </footer>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.MathJax) {
+                if (window.MathJax.startup && window.MathJax.startup.promise) {
+                    MathJax.startup.promise.then(() => {
+                        if (window.MathJax.typesetPromise) {
+                            MathJax.typesetPromise().catch((err) => {
+                                console.log('MathJax typeset error:', err);
+                            });
+                        }
+                    }).catch((err) => {
+                        console.log('MathJax startup error:', err);
+                    });
+                } else {
+                    setTimeout(() => {
+                        if (window.MathJax && window.MathJax.typesetPromise) {
+                            MathJax.typesetPromise().catch((err) => {
+                                console.log('MathJax typeset error:', err);
+                            });
+                        }
+                    }, 500);
+                }
+            }
+        });
+    </script>
 </body>
 </html>
-
